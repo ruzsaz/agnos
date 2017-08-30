@@ -1,0 +1,43 @@
+{
+  "cube_unique_name": "AN_RIP_1",
+  "indicators": [
+    {
+      "caption": "Élveszületések",
+      "description": "Élveszületések száma",
+      "id": 0,
+      "value": {
+        "measure_unique_name": "[Measures].[AVG_VS1]",
+        "unit": "fő"
+      },
+      "fraction": {
+        "measure_unique_name": "[Measures].[AVG_VN1]",
+        "unit": "fő / 1000 lakos"
+      }
+    },
+    {
+      "caption": "Halálozások",
+      "description": "H száma",
+      "id": 1,
+      "value": {
+        "measure_unique_name": "[Measures].[AVG_VS1]",
+        "unit": "fő"
+      },
+      "fraction": null
+    }
+  ],
+  "dimensions": [
+    {
+      "hierarchy_unique_name": "[AT_RIP_1_DIM_TERRITORIAL_NUTS].[TERRITORIAL_NUTS_HIER]",
+      "caption": "Területi felbontás",
+      "description": "Területi felbontás",
+      "top_level_caption": "Magyarország",
+      "id": 0
+    },
+    {}
+  ],
+  "visualization": [
+    "PieChartPanel({dim: 2, val: 0})",
+    "BarLinePanel({ dim:1, valBars: [0], valAvgLines: [],ratio: true, streched: false})",
+    "PieChartPanel({dim: 2, val: 0})"
+  ]
+}

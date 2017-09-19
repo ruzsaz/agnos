@@ -246,7 +246,7 @@ function HeadPanel_Report(init, reportMeta) {
 	}
 
 	that.mediator.publish("magnify", 0);
-	that.mediator.publish("addDrag", that.divTableBase.selectAll(".dragable"));
+	that.mediator.publish("addDrag", that.divTableBase.selectAll(".dragable"));    
 }
 
 //////////////////////////////////////////////////
@@ -417,5 +417,5 @@ HeadPanel_Report.prototype.update = function(data) {
 			}).transition().duration(global.selfDuration)
 			.style("opacity", 1);
 
-	that.mediator.publish("magnify", 0);
+	//that.mediator.publish("magnify", 0);
 };

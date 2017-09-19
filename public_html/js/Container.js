@@ -163,7 +163,6 @@ Container.prototype.resizeContainers = function(duration, container0SizePercenta
  */
 Container.prototype.resizeContainer = function(side, duration, sizePercentage, isAdjust, isResize, isSplit, panelsPerRow) {
     var that = this;
-
     var bodyWidth = parseInt(d3.select("#topdiv").style("width"));
     var bodyHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
     var scrollWidth = 0;
@@ -228,7 +227,9 @@ Container.prototype.resizeContainer = function(side, duration, sizePercentage, i
         var cutterHeight = parseInt(d3.select("#container" + side).style("height")) * scaleRatio;
         d3.select("#cutter" + side).transition().duration(duration).style("height", cutterHeight + "px");
     } else {
-        d3.select("#cutter" + side).style("height", "100%");
+        if (parseFloat(d3.select("#cutter" + side).style("height")) < parseFloat(d3.select("body").style("height"))) {
+            d3.select("#cutter" + side).style("height", "100%");
+        }
     }
 
     if (scaleRatio > 0) {
@@ -306,6 +307,7 @@ Container.prototype.newReportReady = function(side, reportMeta) {
     new HeadPanel_Report({group: side}, reportMeta);						// Fejlécpanel létrehozása.
     global.mediators[side].publish("drill", {dim: -1, direction: 0});		// Kezdeti belefúrás.
     global.mainToolbar_refreshState();										// A toolbar kiszürkültségi állapotának felfrissítése.
+//    global.mediators[side].publish("magnify", 0);
 };
 
 /**
@@ -447,6 +449,7 @@ Container.prototype.addPanel = function(side, panelType) {
         }
         global.mainToolbar_refreshState();
         global.mediators[side].publish("drill", {dim: -1, direction: 0});
+        this.onResize();
     }
 };
 

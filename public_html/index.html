@@ -24,11 +24,11 @@
     <!-- <link href= "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QgQDBYWkPOHOwAAAcRJREFUOMuNkz+LGlEUxX9PnHGIE/zTCYOSFBELv4CkmCbVIpJmiw0EUkhIa6xShLCYPo2VhYUpUgbLQKp8ByHGbLFVbFRQRFfxpIhunuMGcmBg3rzLuWfuORcASUQh6bGkL5K+SnrCP2AkYYxBUgE4B3bAL+CjVbcBXgP3ga2kT7FY7Nru9kDST/3FWqe4sd6/S0pKIr7nOAceWh3dyWTCfD7HGIPv+2QyGccYc7h/BDw1xvxRudvtmgfq2Wymy8tLFYtFua4rx3FUKpXUarW0WCxsRc/tX3gmadXtdlUoFOS6roCjx3VdBUGgdrt9IAjtaaterwuQ7/tyHOeEIB6PK5VKCVCj0dBms5GkszjwdrVaUalUKJfLJJNJms0m0+n0yK5sNkun02E0GpHL5Q7Wf2Dv8xGCIJAx5khBGIZaLpfR0qsY8B7Y2t1qtdpJuMIwxPM8+9MN8O4wh1e29+PxWJ7nCZAxRul0WoPBINr9wnbhTfS23+/fyu/1enfkSi+B2yBtoxmvVqsMh0MSiQT5fP6uNVjbCvL7eP4vBpLSAMYiuQdcAEvgGvgWGdiL/TKtgc/ALLq+0fOZpB+Sro5iG6n/DcoXvi8xP0qVAAAAAElFTkSuQmCC" rel="icon" type="image/x-icon" />
     -->
 
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/manifest.json">
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#40bddf">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="manifest" href="manifest.json">
+<link rel="mask-icon" href="safari-pinned-tab.svg" color="#40bddf">
 <meta name="theme-color" content="#ffffff">
 
 
@@ -228,8 +228,8 @@
       function loadLevel2() {
           loadResourcesAsync([
               "js/Global.js",
-              "js/DragLayer.min.js",
-              "js/datamethods/DataDirector.min.js"
+              "js/DragLayer.js",
+              "js/datamethods/DataDirector.js"
           ], loadLevel3);
       }
 
@@ -240,9 +240,9 @@
        */
       function loadLevel3() {
           loadResourcesAsync([
-              "js/HeadPanel.min.js",
-              "js/Panel.min.js",
-              "js/TitleBox.min.js",
+              "js/HeadPanel.js",
+              "js/Panel.js",
+              "js/TitleBox.js",
               "localSettings.js"
           ], loadLevel4);
       }

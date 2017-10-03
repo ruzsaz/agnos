@@ -262,7 +262,7 @@ svg {
 
 .tableScrollPane, .mainTitle {
 	margin: 8px;
-	padding: 0px 8px;
+	padding: 0px 8px 5px 8px;
 }
 
 .mainTitle {

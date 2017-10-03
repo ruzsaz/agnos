@@ -632,11 +632,16 @@ mask path {
 }
 
 #headPanelP0 .row .cell text:not(.spacer), #headPanelP1 .row .cell text:not(.spacer) {
-    position: absolute;
+    /* position: absolute; A legújabb próbálkozás szerint ez nem kell */
     max-width: 90%;
-    white-space: nowrap;
+    /* white-space: nowrap; A legújabb próbálkozás szerint ez nem kell */
     overflow-x: hidden;
     text-overflow: ellipsis;
+}
+
+#headPanelP0 .halfHead .row .cell text:not(.spacer), #headPanelP1 .halfHead .row .cell text:not(.spacer) {
+    position: absolute;
+    white-space: nowrap;
 }
 
 #headPanelP0 text.spacer, #headPanelP1 text.spacer {
@@ -688,6 +693,7 @@ mask path {
 	display: none;
 }
 
+/* A legújabb próbálkozás szerint ez nem kell
 .reportsTable .cell:nth-child(1) {
 	overflow-wrap: break-word;
 	max-width: 10%;
@@ -709,7 +715,7 @@ mask path {
 	overflow-wrap: break-word;
 	max-width: 5%;
 	width: 5%;
-}
+} */
 
 .reportsTable .cell:nth-child(5) {
 	overflow-wrap: break-word;

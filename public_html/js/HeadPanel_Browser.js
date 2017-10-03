@@ -114,7 +114,7 @@ function HeadPanel_Browser(init, superMeta) {
 
 		tempRowCell.append("html:text")
 				.text(function(d) {
-					return d.updated.replace(/ .*/g, '');
+					return d.updated;
 				});
 
 		tempRowCell.append("html:span")

@@ -292,7 +292,7 @@ HeadPanel_Report.prototype.valToShow = function(data, valueMeta, i) {
 HeadPanel_Report.prototype.ratioToShow = function(data, ratioMeta, i) {
 	var val = "";
 	if (data !== undefined && data.rows[0] !== undefined && data.rows[0].vals[i] !== undefined) {
-		val = (ratioMeta.hide) ? "nem értelmezett" : global.cleverRound3(ratioMeta.multiplier * data.rows[0].vals[i].sz / data.rows[0].vals[i].n) + " " + ratioMeta.unit;
+		val = (ratioMeta.hide) ? "nem értelmezett" : (data.rows[0].vals[i].n === 0) ? "a nevező 0" : global.cleverRound3(ratioMeta.multiplier * data.rows[0].vals[i].sz / data.rows[0].vals[i].n) + " " + ratioMeta.unit;
 	} else {
 		val = "??? " + ratioMeta.unit;
 	}

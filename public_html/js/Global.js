@@ -257,7 +257,7 @@ var global = function() {
                             "Hozzáférés megtagadva",
                             "<div class='errorStaticText'>Nincs hozzáférési jogod a rendszerhez. A hibaüzenet:</div>" +
                             "<div class='errorVariableText'><em>" + "Error " + jqXHR.status + ": " + errorThrown + "</em></div>" +
-                            "<div class='errorStaticText'>Hozzáférési jogot az ÁEEK üzemeltetéstől kérhetsz.</div>",
+                            "<div class='errorStaticText'>Hozzáférési jogot az üzemeltetéstől kérhetsz.</div>",
                             undefined,
                             undefined,
                             "Kilépés",
@@ -347,7 +347,7 @@ var global = function() {
                             "Hozzáférés megtagadva",
                             "<div class='errorStaticText'>A kért adatokhoz nincs hozzáférési jogod. A hibaüzenet:</div>" +
                             "<div class='errorVariableText'><em>" + "Error " + jqXHR.status + ": " + errorThrown + "</em></div>" +
-                            "<div class='errorStaticText'>Hozzáférési jogot az ÁEEK üzemeltetéstől kérhetsz.</div>",
+                            "<div class='errorStaticText'>Hozzáférési jogot az üzemeltetéstől kérhetsz.</div>",
                             undefined,
                             undefined,
                             "Kilépés",

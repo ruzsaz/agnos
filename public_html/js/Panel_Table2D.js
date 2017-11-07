@@ -97,10 +97,10 @@ function panel_table2d(init) {
     /**
      * Függőleges scrollozást végrehajtó függvény.
      * 
+     * @param {Number} top A scrollbar kezdőpontja pixelben.
      * @returns {undefined}
      */
-    var verticalScrollFunction = function() {
-        var top = this.scrollTop;
+    var verticalScrollFunction = function(top) {
         var currentExtent = that.gTable.attr("viewBox").split(" ");
         that.gRowHeads.attr("viewBox", "0 " + top + " " + that.tableHeadWidth + " " + that.tableHeight);
         that.gTable.attr("viewBox", currentExtent[0] + " " + top + " " + that.tableWidth + " " + that.tableHeight);
@@ -109,22 +109,31 @@ function panel_table2d(init) {
     /**
      * Vízszintes scrollozást végrehajtó függvény.
      * 
+     * @param {Number} left A scrollbar kezdőpontja pixelben.
      * @returns {undefined}
      */
-    var horizontalScrollFunction = function() {
-        var left = this.scrollLeft;
+    var horizontalScrollFunction = function(left) {
         var currentExtent = that.gTable.attr("viewBox").split(" ");
         that.gColumnHeads.attr("viewBox", left + " 0 " + that.tableWidth + " " + that.tableHeadHeight);
         that.gTable.attr("viewBox", left + " " + currentExtent[1] + " " + that.tableWidth + " " + that.tableHeight);
     };
 
     // Vízszintes scrollbar elhelyezése.
-    this.horizontalScrollbar = new SVGScrollbar(d3.select(that.panelId), true, that.tableWidth, horizontalScrollFunction);
-    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - global.scrollbarWidth);//30-12);
+    //this.horizontalScrollbar = new SVGScrollbar(d3.select(that.panelId), true, that.tableWidth, horizontalScrollFunction);
+    //that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - global.scrollbarWidth);//30-12);
 
     // Függőleges scrollbar elhelyezése.
-    this.verticalScrollbar = new SVGScrollbar(d3.select(that.panelId), false, that.tableHeight, verticalScrollFunction);
-    that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - global.scrollbarWidth, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
+    //this.verticalScrollbar = new SVGScrollbar(d3.select(that.panelId), false, that.tableHeight, verticalScrollFunction);
+    //that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - global.scrollbarWidth, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
+
+    // Vízszintes scrollbar elhelyezése.
+    this.horizontalScrollbar = new SVGScrollbar(that.svg, true, that.tableWidth, horizontalScrollFunction, that.tableSpacingHorizontal);
+    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - global.scrollbarWidth + that.tableElementGap);
+
+    // Függőleges scrollbar elhelyezése.
+    this.verticalScrollbar = new SVGScrollbar(that.svg, false, that.tableHeight, verticalScrollFunction, that.tableSpacingVerical * 2, tableHolder);
+    that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - global.scrollbarWidth + that.tableElementGap, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
+
 
     var med;
     // Feliratkozás az értékváltó mediátorra.
@@ -244,7 +253,7 @@ panel_table2d.prototype.getTooltip = function(rElement, cElement) {
 panel_table2d.prototype.getCmpFunction = function() {
     var that = this;
     return function(a, b) {
-        return (a.dims[that.dimR].name + ":" + a.dims[that.dimC].name).localeCompare(b.dims[that.dimR].name + ":" + b.dims[that.dimC].name);
+        return global.realCompare(a.dims[that.dimR].name + ":" + a.dims[that.dimC].name, b.dims[that.dimR].name + ":" + b.dims[that.dimC].name);
     };
 };
 
@@ -256,7 +265,7 @@ panel_table2d.prototype.getCmpFunction = function() {
  * @returns {boolean} Az összehasonlítás eredménye.
  */
 panel_table2d.prototype.simpleCmp = function(a, b) {
-    return a.name.localeCompare(b.name);
+    return global.realCompare(a.name, b.name);
 };
 
 //////////////////////////////////////////////////
@@ -348,7 +357,6 @@ panel_table2d.prototype.prepareData = function(oldPreparedData, newDataRows, dri
     var that = this;
     var levelR = (global.baseLevels[that.panelSide])[that.dimRToShow].length;
     var levelC = (global.baseLevels[that.panelSide])[that.dimCToShow].length;
-
 
     newDataRows.sort(that.getCmpFunction());	// Elemi adatok sorbarendezése.
     var dimCArray = [];		// Értékek az Y dimenzió mentén. (Azért kell, mert az adatok az X mentén kerülnek tárolásra.)

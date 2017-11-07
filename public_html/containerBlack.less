@@ -1,3 +1,13 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 7, 2017, 3:16:49 PM
+    Author     : ruzsaz
+*/
+
 /* 
     Document   : frame
     Created on : 2014.01.29., 16:03:26
@@ -134,6 +144,7 @@
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+    font-family: arial, sans-serif;
 }
 
 /* Safarihoz bugfix */
@@ -149,8 +160,7 @@ root {
 	display: block;
 }
 
-body {
-	font-family: arial, sans-serif;
+body {	
 	margin: 0px;
 	padding: 0px;
 	overflow-x: hidden;
@@ -283,8 +293,19 @@ svg {
 	opacity: 0;
 }
 
+/* Ez azért kell, hogy az elmentett panel-képen is ott legyen a háttér */
 .background rect {
-	opacity: 0;
+    opacity: 0;
+/*	opacity: 1;
+    rx: @rounding;
+    fill: @panelBackgroundColor;*/
+}
+
+/* Ez azért kell, hogy az elmentett panel-képen is ott legyen a háttér */
+.backgroundForSave {
+	opacity: 1;
+    rx: @rounding;
+    fill: @panelBackgroundColor;
 }
 
 /* Panel */
@@ -556,10 +577,9 @@ mask path {
 /* HeadPanel */
 .table {
 	display: table;
-	width: 100%;
 	color: @writeOnDimColor;
 	border-spacing: 0px 8px;
-	width: 200%
+	width: 200%;
 }
 
 /* HeadPanel */
@@ -1173,40 +1193,25 @@ text {
 	z-index: 101;
 }
 
-.svgScrollbar {
-	width: 100%;
-	height: 100%;
-	background: @multiValuesColor;
-	position: absolute;
+.svgScrollbarG {
 	opacity: 0;
-	-ms-scrollbar-face-color: @multiValuesColor;
-	-ms-scrollbar-arrow-color: @multiValuesColor;
-	-ms-scrollbar-shadow-color: @multiValuesColor;
 }
 
-.svgScrollbar.horizontal {
-	overflow-x: scroll;
-	overflow-y: hidden;
+.svgScrollbarTrack {
+	fill: @baseBackgroundColor;
+    	box-shadow: 0px 0px 0px 1px #343434;
+	-webkit-box-shadow: 0px 0px 0px 1px #343434;
+	-moz-box-shadow: 0px 0px 0px 1px #343434;
 }
 
-.svgScrollbar.vertical {
-	overflow-x: hidden;
-	overflow-y: scroll;
-}
-
-.svgScrollbar .contentMirror {
-	background: @panelBackgroundColor;
+.svgScrollbarThumb {
+    fill: @multiValuesColor;
 }
 
 .svgScrollbar::-webkit-scrollbar-track {
 	box-shadow: 0px 0px 0px 1px #343434;
 	-webkit-box-shadow: 0px 0px 0px 1px #343434;
 	-moz-box-shadow: 0px 0px 0px 1px #343434;
-}
-
-/* Handle */
-.svgScrollbar::-webkit-scrollbar-thumb {
-	background-color: inherit;
 }
 
 /* Help oldal */

@@ -460,7 +460,7 @@ var global = function() {
      * @returns {String} A kiírandó sztring.
      */
     var cleverRound3 = function(n) {
-        return (n !== undefined) ? (parseFloat(d3.format(".3s")(n)) + d3.formatPrefix(n).symbol).replace(".", ",") : "???";
+        return (n !== undefined) ? ((isFinite(n)) ? (parseFloat(d3.format(".3s")(n)) + d3.formatPrefix(n).symbol).replace(".", ",") : "inf") : "???";
     };
 
     /**
@@ -470,7 +470,24 @@ var global = function() {
      * @returns {String} A kiírandó sztring.
      */
     var cleverRound5 = function(n) {
-        return (n !== undefined) ? (parseFloat(d3.format(".4s")(n)) + d3.formatPrefix(n).symbol).replace(".", ",") : "???";
+        return (n !== undefined) ? ((isFinite(n)) ? (parseFloat(d3.format(".4s")(n)) + d3.formatPrefix(n).symbol).replace(".", ",") : "inf") : "???";
+    };
+
+    /**
+     * Összehasonlít két sztringet lexikografikusan.
+     * Azért kell, mert a localeCompare rosszul működik: A előbb van mint a, de A2 később van mint a1.
+     * 
+     * @param {type} a
+     * @param {type} b
+     * @returns {-1 ha a van előrébb, 1 ha b, 0 ha azonosak}
+     */
+    var realCompare = function(a, b) {
+        var minLen = Math.min(a.length, b.length);
+        var i = 0;
+        while (a.charAt(i) === b.charAt(i) && i < minLen) {
+            i++;
+        }
+        return (a.substr(0, i + 1)).localeCompare(b.substr(0, i + 1), "hu", {sensitivity: 'variant', caseFirst: 'upper'});
     };
 
     /**
@@ -846,6 +863,17 @@ var global = function() {
         global.mediators[1].publish('save');
     };
 
+    var mainToolbar_saveAllImages = function() {        
+        var today = new Date();
+        var todayString = today.toISOString().slice(0,10) + "_" + today.toTimeString().slice(0,8).split(":").join("-");
+        console.log(todayString)
+        d3.selectAll(".activeSide div.panel > svg").each(function(d, i) {             
+            saveSvgAsPng(this, todayString + "_P" + (i+1), 2, panelWidth, panelHeight, 0, 0);  
+        });
+        
+    };
+
+
     /**
      * Frissíti az ikonok láthatóságát.
      * 
@@ -1051,7 +1079,7 @@ var global = function() {
         mediators: [], // Az oldalak mediátorát tartalmazó 2 elemű tömb.
         baseLevels: [[], []], // A két oldal aktuális lefúrási szintjeit tartalmazó tömb.
         superMeta: undefined, // SuperMeta: az összes riport adatait tartalmazó leírás.
-        scrollbarWidth: scrollBarSize, // Scrollbarok szélessége.
+        scrollbarWidth: 10, // Scrollbarok szélessége.
         mapBorder: mapBorder, // A térképi elemek határvonal-vastagsága.
         fontSizeSmall: fontSizeSmall, // A legkisebb betűméret.
         panelBackgroundColor: panelBackgroundColor, // Panelek háttérszíne.
@@ -1092,6 +1120,7 @@ var global = function() {
         mainToolbar_createNewPanel: mainToolbar_createNewPanel, // Új panelt hoz létre.
         mainToolbar_killCursor: mainToolbar_killCursor, // Panelölővé változtatja a kurzort.		
         mainToolbar_save: mainToolbar_save, // Elindítja az épp aktív oldal adatmentését.
+        mainToolbar_saveAllImages: mainToolbar_saveAllImages,
         mainToolbar_refreshState: mainToolbar_refreshState, // Frissíti az ikonok láthatóságát.
         getConfig: getConfig, // Kiírja a pillanatnyilag meglevő panelek konfigurációját a konzolra.
         getConfig2: getConfigToHash, // A böngésző URL-jébe írja boomarkolhatóan hash-ként az állapotot.
@@ -1104,6 +1133,7 @@ var global = function() {
         getAnimDuration: getAnimDuration, // Egy panel animálásának ideje.
         cleverRound3: cleverRound3, // Szám rövid kijelzése kiíráshoz, max 3 számkarakterrel. (pl. 3.51 Mrd.)
         cleverRound5: cleverRound5, // Szám rövid kijelzése kiíráshoz, max 5 számkarakterrel. (pl. 34514 M.)
+        realCompare: realCompare, // Pótlás a picit hibásan működő localeCompare helyett.
         cleverCompress: cleverCompress, // Betömörít kiírt feliratokat a megadott helyre.
         rectanglePath: rectanglePath, // Egy SVG téglalapot kirajzoló path-t generál, opcionálisan lekerekített sarkokkal.
         colorValue: colorValue, // Megadja egy érték kijelzésének színét.

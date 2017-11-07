@@ -59,6 +59,12 @@ function Panel(panelInitString, mediator, isLegendRequired, leftOffset, rightOff
 			.attr("width", that.w)
 			.attr("height", that.h);
 
+    that.svg.append("svg:rect")
+            .attr("class", "backgroundForSave")
+			.attr("width", that.w)
+			.attr("height", that.h)
+            .attr("rx", global.rectRounding);
+    
 	this.gLegend = that.svg;
 
 	// Feliratkozás a panelt megölő mediátorra.

@@ -209,6 +209,7 @@ Container.prototype.resizeContainer = function(side, duration, sizePercentage, i
             that.resizeContainer(side, duration / 10, sizePercentage, true, false, false, panelNumberPerRow);
         } else if (duration !== 0) {
             that.resizeContainer(side, 0, sizePercentage, true, false, false, panelNumberPerRow);
+            setTimeout(function() {that.resizeContainer(side, 0, sizePercentage, true, false, false, panelNumberPerRow);}, 80);            
         }
 
     };

@@ -108,10 +108,10 @@ function panel_table1d(init) {
     /**
      * Függőleges scrollozást végrehajtó függvény.
      * 
+     * @param {Number} top A scrollbar kezdőpontja pixelben.
      * @returns {undefined}
      */
-    var verticalScrollFunction = function() {
-        var top = this.scrollTop;
+    var verticalScrollFunction = function(top) {
         var currentExtent = that.gTable.attr("viewBox").split(" ");
         that.gRowHeads.attr("viewBox", "0 " + top + " " + that.tableHeadWidth + " " + that.tableHeight);
         that.gTable.attr("viewBox", currentExtent[0] + " " + top + " " + that.tableWidth + " " + that.tableHeight);
@@ -120,23 +120,23 @@ function panel_table1d(init) {
     /**
      * Vízszintes scrollozást végrehajtó függvény.
      * 
+     * @param {Number} left A scrollbar kezdőpontja pixelben.
      * @returns {undefined}
      */
-    var horizontalScrollFunction = function() {
-        var left = this.scrollLeft;
+    var horizontalScrollFunction = function(left) {
         var currentExtent = that.gTable.attr("viewBox").split(" ");
         that.gColumnHeads.attr("viewBox", left + " 0 " + that.tableWidth + " " + that.tableHeadHeight);
         that.gTable.attr("viewBox", left + " " + currentExtent[1] + " " + that.tableWidth + " " + that.tableHeight);
     };
 
     // Vízszintes scrollbar elhelyezése.
-    this.horizontalScrollbar = new SVGScrollbar(d3.select(that.panelId), true, that.tableWidth, horizontalScrollFunction);
-    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - global.scrollbarWidth);
+    this.horizontalScrollbar = new SVGScrollbar(that.svg, true, that.tableWidth, horizontalScrollFunction, that.tableSpacingHorizontal);
+    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - global.scrollbarWidth + that.tableElementGap);
     that.horizontalScrollbar.set(that.columnColorIndex.length * that.tableSpacingHorizontal, null, 0);
 
     // Függőleges scrollbar elhelyezése.
-    this.verticalScrollbar = new SVGScrollbar(d3.select(that.panelId), false, that.tableHeight, verticalScrollFunction);
-    that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - global.scrollbarWidth, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
+    this.verticalScrollbar = new SVGScrollbar(that.svg, false, that.tableHeight, verticalScrollFunction, that.tableSpacingVerical * 2, tableHolder);
+    that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - global.scrollbarWidth + that.tableElementGap, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
 
     // Feliratkozás a dimenzióváltó mediátorra.
     var med = that.mediator.subscribe("changeDimension", function(panelId, newDimId, dimToChange) {
@@ -149,6 +149,7 @@ function panel_table1d(init) {
 
     // Oszlopfejlécek kirajzolása.
     that.drawColumnHeaders(global.getAnimDuration(-1, that.panelId));
+
 }
 
 //////////////////////////////////////////////////
@@ -663,6 +664,6 @@ panel_table1d.prototype.doChangeDimension = function(panelId, newDimId) {
         that.actualInit.dim = that.dimToShow;
         that.mediator.publish("register", that, that.panelId, [that.dimToShow], that.preUpdate, that.update, that.getConfig);
         global.tooltip.kill();
-        this.mediator.publish("drill", {dim: -1, direction: 0, toId: undefined});        
+        this.mediator.publish("drill", {dim: -1, direction: 0, toId: undefined});
     }
 };

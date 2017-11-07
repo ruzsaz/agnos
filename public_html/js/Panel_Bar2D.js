@@ -208,7 +208,7 @@ panel_bar2d.prototype.getTooltip = function(xElement, yElement) {
 panel_bar2d.prototype.getCmpFunction = function() {
     var that = this;
     return function(a, b) {
-        return (a.dims[that.dimX].name + ":" + a.dims[that.dimY].name).localeCompare(b.dims[that.dimX].name + ":" + b.dims[that.dimY].name);
+        return global.realCompare(a.dims[that.dimX].name + ":" + a.dims[that.dimY].name, b.dims[that.dimX].name + ":" + b.dims[that.dimY].name);
     };
 };
 

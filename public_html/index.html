@@ -123,9 +123,10 @@
     <script>
       'use strict';
       var numberOfLoadedResources = 0;	// A már betöltött külső js-ek száma.
-      var numberOfResources = 29;			// Az összes betöltendő külső js-ek száma.
+      var numberOfResources = 28;			// Az összes betöltendő külső js-ek száma.
       var finalThreads = 2;				// Ennyi betöltési szálnak kell lefutnia az elinduláshoz.
       var version = "3.0";
+      var min = "";           // "" vagy "min." attól függően, hogy a minify-s verziók kellenek-e?
 
       /**
        * A betöltöttséget jelző panel betöltöttségi szintjét beállítja a kért értékre.
@@ -217,8 +218,8 @@
               "js/libs/d3-3.0.1/d3.v3.min.js",
               "js/libs/mediator-0.9.6/mediator.min.js",
               "js/libs/topojson/topojson.min.js",
-              "js/libs/lz-string-1.3.0/lz-string.min.js",
-              "js/libs/saveassvg/saveSvgAsPng.js"
+              "js/libs/lz-string-1.3.0/lz-string."+min+"js",
+              "js/libs/saveassvg/saveSvgAsPng."+min+"js"
           ], loadLevel2);
       }
 
@@ -229,9 +230,9 @@
        */
       function loadLevel2() {
           loadResourcesAsync([
-              "js/Global.js",
-              "js/DragLayer.js",
-              "js/datamethods/DataDirector.js"
+              "js/Global."+min+"js",
+              "js/DragLayer."+min+"js",
+              "js/datamethods/DataDirector."+min+"js"
           ], loadLevel3);
       }
 
@@ -242,10 +243,10 @@
        */
       function loadLevel3() {
           loadResourcesAsync([
-              "js/HeadPanel.js",
-              "js/Panel.js",
-              "js/TitleBox.js",
-              "localSettings.js"
+              "js/HeadPanel."+min+"js",
+              "js/Panel."+min+"js",
+              "js/TitleBox."+min+"js",
+              "localSettings."+min+"js"
           ], loadLevel4);
       }
 
@@ -257,14 +258,14 @@
        */
       function loadLevel4() {
           loadResourcesAsync([
-              "js/HeadPanel_Browser.js",
-              "js/HeadPanel_Report.js",
-              "js/Panel_Pie.js",
-              "js/Panel_BarLine.js",
-              "js/Panel_HorizontalBar.js",
-              "js/Panel_Table1D.js",
-              "js/Panel_Bar2D.js",
-              "js/Panel_Table2D.js"
+              "js/HeadPanel_Browser."+min+"js",
+              "js/HeadPanel_Report."+min+"js",
+              "js/Panel_Pie."+min+"js",
+              "js/Panel_BarLine."+min+"js",
+              "js/Panel_HorizontalBar."+min+"js",
+              "js/Panel_Table1D."+min+"js",
+              "js/Panel_Bar2D."+min+"js",
+              "js/Panel_Table2D."+min+"js"
           ], loadLevelLast);
       }
 
@@ -277,9 +278,9 @@
       function loadAnytime() {
           loadResourcesAsync([
               "js/libs/jquery-1.9.0/jquery.min.js",
-              "js/SVGScrollbar.js",
-              "js/datamethods/Fact.min.js",
-              "js/Tooltip.min.js",
+              "js/SVGScrollbar."+min+"js",
+              "js/datamethods/Fact."+min+"js",
+              "js/Tooltip."+min+"js",
               "data/shapes/mapOfHungary.min.js",
               "data/shapes/pois.min.js"
 
@@ -296,8 +297,8 @@
           finalThreads--;
           if (finalThreads <= 0) {
               loadResourcesAsync([
-                  "js/Panel_Map.min.js",
-                  "js/libs/jscrollpane/jquery.jscrollpane.min.js"
+                  "js/Panel_Map."+min+"js"
+                 
               ], loadAndStart);
           }
       }
@@ -309,7 +310,7 @@
        */
       function loadAndStart() {
           loadResourcesAsync([
-              "js/Container.js"
+              "js/Container."+min+"js"
           ], function() {
               $("#helpPanel").load("help.html?=ver" + version);
           });
@@ -773,7 +774,7 @@
     </div>
 
     <!-- Dialógus panel. Kezdetben a belépési információ látszik rajta. -->
-    <div id="dialogMask">
+    <div id="dialogMask" tabindex="1">
       <div id="dialogPanel" class="baseDiv">
         <h1>
           <!-- PULZUS logo

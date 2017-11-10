@@ -147,7 +147,7 @@ function panel_barline(init) {
             .attr("class", "line_group")
             .attr("transform", "translate(" + that.margin.left + ", " + that.margin.top + ")")
             .attr("mask", "url(#maskurl" + that.panelId + ")");
-    
+
     // Átlagvonal rétege.
     this.gAvgLines = that.svg.insert("svg:g", ".title_group")
             .attr("class", "avg_group")
@@ -173,7 +173,7 @@ function panel_barline(init) {
 
     // A kilógó oszlopok végét elhalványító.
     this.mask = that.svg.append("svg:mask")
-            .attr("id", "maskurl" + that.panelId);    
+            .attr("id", "maskurl" + that.panelId);
     that.mask
             .append("svg:rect")
             .attr("x", 0)
@@ -712,7 +712,7 @@ panel_barline.prototype.prepareData = function(oldPreparedData, newDataRows, dri
     numbers.splice(numbers.indexOf(maxAbsNumber), 1);
     var secondAbsNumber = Math.max.apply(null, numbers);
 
-    var dataMax = Math.max(maxValue, maxAvgValue); // Az Y skála végpontja: a legnagyobb ábrázolandó érték.
+    var dataMax = Math.max(maxValue, maxAvgValue, 0); // Az Y skála végpontja: a legnagyobb ábrázolandó érték.
     var dataMin = Math.min(minValue, minAvgValue, 0); // Az Y skála alsóvégpontja: a legkisebb ábrázolandó érték.	
 
     // Ha a maximum sokkal nagyobb, mint a következő abszolút értéke, és legalább 3 elem van, akkor úgy módosítjuk a skálát, hogy elszálljon felfelé.
@@ -721,9 +721,9 @@ panel_barline.prototype.prepareData = function(oldPreparedData, newDataRows, dri
     }
 
     // Ha a minimum sokkal kisebb, mint a következő abszolút értéke, és legalább 3 elem van, akkor úgy módosítjuk a skálát, hogy elszálljon lefelé.
-//    if (dataMin < -that.cutLimit * absValue && absValue > 0 && newDataRows.length > 2) {
-    dataMin = min2ndValue * that.cutConstant;
-//    }
+    if (dataMin < -that.cutLimit * secondAbsNumber && secondAbsNumber > 0 && newDataRows.length > 2) {
+        dataMin = min2ndValue * that.cutConstant;
+    }
 
     var oldDataMax = that.yScale.domain()[1]; // Az Y skála régi végpontja.
     var oldDataMin = that.yScale.domain()[0]; // Az Y skála régi alsó végpontja.
@@ -1394,7 +1394,7 @@ panel_barline.prototype.drawLegend = function() {
 
         // Jelkulcs-szövegek formázása, hogy beférjenek.
         global.cleverCompress(legendText, l_width - 1.8 * global.legendOffsetX, 1, undefined, false, true, l_width - global.legendOffsetX);
-        
+
         // A jelkulcselemek hozzácsapása a maszkhoz. (A jelkulcsnak a téglalapok előtt kell lennie a kódban, mert csak akkor tudja irányítani, de akkor bekúszna alája.)
         var legendEntryMask = that.mask.selectAll("g.lineLegend")
                 .data(that.legendArray).enter();
@@ -1420,7 +1420,7 @@ panel_barline.prototype.drawLegend = function() {
                 .attr("stroke-opacity", function(d) {
                     return (d.isLineRequired) ? 1 : 0;
                 });
-        
+
     }
 };
 

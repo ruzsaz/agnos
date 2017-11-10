@@ -58,7 +58,7 @@ function Container() {
     global.initGlobals(function() {
         that.initSide(0);
         that.initSide(1);
-        that.onResize();
+        //that.onResize();
 
         // A riportokat tartalmazó táblázat magasságának kiszámolásához...
         that.tableBaseOffset =
@@ -78,9 +78,12 @@ function Container() {
                 var startObject = JSON.parse(LZString.decompressFromEncodedURIComponent(startString));
                 that.navigateTo(startObject);
             } catch (e) {
-                console.err("A bookmarkban hivatkozott objektum sérült, dekódolni nem lehet.");
+                alert("A bookmarkba kódolt hivatkozás sérült.");
+                window.location.replace(location.href.split("#")[0]);
             }
         }
+        
+        that.onResize();
     });
 
 }
@@ -91,6 +94,7 @@ function Container() {
  * @returns {undefined}
  */
 Container.prototype.switchPanels = function() {
+    console.log(this.panelState, global.panelNumberOnScreen);
     this.panelState = (this.panelState + 1) % 4;
     var newSize = Math.abs((this.panelState / 2) - 1);
     this.resizeContainers(global.selfDuration, newSize, false, false, true, global.panelNumberOnScreen);
@@ -139,7 +143,7 @@ Container.prototype.onResize = function(panelsPerScreen) {
  */
 Container.prototype.resizeContainers = function(duration, container0SizePercentage, isAdjust, isResize, isSplit, panelsPerRow) {
     var that = this;
-    if (!that.resizeInProgress) {
+    if (!that.resizeInProgress) {        
         that.resizeInProgress = true;
         setTimeout(function() {
             that.resizeInProgress = false;
@@ -209,7 +213,6 @@ Container.prototype.resizeContainer = function(side, duration, sizePercentage, i
             that.resizeContainer(side, duration / 10, sizePercentage, true, false, false, panelNumberPerRow);
         } else if (duration !== 0) {
             that.resizeContainer(side, 0, sizePercentage, true, false, false, panelNumberPerRow);
-            setTimeout(function() {that.resizeContainer(side, 0, sizePercentage, true, false, false, panelNumberPerRow);}, 80);            
         }
 
     };
@@ -226,7 +229,8 @@ Container.prototype.resizeContainer = function(side, duration, sizePercentage, i
     // A vágólap mérete, hogy ne lógjon túl IE-ben.
     if (isAdjust) {
         var cutterHeight = parseInt(d3.select("#container" + side).style("height")) * scaleRatio;
-        d3.select("#cutter" + side).transition().duration(duration).style("height", cutterHeight + "px");
+        //d3.select("#cutter" + side).transition().duration(duration).style("height", cutterHeight + "px");
+        d3.select("#cutter" + side).style("height", cutterHeight + "px");
     } else {
         if (parseFloat(d3.select("#cutter" + side).style("height")) < parseFloat(d3.select("body").style("height"))) {
             d3.select("#cutter" + side).style("height", "100%");
@@ -249,7 +253,43 @@ Container.prototype.resizeContainer = function(side, duration, sizePercentage, i
 Container.prototype.newReport = function(side, reportSuperMeta, startObject) {
     global.mediators[side].remove("killListeners");
     this.isSideInUse[side] = true;
+    this.updateHelp(side, reportSuperMeta.description, reportSuperMeta.updated, reportSuperMeta.helpHTML);
     global.facts[side] = new Fact(reportSuperMeta, side, this.newReportReady, startObject);
+};
+
+/**
+ * Beállítja a reportra vonatkozó help-et.
+ * 
+ * @param {Integer} side Erre az oldalra vonatkozó helpről van szó.
+ * @param {String} reportName A report neve, meg fog jelenni a help-ben. (üres: törlés)
+ * @param {String} updated A report Frissítési dátuma, meg fog jelenni a help-ben. (üres: törlés)
+ * @param {String} base64EncodedContent A beállítandó HTML base64 kódolva. (üres: törlés)
+ * @returns {undefined}
+ */
+Container.prototype.updateHelp = function(side, reportName, updated, base64EncodedContent) {    
+    var header = (reportName) ? "<h3>" + reportName + "</h3>" : "";
+    var updateTime = (updated) ? "<em>frissítve: " + updated + "</em><br>" : "";
+    var content = (base64EncodedContent) ? ((base64EncodedContent.length > 4) ? LZString.decode(base64EncodedContent) : "Nincs elérhető információ.") : "";
+    var html = header + updateTime + content;
+        
+    if (this.isSideInUse[0] && this.isSideInUse[1]) {   // Ha mindkét oldalon van report
+        d3.selectAll("#helpStart .hideWhenOnlyOne")
+                .style("display", "block");
+        d3.select("#helpStart .placeHolder")
+                .style("display", "none");    
+    } else if (this.isSideInUse[0] || this.isSideInUse[1]) {    // Ha csak az egyik oldalon van report
+        d3.selectAll("#helpStart .hideWhenOnlyOne")
+                .style("display", "none");
+        d3.select("#helpStart .placeHolder")
+                .style("display", "none");        
+    } else {    // Ha egyiken sincs report
+        d3.select("#helpStart .placeHolder")
+                .style("display", "block");
+        d3.selectAll("#helpStart .hideWhenOnlyOne")
+                .style("display", "none");
+    }
+    
+    d3.select(".helpReport" + side).html(html);    
 };
 
 /**
@@ -259,6 +299,8 @@ Container.prototype.newReport = function(side, reportSuperMeta, startObject) {
  * @returns {undefined}
  */
 Container.prototype.navigateTo = function(startObject) {
+
+    console.log(startObject)
 
     // A 0-ás és az 1-es oldalban megnyitandó report szétválogatása és meghívása
     for (var side = 0; side < 2; side++) {
@@ -270,13 +312,15 @@ Container.prototype.navigateTo = function(startObject) {
         }
     }
 
+    // Egy sorba kiférő panelek számának beállítása
+    global.panelNumberOnScreen = startObject.n;
+
     // 1 vagy 2 oldalas nézet beállítása
     if (startObject.d !== 0) {
+        this.panelState = startObject.d - 1;
         global.mediators[0].publish("changepanels");
-        if (startObject.d === 1) {
-            global.mediators[0].publish("changepanels");
-        }
-    }
+    }    
+    
 };
 
 /**
@@ -288,7 +332,6 @@ Container.prototype.navigateTo = function(startObject) {
  * @returns {undefined}
  */
 Container.prototype.newReportReady = function(side, reportMeta) {
-
     // Megjelenítés a meta alapján
     for (var i = 0, iMax = reportMeta.visualization.length; i < iMax; i++) {
         // De előbb a megfelelő oldalra kell hozni...
@@ -345,6 +388,7 @@ Container.prototype.initSide = function(side) {
     });
 
     that.isSideInUse[side] = false;
+    that.updateHelp(side);
     new Draglayer(side, global.mediators[side]);
 
     new HeadPanel_Browser({group: side}, global.superMeta);						// Fejléc.
@@ -382,6 +426,7 @@ Container.prototype.killSide = function(side) {
 
         global.facts[side] = null;
         this.dataDirector[side] = undefined;
+        
         this.initSide(side);
         this.onResize();
         global.mainToolbar_refreshState();

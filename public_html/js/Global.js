@@ -193,11 +193,17 @@ var global = function() {
             if (panelsToWaitFor === 0) {
 
                 // A megjelenítési mód (bal, jobb, osztott) kinyerése.
-                var displayMode = d3.selectAll(".container.activeSide")[0].length; // Hány aktív oldal van? (2 ha osztottkijelzős üzemmód, 1 ha nem.)
-                if (displayMode === 1) {
-                    displayMode = d3.selectAll("#container1.activeSide")[0].length; // Aktív oldal id-je, 0 vagy 1. Csak akkor ételmes, ha 1 aktív oldal van.
+                var displayMode;
+                var numberOfSides = d3.selectAll(".container.activeSide")[0].length; // Hány aktív oldal van? (2 ha osztottkijelzős üzemmód, 1 ha nem.)
+                if (numberOfSides === 1) {
+                    displayMode = d3.selectAll("#container1.activeSide")[0].length * 2; // Aktív oldal id-je, 0 vagy 2. Csak akkor ételmes, ha 1 aktív oldal van.
+                } else {
+                    displayMode = 1;
                 }
-                startObject.d = displayMode; // A megjelenítési mód: 0: bal, 1: jobb, 2: mindkettő.
+                startObject.d = displayMode; // A megjelenítési mód: 0: bal, 2: jobb, 1: mindkettő.
+
+                // A képernyőn egy sorba kiférő panelek száma.
+                startObject.n = global.panelNumberOnScreen;
 
                 // Tényleges URL-be írás. Ha nem kell, kikommentelendő.
                 location.hash = LZString.compressToEncodedURIComponent(JSON.stringify(startObject));
@@ -250,8 +256,9 @@ var global = function() {
                             "Kilépés",
                             function() {
                                 location.reload();
-                            }
-                    );
+                            },
+                            1
+                            );
                 } else if (jqXHR.status === 403) { // Ha az autentikáció jó, de nincs olvasási jog az adathoz
                     setDialog(
                             "Hozzáférés megtagadva",
@@ -263,9 +270,10 @@ var global = function() {
                             "Kilépés",
                             function() {
                                 location.reload();
-                            }
-                    );
-                } else { // Más hiba esetén...
+                            },
+                            2
+                            );
+                } else { // Más hiba esetén...                    
                     setDialog(
                             "Hálózati hiba",
                             "<div class='errorStaticText'>A kapcsolat az adatbázis felé megszakadt. A hibaüzenet:</div>" +
@@ -278,8 +286,10 @@ var global = function() {
                             "Kilépés",
                             function() {
                                 location.reload();
-                            }
-                    );
+                            },
+                            1
+
+                            );
                 }
             },
             complete: function() {
@@ -340,8 +350,9 @@ var global = function() {
                             "Kilépés",
                             function() {
                                 location.reload();
-                            }
-                    );
+                            },
+                            1
+                            );
                 } else if (jqXHR.status === 403) { // Ha az autentikáció jó, de nincs olvasási jog az adathoz
                     setDialog(
                             "Hozzáférés megtagadva",
@@ -353,9 +364,10 @@ var global = function() {
                             "Kilépés",
                             function() {
                                 location.reload();
-                            }
-                    );
-                } else { // Más hiba esetén...
+                            },
+                            2
+                            );
+                } else { // Más hiba esetén...                    
                     if (errorThrown === "") {
                         errorThrown = "Server unreachable";
                     }
@@ -371,8 +383,9 @@ var global = function() {
                             "Kilépés",
                             function() {
                                 location.reload();
-                            }
-                    );
+                            },
+                            1
+                            );
                 }
 
             },
@@ -795,6 +808,7 @@ var global = function() {
      */
     var mainToolbar_magnify = function(direction) {
         global.mediators[0].publish("magnify", direction);
+        global.getConfig2();
     };
 
     /**
@@ -863,14 +877,17 @@ var global = function() {
         global.mediators[1].publish('save');
     };
 
-    var mainToolbar_saveAllImages = function() {        
+    /**
+     * Képként menti az összes látható panelt.
+     * 
+     * @returns {undefined}
+     */
+    var mainToolbar_saveAllImages = function() {
         var today = new Date();
-        var todayString = today.toISOString().slice(0,10) + "_" + today.toTimeString().slice(0,8).split(":").join("-");
-        console.log(todayString)
-        d3.selectAll(".activeSide div.panel > svg").each(function(d, i) {             
-            saveSvgAsPng(this, todayString + "_P" + (i+1), 2, panelWidth, panelHeight, 0, 0);  
+        var todayString = today.toISOString().slice(0, 10) + "_" + today.toTimeString().slice(0, 8).split(":").join("-");
+        d3.selectAll(".activeSide div.panel > svg").each(function(d, i) {
+            saveSvgAsPng(this, todayString + "_P" + (i + 1), 2, panelWidth, panelHeight, 0, 0);
         });
-        
     };
 
 
@@ -929,6 +946,8 @@ var global = function() {
                 .classed("inactive", (global.panelNumberOnScreen >= global.maxPanelCount));
     };
 
+    var dialogTimeoutVar; // A dialógusablak időzített eltüntetését számontartó időzítő.
+
     /**
      * Dialógusablak beállítása/levétele.
      * 
@@ -938,16 +957,32 @@ var global = function() {
      * @param {Function} leftButtonFunction Baloldali gomb megnyomásakor lefutó függvény.
      * @param {String} rightButtonLabel Jobboldali gomb szövege. Ha undefined, nincs jobb gomb.
      * @param {Function} rightButtonFunction Jobboldali gomb megnyomásakor lefutó függvény.
+     * @param {Integer} enterFunctionNumber Az enter melyik gombklikkelést hajtsa végre? (1: bal, 2: jobb, undefined: semmit se)
      * @returns {undefined}
      */
-    var setDialog = function(title, body, leftButtonLabel, leftButtonFunction, rightButtonLabel, rightButtonFunction) {
+    var setDialog = function(title, body, leftButtonLabel, leftButtonFunction, rightButtonLabel, rightButtonFunction, enterFunctionNumber) {
+        clearTimeout(dialogTimeoutVar);
         var dialogMask = d3.select("#dialogMask");
+        if (enterFunctionNumber) {
+            dialogMask.on("keydown", function() {
+                if (d3.event && d3.event.keyCode === 13) {
+                    if (enterFunctionNumber === 1 && leftButtonFunction) {
+                        leftButtonFunction();
+                    } else if (enterFunctionNumber === 2 && rightButtonFunction) {
+                        rightButtonFunction();
+                    }
+                }
+            });
+        } else {
+            dialogMask.on("keydown", null);
+        }
+
         var leftButton = dialogMask.select("#dialogFirstButton");
         var rightButton = dialogMask.select("#dialogSecondButton");
         if (title === undefined) { // Ha üres a cím, eltüntetjük a panelt.
             if (dialogMask.style("display") !== "none") {
                 dialogMask.style("opacity", 0);
-                setTimeout(function() {
+                dialogTimeoutVar = setTimeout(function() {
                     dialogMask.style("display", "none");
                 }, 200);
             }
@@ -979,6 +1014,7 @@ var global = function() {
             dialogMask.style("display", "block");
             setTimeout(function() {
                 dialogMask.style("opacity", 1);
+                dialogMask.node().focus();
             }, 50);
         }
     };

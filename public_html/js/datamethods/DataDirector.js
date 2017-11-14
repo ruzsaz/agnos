@@ -260,7 +260,7 @@ DataDirector.prototype.getConfigs = function(callback) {
     // Ha callbackolni kell, íme.
     if (typeof callback === 'function') {
         var configObject = {};
-        if (global.facts[this.side]) {
+        if (global.facts[this.side] && global.facts[this.side].reportMeta) {
             configObject.s = this.side; // Az oldal, amire vonatkozik (0 vagy 1).
             configObject.c = global.facts[this.side].reportMeta.cube_unique_name; // A cube neve.
             configObject.b = global.baseLevels[this.side]; // A bázisszintek, amire épp lefúrva van.

@@ -181,6 +181,7 @@ Panel.prototype.killPanel = function(panelId) {
 		// Panel levétele a DOM-ból.
 		var centerX = parseInt(this.panelDiv.style("width")) / 2;
 		var centerY = parseInt(this.panelDiv.style("height")) / 2;
+        this.panelDiv.classed("dying", true);     // Beállítjuk megsemmisülőnek, hogy ne számolódjon be a panelszámba.
 		this.panelDiv.style(global.getStyleForScale(1, centerX, centerY))
 				.style("opacity", "1")
 				.transition().duration(global.selfDuration)

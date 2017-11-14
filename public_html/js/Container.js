@@ -11,7 +11,6 @@
 function Container() {
     this.dataDirector = [];
     var that = this;
-
     var topdiv = d3.select("body").append("html:div")
             .attr("id", "topdiv");
 
@@ -43,6 +42,7 @@ function Container() {
     d3.select("#container0").classed("activeSide", true);
 
     this.isSideInUse = [];	// True, ha a panel használatban van, false ha alapállapotban.
+    this.counter = 0;       // Számláló, a betöltődésre váro reportok betöltését követi.
 
     // Az átméretezéskor lefutó függvény eseménykezelője.
     $(window).resize(function() {
@@ -58,7 +58,6 @@ function Container() {
     global.initGlobals(function() {
         that.initSide(0);
         that.initSide(1);
-        //that.onResize();
 
         // A riportokat tartalmazó táblázat magasságának kiszámolásához...
         that.tableBaseOffset =
@@ -75,15 +74,17 @@ function Container() {
         var startString = location.href.split("#")[1];
         if (startString) {
             try {
+                that.counter = 2;   // 2 report betöltésére várunk, bal, jobbpanel.
                 var startObject = JSON.parse(LZString.decompressFromEncodedURIComponent(startString));
                 that.navigateTo(startObject);
             } catch (e) {
                 alert("A bookmarkba kódolt hivatkozás sérült.");
                 window.location.replace(location.href.split("#")[0]);
             }
+        } else {
+            that.resizeContainers(0, 1, global.panelNumberOnScreen);
         }
-        
-        that.onResize();
+
     });
 
 }
@@ -94,10 +95,9 @@ function Container() {
  * @returns {undefined}
  */
 Container.prototype.switchPanels = function() {
-    console.log(this.panelState, global.panelNumberOnScreen);
     this.panelState = (this.panelState + 1) % 4;
     var newSize = Math.abs((this.panelState / 2) - 1);
-    this.resizeContainers(global.selfDuration, newSize, false, false, true, global.panelNumberOnScreen);
+    this.resizeContainers(global.selfDuration, newSize, global.panelNumberOnScreen, true);
     d3.select("#container0").classed("activeSide", (this.panelState !== 2));
     d3.select("#container1").classed("activeSide", (this.panelState !== 0));
     global.mainToolbar_refreshState();
@@ -127,7 +127,7 @@ Container.prototype.onResize = function(panelsPerScreen) {
         panelsPerScreen = global.panelNumberOnScreen;
     }
     var newSize = Math.abs((this.panelState / 2) - 1);
-    this.resizeContainers(global.selfDuration, newSize, false, true, false, panelsPerScreen);
+    this.resizeContainers(global.selfDuration, newSize, panelsPerScreen);
 };
 
 /**
@@ -135,22 +135,14 @@ Container.prototype.onResize = function(panelsPerScreen) {
  * 
  * @param {Number} duration Az átméretezés ideje (ms).
  * @param {Number} container0SizePercentage A bal oldali konténer relatív mérete: 0, 0.5 vagy 1.
- * @param {Boolean} isAdjust Csak a scrollbar esetleges eltűnése utáni apró igazításról van szó?
- * @param {Boolean} isResize A képernyő átméretezése miatt van szükség átméretezésre?
- * @param {Boolean} isSplit Osztott képrenyős üzemmódban vagyunk?
  * @param {Integer} panelsPerRow Ennyi panelnek kell egy sorba kiférnie.
+ * @param {Boolean} isViewSwitch Nézetváltás miatt (1-2 panel) van szükség átméretezésre?
  * @returns {undefined}
  */
-Container.prototype.resizeContainers = function(duration, container0SizePercentage, isAdjust, isResize, isSplit, panelsPerRow) {
+Container.prototype.resizeContainers = function(duration, container0SizePercentage, panelsPerRow, isViewSwitch) {
     var that = this;
-    if (!that.resizeInProgress) {        
-        that.resizeInProgress = true;
-        setTimeout(function() {
-            that.resizeInProgress = false;
-        }, 50);
-        that.resizeContainer(0, duration, container0SizePercentage, isAdjust, isResize, isSplit, panelsPerRow);
-        that.resizeContainer(1, duration, 1 - container0SizePercentage, isAdjust, isResize, isSplit, panelsPerRow);
-    }
+    that.resizeContainer(0, duration, container0SizePercentage, panelsPerRow, undefined, isViewSwitch);
+    that.resizeContainer(1, duration, 1 - container0SizePercentage, panelsPerRow, undefined, isViewSwitch);
 };
 
 /**
@@ -159,38 +151,19 @@ Container.prototype.resizeContainers = function(duration, container0SizePercenta
  * @param {Integer} side A kérdéses oldal.
  * @param {Number} duration Az átméretezés ideje (ms).
  * @param {Number} sizePercentage Az oldal a képernyő mennyied részét tölti ki? (0, 0.5, 1)
- * @param {Boolean} isAdjust Csak a scrollbar esetleges eltűnése utáni apró igazításról van szó?
- * @param {Boolean} isResize A képernyő átméretezése miatt van szükség átméretezésre?
- * @param {Boolean} isSplit Osztott képrenyős üzemmódban vagyunk?
  * @param {Integer} panelsPerRow Ennyi panelnek kell egy sorba kiférnie.
+ * @param {Number} scaleRatio A kért nagyítási arány a nyers pixel számokhoz képest. Ha undefined, megpróbáljuk kiszámolni.
+ * @param {Boolean} isViewSwitch Nézetváltás miatt (1-2 panel) van szükség átméretezésre?
  * @returns {undefined}
  */
-Container.prototype.resizeContainer = function(side, duration, sizePercentage, isAdjust, isResize, isSplit, panelsPerRow) {
+Container.prototype.resizeContainer = function(side, duration, sizePercentage, panelsPerRow, scaleRatio, isViewSwitch) {
     var that = this;
     var bodyWidth = parseInt(d3.select("#topdiv").style("width"));
     var bodyHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    var scrollWidth = 0;
-    if (isResize) {
-        d3.select("#scrollPaneP" + side)
-                .style("width", (bodyWidth * sizePercentage) + "px");
-        scrollWidth = parseInt(document.getElementById("scrollPaneP" + side).clientWidth);
-    }
-
-    if (isSplit) {
-        d3.select("#scrollPaneP" + side).transition().duration(duration)
-                .style("width", (bodyWidth * sizePercentage) + "px");
-        scrollWidth = bodyWidth * sizePercentage;
-    }
-
-    if (isAdjust) {
-        scrollWidth = parseInt(document.getElementById("scrollPaneP" + side).clientWidth);
-    }
-
     var panelMargin = parseInt($(".panel").css("margin-top")) + parseInt($(".panel").css("border-top-width"));
     var panelRealWidth = global.panelWidth + 2 * panelMargin; // Egy panel ténylegesen ennyi pixelt folgalna el nagyítás nélkül.
 
-    var panelNumberPerRow = Math.max(parseInt(scrollWidth / panelRealWidth), 1); // A vízszintesen elférő panelek száma.
-
+    var panelNumberPerRow = Math.max(parseInt(bodyWidth * sizePercentage / panelRealWidth), 1); // A vízszintesen elférő panelek száma.
     if (panelsPerRow > 0) {
         panelNumberPerRow = panelsPerRow;
     } else {
@@ -199,7 +172,21 @@ Container.prototype.resizeContainer = function(side, duration, sizePercentage, i
         }
     }
 
-    var scaleRatio = scrollWidth / (panelNumberPerRow * panelRealWidth); // Ennyiszeresére kell nagyítani.
+    scaleRatio = (scaleRatio === undefined) ? that.getScaleRatio(side, sizePercentage, panelNumberPerRow) : scaleRatio;
+
+    if (isViewSwitch) {
+        // Azért kell így animálni, mert ha scrollbar is van, akkor a d3 hibásan számolja ki a "from" értéket. (Scrollbar nélkül veszi, míg a "to"-t scrollbarrral.)
+        d3.select("#scrollPaneP" + side).style("overflow-y", "hidden");
+        var startSize = d3.select("#scrollPaneP" + side).style("width");
+        d3.select("#scrollPaneP" + side).style("overflow-y", null);
+        d3.select("#scrollPaneP" + side).transition().duration(duration)
+                .styleTween("width", function() {
+                    return d3.interpolate(startSize, (bodyWidth * sizePercentage) + "px");
+                });
+    } else {
+        d3.select("#scrollPaneP" + side)
+                .style("width", parseInt(bodyWidth * sizePercentage) + "px");
+    }
 
     // A headpanel mostani, és a számára elérendő magasság meghatározása.	
     d3.select("#scrollPaneP" + side + " .HeadPanel_Browser .tableScrollPane")
@@ -207,39 +194,61 @@ Container.prototype.resizeContainer = function(side, duration, sizePercentage, i
 
     d3.select("body").style("width", null);
 
-    // Az átméretezés után meghívandó függvény: finom átméretezés a scrollbarok esetleges megjelenése miatt.
-    var callback = function() {
-        if (!isAdjust) {
-            that.resizeContainer(side, duration / 10, sizePercentage, true, false, false, panelNumberPerRow);
-        } else if (duration !== 0) {
-            that.resizeContainer(side, 0, sizePercentage, true, false, false, panelNumberPerRow);
-        }
-
-    };
-
-    // Finom átméretezés a scrollbarok esetleges megjelenése miatt.
-    if (global.mediators[0]) {
-        global.mediators[side].publish("resize", duration, panelNumberPerRow, scaleRatio, callback);
+    // A panelek (főleg a fejlécpanel) számáta kiadandó resize üzenet.
+    if (global.mediators[side]) {
+        global.mediators[side].publish("resize", duration, panelNumberPerRow, scaleRatio);
     }
 
+    // Animálva átméretezi a tartó konténert.
     d3.select("#container" + side).transition().duration(duration)
-            .style({"width": parseInt((scrollWidth / scaleRatio) + 20) + "px"})
-            .style(global.getStyleForScale(scaleRatio, 0, 0));
+            .style({"width": parseInt((bodyWidth * sizePercentage / scaleRatio) + 20) + "px"})
+            .style(global.getStyleForScale(scaleRatio, 0, 0))
+            .each("end", function() {
+                var cutterHeight = parseInt(d3.select("#container" + side).style("height")) * scaleRatio;
+                if (cutterHeight < parseFloat(d3.select("body").style("height")) - global.mainToolbarHeight) {
+                    d3.select("#cutter" + side).style("height", "100%");
+                } else {
+                    d3.select("#cutter" + side).style("height", cutterHeight + "px");
+                }
+            });
 
-    // A vágólap mérete, hogy ne lógjon túl IE-ben.
-    if (isAdjust) {
-        var cutterHeight = parseInt(d3.select("#container" + side).style("height")) * scaleRatio;
-        //d3.select("#cutter" + side).transition().duration(duration).style("height", cutterHeight + "px");
-        d3.select("#cutter" + side).style("height", cutterHeight + "px");
-    } else {
-        if (parseFloat(d3.select("#cutter" + side).style("height")) < parseFloat(d3.select("body").style("height"))) {
-            d3.select("#cutter" + side).style("height", "100%");
-        }
-    }
-
+    // A draglayer megfelelő méretezéséhez beállítjuk globálisra.
     if (scaleRatio > 0) {
         global.scaleRatio = scaleRatio;
     }
+};
+
+/**
+ * Meghatározza egy oldal megjelenítéséhez szükséges nagyítási arányt.
+ * Figyel a létrejövő scrollbarokra is.
+ * 
+ * @param {type} side Oldal (0 vagy 1)
+ * @param {type} sizePercentage A képernyő hányadrészét töltse ki? 0, 0.5 vagy 1.
+ * @param {type} panelsPerRow Egy sorba kiférő panelek száma.
+ * @param {type} panelNumber Megjelenítendő panelek száma. (A fejlécpanelt nem számolva.) Ha nincs megadva, kiszedi a DOM-ból.
+ * @returns {Number} A nagyítási arány.
+ */
+Container.prototype.getScaleRatio = function(side, sizePercentage, panelsPerRow, panelNumber) {
+    var bodyWidth = parseInt(d3.select("#topdiv").style("width"));
+    var bodyHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+    var panelMargin = parseInt($(".panel").css("margin-top")) + parseInt($(".panel").css("border-top-width"));
+    var panelRealWidth = global.panelWidth + 2 * panelMargin; // Egy panel ténylegesen ennyi pixelt folgalna el nagyítás nélkül.
+    var panelRealHeight = global.panelHeight + 2 * panelMargin; // Egy panel ténylegesen ennyi pixelt folgalna el nagyítás nélkül.
+
+    panelNumber = panelNumber || d3.selectAll("#container" + side + " .panel:not(.dying)")[0].length - 1; // A pillanatnyilag meglévő normál panelek száma. A magasság megállapításához kell.
+    var unscaledPageWidth = panelsPerRow * panelRealWidth;
+    var unscaledPageHeight = parseFloat(d3.select("#headPanelP" + side).style("height")) + 2 * panelMargin + panelRealHeight * parseInt(panelNumber / panelsPerRow + 0.99);
+
+    var availableWidth = bodyWidth * sizePercentage;
+    var availabelHeight = bodyHeight - global.mainToolbarHeight;
+
+    var widthMultiplier = availableWidth / unscaledPageWidth;
+    var widthMultiplierWithScrollbar = (availableWidth - global.scrollbarWidth) / unscaledPageWidth;
+    var heightMultiplier = availabelHeight / unscaledPageHeight;
+
+    var scaleRatio = (widthMultiplier < heightMultiplier) ? widthMultiplier : widthMultiplierWithScrollbar;
+    return scaleRatio;
 };
 
 /**
@@ -254,7 +263,7 @@ Container.prototype.newReport = function(side, reportSuperMeta, startObject) {
     global.mediators[side].remove("killListeners");
     this.isSideInUse[side] = true;
     this.updateHelp(side, reportSuperMeta.description, reportSuperMeta.updated, reportSuperMeta.helpHTML);
-    global.facts[side] = new Fact(reportSuperMeta, side, this.newReportReady, startObject);
+    global.facts[side] = new Fact(reportSuperMeta, side, this.newReportReady, this, startObject);
 };
 
 /**
@@ -266,31 +275,32 @@ Container.prototype.newReport = function(side, reportSuperMeta, startObject) {
  * @param {String} base64EncodedContent A beállítandó HTML base64 kódolva. (üres: törlés)
  * @returns {undefined}
  */
-Container.prototype.updateHelp = function(side, reportName, updated, base64EncodedContent) {    
+Container.prototype.updateHelp = function(side, reportName, updated, base64EncodedContent) {
     var header = (reportName) ? "<h3>" + reportName + "</h3>" : "";
     var updateTime = (updated) ? "<em>frissítve: " + updated + "</em><br>" : "";
     var content = (base64EncodedContent) ? ((base64EncodedContent.length > 4) ? LZString.decode(base64EncodedContent) : "Nincs elérhető információ.") : "";
     var html = header + updateTime + content;
-        
+
     if (this.isSideInUse[0] && this.isSideInUse[1]) {   // Ha mindkét oldalon van report
         d3.selectAll("#helpStart .hideWhenOnlyOne")
                 .style("display", "block");
         d3.select("#helpStart .placeHolder")
-                .style("display", "none");    
+                .style("display", "none");
     } else if (this.isSideInUse[0] || this.isSideInUse[1]) {    // Ha csak az egyik oldalon van report
         d3.selectAll("#helpStart .hideWhenOnlyOne")
                 .style("display", "none");
         d3.select("#helpStart .placeHolder")
-                .style("display", "none");        
+                .style("display", "none");
     } else {    // Ha egyiken sincs report
         d3.select("#helpStart .placeHolder")
                 .style("display", "block");
         d3.selectAll("#helpStart .hideWhenOnlyOne")
                 .style("display", "none");
     }
-    
-    d3.select(".helpReport" + side).html(html);    
+
+    d3.select(".helpReport" + side).html(html);
 };
+
 
 /**
  * Előre beállított helyről indítja az előre beállított reportot.
@@ -299,28 +309,35 @@ Container.prototype.updateHelp = function(side, reportName, updated, base64Encod
  * @returns {undefined}
  */
 Container.prototype.navigateTo = function(startObject) {
+    var that = this;
 
-    console.log(startObject)
+    that.resizeInProgress = true;
+    that.panelState = startObject.d;
+    global.panelNumberOnScreen = startObject.n;
 
-    // A 0-ás és az 1-es oldalban megnyitandó report szétválogatása és meghívása
     for (var side = 0; side < 2; side++) {
         var sideInit = startObject.p[side];
+        var sizePercentage = 0;
+        if ((that.panelState === 0 && side === 0) || (that.panelState === 2 && side === 1)) {
+            sizePercentage = 1;
+        } else if (that.panelState === 1) {
+            sizePercentage = 0.5;
+        }
         if (sideInit.v) {
             var reportMeta = global.getFromArrayByProperty(global.superMeta, 'name', sideInit.c); // A reporthoz tartozó meta.
             sideInit.v = global.minifyInits(sideInit.v, true).split(';'); // A panelek indító konstruktorai.
-            this.newReport(side, reportMeta, sideInit);
+            that.newReport(side, reportMeta, sideInit);
+            var scaleRatio = Container.prototype.getScaleRatio(side, sizePercentage, global.panelNumberOnScreen, sideInit.v.length);
+            that.resizeContainer(side, 0, sizePercentage, global.panelNumberOnScreen, scaleRatio);
+        } else {
+            that.counter--;
+            var scaleRatio = Container.prototype.getScaleRatio(side, sizePercentage, global.panelNumberOnScreen, 0);
+            that.resizeContainer(side, 0, sizePercentage, global.panelNumberOnScreen, scaleRatio);
         }
     }
 
-    // Egy sorba kiférő panelek számának beállítása
-    global.panelNumberOnScreen = startObject.n;
-
-    // 1 vagy 2 oldalas nézet beállítása
-    if (startObject.d !== 0) {
-        this.panelState = startObject.d - 1;
-        global.mediators[0].publish("changepanels");
-    }    
-    
+    d3.select("#container0").classed("activeSide", (this.panelState !== 2));
+    d3.select("#container1").classed("activeSide", (this.panelState !== 0));
 };
 
 /**
@@ -332,6 +349,11 @@ Container.prototype.navigateTo = function(startObject) {
  * @returns {undefined}
  */
 Container.prototype.newReportReady = function(side, reportMeta) {
+    var that = this;
+
+    // Blokkoljuk a resize metódust 50 milisec-re
+    that.resizeInProgress = true;
+
     // Megjelenítés a meta alapján
     for (var i = 0, iMax = reportMeta.visualization.length; i < iMax; i++) {
         // De előbb a megfelelő oldalra kell hozni...
@@ -347,11 +369,26 @@ Container.prototype.newReportReady = function(side, reportMeta) {
         eval("new " + initString);
     }
 
-    global.mediators[side].publish("killPanel", "#panel" + side + "P-1");	// Esetleges régi fejlécpanel megölése.
-    new HeadPanel_Report({group: side}, reportMeta);						// Fejlécpanel létrehozása.
+    global.mediators[side].publish("killPanel", "#panel" + side + "P-1");	// Esetleges régi fejlécpanel megölése.    
+    var scaleRatio = Container.prototype.getScaleRatio(side, sizePercentage, global.panelNumberOnScreen, reportMeta.visualization.length);
+    new HeadPanel_Report({group: side}, reportMeta, scaleRatio);						// Fejlécpanel létrehozása.
     global.mediators[side].publish("drill", {dim: -1, direction: 0});		// Kezdeti belefúrás.
-    global.mainToolbar_refreshState();										// A toolbar kiszürkültségi állapotának felfrissítése.
-//    global.mediators[side].publish("magnify", 0);
+
+
+    var sizePercentage = 0;
+    if ((this.panelState === 0 && side === 0) || (this.panelState === 2 && side === 1)) {
+        sizePercentage = 1;
+    } else if (this.panelState === 1) {
+        sizePercentage = 0.5;
+    }
+
+    var scaleRatio = Container.prototype.getScaleRatio(side, sizePercentage, global.panelNumberOnScreen, reportMeta.visualization.length);
+    this.resizeContainer(side, 0, sizePercentage, global.panelNumberOnScreen, scaleRatio);
+
+    that.counter--;
+    if (that.counter <= 0) {
+        global.mainToolbar_refreshState();                                      // A toolbar kiszürkültségi állapotának felfrissítése.
+    }
 };
 
 /**
@@ -386,13 +423,14 @@ Container.prototype.initSide = function(side) {
     global.mediators[side].subscribe("save", function() {
         that.save(side);
     });
-
     that.isSideInUse[side] = false;
     that.updateHelp(side);
     new Draglayer(side, global.mediators[side]);
 
-    new HeadPanel_Browser({group: side}, global.superMeta);						// Fejléc.
+    var scaleRatio = Container.prototype.getScaleRatio(side, 1, global.panelNumberOnScreen, 0);
+    new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio);						// Fejléc.
     this.dataDirector[side] = new DataDirector(side, global.mediators[side]);	// Adatrendező.
+    that.onResize();
 };
 
 /**
@@ -401,7 +439,7 @@ Container.prototype.initSide = function(side) {
  * @param {Integer} side A kérdéses oldal.
  * @returns {undefined}
  */
-Container.prototype.killSide = function(side) {
+Container.prototype.killSide = function(side) {    
     if (this.panelState / 2 === side && this.isSideInUse[side]) {
         global.mediators[side].publish("killListeners");
         global.mediators[side].publish("killPanel", undefined);
@@ -426,9 +464,8 @@ Container.prototype.killSide = function(side) {
 
         global.facts[side] = null;
         this.dataDirector[side] = undefined;
-        
+
         this.initSide(side);
-        this.onResize();
         global.mainToolbar_refreshState();
     }
 };

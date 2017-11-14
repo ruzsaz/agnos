@@ -9,10 +9,11 @@
  * @param {Object} startObject Az indulást leíró objektum, ha a reportba nem a legfelső szinten lépünk be.
  * @returns {Fact}
  */
-function Fact(reportSuperMeta, side, callbackFunction, startObject) {
+function Fact(reportSuperMeta, side, callbackFunction, callContext, startObject) {
 
     var that = this;
     this.callback = callbackFunction;
+    this.callContext = callContext;
     this.side = side;
 
     this.reportMeta = undefined;
@@ -48,7 +49,7 @@ Fact.prototype.reportMetaReady = function(reportSuperMeta, reportMetaJson, start
         global.baseLevels[this.side] = startObject.b;
         this.reportMeta.visualization = startObject.v;
     }
-    this.callback(this.side, this.reportMeta);
+    this.callback.call(this.callContext, this.side, this.reportMeta);
 
     // A dimenziók id-jének beállítása, tooltip beállítása;
     for (var i = 0, iMax = this.reportMeta.dimensions.length; i < iMax; i++) {

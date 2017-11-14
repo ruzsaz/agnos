@@ -8,33 +8,35 @@
  * @param {Object} init Inicializáló objektum. Valójában csak az oldal érdekel belőle.
  * @param {Object} mediator A rendelkezésre álló mediátor.
  * @param {String} additionalClass A html objektumhoz adandó további class-nevek.
+ * @param {Number} startScale A méretszorzó, amivel meg kell jeleníteni.
  * @returns {HeadPanel} A fejlécpanel.
  */
-function HeadPanel(init, mediator, additionalClass) {
-	var that = this;
-	
-	this.panelSide = init.group || 0;
-	this.mediator = mediator;
-	this.mediatorIds = [];		// A mediátorok id-jeit tartalmazó tömb.
-	this.panelDiv = d3.select("#headPanelP" + this.panelSide);
-	this.panelId = "#panel" + that.panelSide + "P-1";
-	this.divTableBase = undefined;
-	this.init(additionalClass);
-	var med;
-	med = this.mediator.subscribe("killPanel", function(panelId) {
-		that.killPanel(panelId);
-	});
-	that.mediatorIds.push({"channel": "killPanel", "id": med.id});
+function HeadPanel(init, mediator, additionalClass, startScale) {
+    var that = this;
 
-	med = this.mediator.subscribe("killListeners", function() {
-		that.killListeners();
-	});
-	that.mediatorIds.push({"channel": "killListeners", "id": med.id});
+    this.panelSide = init.group || 0;
+    this.mediator = mediator;
+    this.mediatorIds = [];		// A mediátorok id-jeit tartalmazó tömb.
+    this.panelDiv = d3.select("#headPanelP" + this.panelSide);
+    that.panelDiv.style("width", (((parseInt(d3.select("#topdiv").style("width"))) / startScale) - global.panelMargin * 2) + "px");
+    this.panelId = "#panel" + that.panelSide + "P-1";
+    this.divTableBase = undefined;
+    this.init(additionalClass);
+    var med;
+    med = this.mediator.subscribe("killPanel", function(panelId) {
+        that.killPanel(panelId);
+    });
+    that.mediatorIds.push({"channel": "killPanel", "id": med.id});
 
-	med = this.mediator.subscribe("resize", function(duration, panelNumberPerRow, scaleRatio, callback) {
-		that.resize(duration, panelNumberPerRow, callback);
-	});
-	that.mediatorIds.push({"channel": "resize", "id": med.id});
+    med = this.mediator.subscribe("killListeners", function() {
+        that.killListeners();
+    });
+    that.mediatorIds.push({"channel": "killListeners", "id": med.id});
+
+    med = this.mediator.subscribe("resize", function(duration, panelNumberPerRow, scaleRatio) {
+        that.resize(duration, panelNumberPerRow);
+    });
+    that.mediatorIds.push({"channel": "resize", "id": med.id});
 }
 
 //////////////////////////////////////////////////
@@ -42,7 +44,7 @@ function HeadPanel(init, mediator, additionalClass) {
 //////////////////////////////////////////////////
 
 {
-	HeadPanel.prototype.panelMargin = global.panelMargin;
+    HeadPanel.prototype.panelMargin = global.panelMargin;
 }
 
 //////////////////////////////////////////////////
@@ -56,19 +58,19 @@ function HeadPanel(init, mediator, additionalClass) {
  * @returns {undefined}
  */
 HeadPanel.prototype.init = function(additionalClass) {
-	var that = this;
+    var that = this;
 
-	if (that.panelDiv.selectAll(".baseDiv").empty()) {
+    if (that.panelDiv.selectAll(".baseDiv").empty()) {
 
-		// Alap Div, rajta van a táblázat
-		that.divBase = that.panelDiv.append("html:div")
-				.attr("class", "baseDiv");
+        // Alap Div, rajta van a táblázat
+        that.divBase = that.panelDiv.append("html:div")
+                .attr("class", "baseDiv");
 
-	} else {
-		that.divBase = that.panelDiv.select(".baseDiv");
-	}
+    } else {
+        that.divBase = that.panelDiv.select(".baseDiv");
+    }
 
-	that.reset(additionalClass);
+    that.reset(additionalClass);
 };
 
 /**
@@ -76,25 +78,21 @@ HeadPanel.prototype.init = function(additionalClass) {
  * 
  * @param {Number} duration Az átméretezés ideje, millisec.
  * @param {Integer} panelNumberPerRow Egy sorban elférő normál méretű panelek száma.
- * @param {Function} callback Az átméretezés után meghívandó függvény.
  * @returns {undefined}
  */
-HeadPanel.prototype.resize = function(duration, panelNumberPerRow, callback) {
-	var that = this;
-	var currentHeight = this.panelDiv.style("height");
-	var finalHeight = this.panelDiv.style("height", null).style("height");
-	this.panelDiv.style("height", currentHeight);
-
-	var width = panelNumberPerRow * (global.panelWidth + 2 * this.panelMargin) - 2 * this.panelMargin;
-
-	this.panelDiv.transition().duration(duration)
-			.style("width", width + "px")
-			.style("height", finalHeight)
-			.each("end", function() {
-				that.panelDiv.selectAll(".halfHead")
-						.classed("vertical", (panelNumberPerRow === 1) ? true : false);
-				callback();
-			});
+HeadPanel.prototype.resize = function(duration, panelNumberPerRow) {
+    var that = this;
+    var width = panelNumberPerRow * (global.panelWidth + 2 * this.panelMargin) - 2 * this.panelMargin;
+    if (panelNumberPerRow === 1) {
+        that.panelDiv.selectAll(".halfHead")
+                .classed("vertical", true);
+    }
+    this.panelDiv.transition().duration(duration)
+            .style("width", width + "px")
+            .each("end", function() {                
+                that.panelDiv.selectAll(".halfHead")
+                        .classed("vertical", (panelNumberPerRow === 1) ? true : false);
+            });
 };
 
 /**
@@ -104,24 +102,23 @@ HeadPanel.prototype.resize = function(duration, panelNumberPerRow, callback) {
  * @returns {undefined}
  */
 HeadPanel.prototype.reset = function(additionalClass) {
-	var that = this;
+    var that = this;
 
-	that.panelDiv.selectAll(".divTableBase")
-			.attr("class", null)
-			.style("width", function() {
-				return d3.select(this).style("width");
-			})
-			.style("position", "absolute")
-			.transition().duration(global.selfDuration)
-			.style("opacity", "0")
-			.remove();
+    that.panelDiv.selectAll(".divTableBase")
+            .attr("class", null)
+            .style("width", function() {
+                return d3.select(this).style("width");
+            })
+            .style("position", "absolute")
+            .style("opacity", "0")
+            .remove();
 
-	that.divTableBase = that.divBase.append("html:div")
-			.attr("class", "divTableBase " + additionalClass)
-			.style("opacity", 0);
+    that.divTableBase = that.divBase.append("html:div")
+            .attr("class", "divTableBase " + additionalClass)
+            .style("opacity", 0);
 
-	that.divTableBase.transition().duration(global.selfDuration)
-			.style("opacity", 1);
+    that.divTableBase.transition().duration(global.selfDuration)
+            .style("opacity", 1);
 };
 
 /**
@@ -130,10 +127,10 @@ HeadPanel.prototype.reset = function(additionalClass) {
  * @returns {undefined}
  */
 HeadPanel.prototype.killListeners = function() {
-	this.panelDiv.selectAll(".listener")
-			.on("click", null)
-			.on("mouseover", null)
-			.on("mouseout", null);
+    this.panelDiv.selectAll(".listener")
+            .on("click", null)
+            .on("mouseover", null)
+            .on("mouseout", null);
 };
 
 /**
@@ -143,14 +140,14 @@ HeadPanel.prototype.killListeners = function() {
  * @returns {undefined}
  */
 HeadPanel.prototype.killPanel = function(panelId) {
-	if (panelId === undefined || panelId === this.panelId) {
-		this.killListeners();
-		
-		// A panel mediátor-leiratkozásai.
-		for (var i = 0, iMax = this.mediatorIds.length; i < iMax; i++) {
-			this.mediator.remove(this.mediatorIds[i].channel, this.mediatorIds[i].id);
-		}
-		this.mediatorIds = [];
-		this.mediator = undefined;
-	}
+    if (panelId === undefined || panelId === this.panelId) {
+        this.killListeners();
+
+        // A panel mediátor-leiratkozásai.
+        for (var i = 0, iMax = this.mediatorIds.length; i < iMax; i++) {
+            this.mediator.remove(this.mediatorIds[i].channel, this.mediatorIds[i].id);
+        }
+        this.mediatorIds = [];
+        this.mediator = undefined;
+    }
 };

@@ -131,12 +131,12 @@ function panel_table1d(init) {
 
     // Vízszintes scrollbar elhelyezése.
     this.horizontalScrollbar = new SVGScrollbar(that.svg, true, that.tableWidth, horizontalScrollFunction, that.tableSpacingHorizontal);
-    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - global.scrollbarWidth + that.tableElementGap);
+    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - that.innerScrollbarWidth + that.tableElementGap);
     that.horizontalScrollbar.set(that.columnColorIndex.length * that.tableSpacingHorizontal, null, 0);
 
     // Függőleges scrollbar elhelyezése.
     this.verticalScrollbar = new SVGScrollbar(that.svg, false, that.tableHeight, verticalScrollFunction, that.tableSpacingVerical * 2, tableHolder);
-    that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - global.scrollbarWidth + that.tableElementGap, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
+    that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - that.innerScrollbarWidth + that.tableElementGap, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
 
     // Feliratkozás a dimenzióváltó mediátorra.
     var med = that.mediator.subscribe("changeDimension", function(panelId, newDimId, dimToChange) {
@@ -166,9 +166,10 @@ function panel_table1d(init) {
     panel_table1d.prototype.tableLeftMargin = 40;	// Bal oldali margó mérete.
     panel_table1d.prototype.tableTopMargin = 70;	// Felső margó mérete.
     panel_table1d.prototype.tableBottomMargin = 15;	// Alsó margó mérete.
+    panel_table1d.prototype.innerScrollbarWidth = 10;// A belső scrollbar vastagsága, pixel.
 
-    panel_table1d.prototype.tableWidth = 600 - 2 * (panel_table1d.prototype.tableLeftMargin + panel_table1d.prototype.tableElementGap) - panel_table1d.prototype.tableHeadWidth - global.scrollbarWidth; // A táblázat törzsének szélessége.
-    panel_table1d.prototype.tableHeight = 400 - panel_table1d.prototype.tableTopMargin - panel_table1d.prototype.tableHeadHeight - panel_table1d.prototype.tableBottomMargin - global.scrollbarWidth - 2 * panel_table1d.prototype.tableElementGap; // A táblázat törzsének magassága.
+    panel_table1d.prototype.tableWidth = 600 - 2 * (panel_table1d.prototype.tableLeftMargin + panel_table1d.prototype.tableElementGap) - panel_table1d.prototype.tableHeadWidth - panel_table1d.prototype.innerScrollbarWidth; // A táblázat törzsének szélessége.
+    panel_table1d.prototype.tableHeight = 400 - panel_table1d.prototype.tableTopMargin - panel_table1d.prototype.tableHeadHeight - panel_table1d.prototype.tableBottomMargin - panel_table1d.prototype.innerScrollbarWidth - 2 * panel_table1d.prototype.tableElementGap; // A táblázat törzsének magassága.
 
     panel_table1d.prototype.tableSpacingVerical = panel_table1d.prototype.tableHeight / 14;		// Egy táblázatsor magassága.
     panel_table1d.prototype.tableSpacingHorizontal = panel_table1d.prototype.tableWidth / 7;	// Egy táblázatoszlop szélessége.

@@ -196,6 +196,7 @@ var global = function() {
                 var displayMode;
                 var numberOfSides = d3.selectAll(".container.activeSide")[0].length; // Hány aktív oldal van? (2 ha osztottkijelzős üzemmód, 1 ha nem.)
                 if (numberOfSides === 1) {
+                    
                     displayMode = d3.selectAll("#container1.activeSide")[0].length * 2; // Aktív oldal id-je, 0 vagy 2. Csak akkor ételmes, ha 1 aktív oldal van.
                 } else {
                     displayMode = 1;
@@ -490,8 +491,8 @@ var global = function() {
      * Összehasonlít két sztringet lexikografikusan.
      * Azért kell, mert a localeCompare rosszul működik: A előbb van mint a, de A2 később van mint a1.
      * 
-     * @param {type} a
-     * @param {type} b
+     * @param {String} a
+     * @param {String} b
      * @returns {-1 ha a van előrébb, 1 ha b, 0 ha azonosak}
      */
     var realCompare = function(a, b) {
@@ -929,10 +930,12 @@ var global = function() {
             // Ha nincs területi dimenzió, a mappanel letiltása.
             if (global.facts[side]) {
                 var isHaveTerritorial = false;
-                for (var d = 0, dMax = global.facts[side].reportMeta.dimensions.length; d < dMax; d++) {
-                    if (global.facts[side].reportMeta.dimensions[d].is_territorial === 1) {
-                        isHaveTerritorial = true;
-                        break;
+                if (global.facts[side].reportMeta) {
+                    for (var d = 0, dMax = global.facts[side].reportMeta.dimensions.length; d < dMax; d++) {
+                        if (global.facts[side].reportMeta.dimensions[d].is_territorial === 1) {
+                            isHaveTerritorial = true;
+                            break;
+                        }
                     }
                 }
                 d3.selectAll("#mainToolbar .mappanelcreator").classed("inactive", !isHaveTerritorial);
@@ -1067,7 +1070,7 @@ var global = function() {
         var panelBackgroundColor = varsFromCSS.panelBackgroundColor;
         var axisTextOpacity = varsFromCSS.axisTextOpacity;
         var fontSizeSmall = parseInt(varsFromCSS.fontSizeSmall);
-        var mainToolbarHeight = parseInt(varsFromCSS.mainToolbarHeight);
+        var mainToolbarHeight = parseInt(varsFromCSS.mainToolbarHeight);        
 
         // Húzd-és-ejtsd működését vezérlő ojektum.
         var dragDropManager = {
@@ -1115,7 +1118,7 @@ var global = function() {
         mediators: [], // Az oldalak mediátorát tartalmazó 2 elemű tömb.
         baseLevels: [[], []], // A két oldal aktuális lefúrási szintjeit tartalmazó tömb.
         superMeta: undefined, // SuperMeta: az összes riport adatait tartalmazó leírás.
-        scrollbarWidth: 10, // Scrollbarok szélessége.
+        scrollbarWidth: scrollBarSize, // Scrollbarok szélessége.
         mapBorder: mapBorder, // A térképi elemek határvonal-vastagsága.
         fontSizeSmall: fontSizeSmall, // A legkisebb betűméret.
         panelBackgroundColor: panelBackgroundColor, // Panelek háttérszíne.

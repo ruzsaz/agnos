@@ -627,13 +627,3 @@ var LZString = function() {
 
 }();
 
-//if (typeof define === 'function' && define.amd) {
-//  define(function () { return LZString; });
-//} else if( typeof module !== 'undefined' && module != null ) {
-//  module.exports = LZString
-//} else if( typeof angular !== 'undefined' && angular != null ) {
-//  angular.module('LZString', [])
-//  .factory('LZString', function () {
-//    return LZString;
-//  });
-//}

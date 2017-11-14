@@ -7,12 +7,13 @@
  *  
  * @param {Object} init Inicializáló objektum.
  * @param {Object} reportMeta A megjelenített report metaadatai.
+ * @param {Number} startScale A méretszorzó, amivel meg kell jeleníteni.
  * @returns {HeadPanel_Report} A fejlécpanel.
  */
-function HeadPanel_Report(init, reportMeta) {
+function HeadPanel_Report(init, reportMeta, startScale) {
 	var that = this;
 
-	HeadPanel.call(this, init, global.mediators[init.group], "reportHeadPanel");
+	HeadPanel.call(this, init, global.mediators[init.group], "reportHeadPanel", startScale);
 
 	this.meta = reportMeta;
 

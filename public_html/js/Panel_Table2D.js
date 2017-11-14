@@ -119,20 +119,12 @@ function panel_table2d(init) {
     };
 
     // Vízszintes scrollbar elhelyezése.
-    //this.horizontalScrollbar = new SVGScrollbar(d3.select(that.panelId), true, that.tableWidth, horizontalScrollFunction);
-    //that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - global.scrollbarWidth);//30-12);
-
-    // Függőleges scrollbar elhelyezése.
-    //this.verticalScrollbar = new SVGScrollbar(d3.select(that.panelId), false, that.tableHeight, verticalScrollFunction);
-    //that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - global.scrollbarWidth, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
-
-    // Vízszintes scrollbar elhelyezése.
     this.horizontalScrollbar = new SVGScrollbar(that.svg, true, that.tableWidth, horizontalScrollFunction, that.tableSpacingHorizontal);
-    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - global.scrollbarWidth + that.tableElementGap);
+    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - that.innerScrollbarWidth + that.tableElementGap);
 
     // Függőleges scrollbar elhelyezése.
     this.verticalScrollbar = new SVGScrollbar(that.svg, false, that.tableHeight, verticalScrollFunction, that.tableSpacingVerical * 2, tableHolder);
-    that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - global.scrollbarWidth + that.tableElementGap, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
+    that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - that.innerScrollbarWidth + that.tableElementGap, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
 
 
     var med;
@@ -166,9 +158,10 @@ function panel_table2d(init) {
     panel_table2d.prototype.tableLeftMargin = 40;	// Bal oldali margó mérete.
     panel_table2d.prototype.tableTopMargin = 70;	// Felső margó mérete.
     panel_table2d.prototype.tableBottomMargin = 15;	// Alsó margó mérete.
+    panel_table2d.prototype.innerScrollbarWidth = 10;// A belső scrollbar vastagsága, pixel.
 
-    panel_table2d.prototype.tableWidth = 600 - 2 * (panel_table2d.prototype.tableLeftMargin + panel_table2d.prototype.tableElementGap) - panel_table2d.prototype.tableHeadWidth - global.scrollbarWidth; // A táblázat törzsének szélessége.
-    panel_table2d.prototype.tableHeight = 400 - panel_table2d.prototype.tableTopMargin - panel_table2d.prototype.tableHeadHeight - panel_table2d.prototype.tableBottomMargin - global.scrollbarWidth - 2 * panel_table2d.prototype.tableElementGap; // A táblázat törzsének magassága.
+    panel_table2d.prototype.tableWidth = 600 - 2 * (panel_table2d.prototype.tableLeftMargin + panel_table2d.prototype.tableElementGap) - panel_table2d.prototype.tableHeadWidth - panel_table2d.prototype.innerScrollbarWidth; // A táblázat törzsének szélessége.
+    panel_table2d.prototype.tableHeight = 400 - panel_table2d.prototype.tableTopMargin - panel_table2d.prototype.tableHeadHeight - panel_table2d.prototype.tableBottomMargin - panel_table2d.prototype.innerScrollbarWidth - 2 * panel_table2d.prototype.tableElementGap; // A táblázat törzsének magassága.
 
     panel_table2d.prototype.tableSpacingVerical = panel_table2d.prototype.tableHeight / 15;		// Egy táblázatsor magassága.
     panel_table2d.prototype.tableSpacingHorizontal = panel_table2d.prototype.tableWidth / 7;	// Egy táblázatoszlop szélessége.

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * Létrehoz egy új reportot, és betölti a hozzá tartizó metát.

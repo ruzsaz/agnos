@@ -1,9 +1,10 @@
 /* global d3, LZString */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 console.log("Az épp aktuális panelkonfiguráció kiíratása: global.getConfig();");
-// A bookmark-lehetőség a 203.sorban van!
+console.log("A fordítás segítéséhez: global.getUntranslated('lang');");
+// A bookmark-lehetőség kiiktatásához a "location.hash"-t tartalmazó sort kell kikommentelni.
 
 /**
  * Kiterjeszti a d3.selectiont egy .moveToFront() függvénnyel, ami az adott
@@ -23,6 +24,12 @@ d3.formatPrefix(1e9).symbol = "Mrd";
 d3.formatPrefix(1e6).symbol = "M";
 d3.formatPrefix(1e3).symbol = "e";
 
+// Nyelv beállító függvény. "blabla" helyett _("blabla") írandó.
+var _ = function(string) {
+    return string.toLocaleString();
+};
+
+
 /**
  * A globális változók elérését biztosító namespace. (Valójában property-tömb.)
  * 
@@ -33,6 +40,18 @@ var global = function() {
 //////////////////////////////////////////////////
 // Lokálisan használt függvények.
 //////////////////////////////////////////////////
+
+    /**
+     * Átírja a fix szövegeket a beállított nyelvre. A nyelvbeállítás a
+     * String.locale beállításával történik.
+     * 
+     * @returns {undefined}
+     */
+    var localizeAll = function() {
+        $("[origText]").html(function() {
+            return _($(this).attr('origText'));
+        });
+    }
 
     /**
      * Kiolvassa a css-be írt változók értékeit.
@@ -164,6 +183,83 @@ var global = function() {
 //////////////////////////////////////////////////
 
     /**
+     * Nyelvállítás előtt kell meghívni. A .loc osztályú tag-ekenél a
+     * szöveget berakja egy 'origText' tag-be, hogy arra cuppanjon rá
+     * a nyelvállító fordítóJSON.
+     * 
+     * @returns {undefined}
+     */
+    var tagForLocalization = function() {
+        $(".loc").each(function() {
+            if ($(this).attr('origText') === undefined) {
+                $(this).attr('origText', function() {
+                    return $(this).html().trim().replace(/\r?\n|\r/g, '').replace(/\s\s+/g, ' ');
+                });
+            }
+        });
+    }
+
+    /**
+     * Átáll a kiválasztott nyelvre.
+     * 
+     * @param {String} lang A nyelv kódja, pl. 'hu', 'en'.
+     * @returns {undefined}
+     */
+    var setLanguage = function(lang) {
+        tagForLocalization();
+        String.locale = lang;
+        localizeAll();
+
+        d3.selectAll(".localized").style("display", "none");
+        if (d3.selectAll(".localized.language_" + lang).empty()) {
+            d3.selectAll(".localized.language_default").style("display", "block");
+        } else {
+            d3.selectAll(".localized.language_" + lang).style("display", "block");
+        }
+    };
+
+    var getUntranslated = function(lang) {
+        var localeToStore = String.locale;
+        String.locale = lang;
+        tagForLocalization();
+        console.log(lang);
+        var untranslated = [];
+
+        // A statikus tartalmak kinyerése
+        $("[origText]").text(function() {
+            var original = $(this).attr('origText');
+            var translated = original.toLocaleString(true);
+            if (translated === undefined) {
+
+                untranslated.push(original);
+            } else {
+                console.log('"' + original + '": "' + translated + '",');
+            }
+
+        });
+
+        // A tooltip-ek kinyerése
+        $(".tloc[tooltip]").text(function() {
+            var original = $(this).attr('tooltip');
+            var translated = original.toLocaleString(true);
+            if (translated === undefined) {
+                untranslated.push(original);
+            } else {
+                console.log('"' + original + '": "' + translated + '",');
+            }
+        });
+
+        var untranslatedString = "";
+        for (var i = 0, iMax = untranslated.length; i < iMax; i++) {
+            untranslatedString = untranslatedString + '"' + untranslated[i] + '": "",\n';
+        }
+        console.log(untranslatedString);
+
+
+        String.locale = localeToStore;
+    };
+
+    /**
      * Kiírja a pillanatnyilag meglevő panelek konfigurációját a konzolra.
      * 
      * @returns {undefined}
@@ -196,7 +292,7 @@ var global = function() {
                 var displayMode;
                 var numberOfSides = d3.selectAll(".container.activeSide")[0].length; // Hány aktív oldal van? (2 ha osztottkijelzős üzemmód, 1 ha nem.)
                 if (numberOfSides === 1) {
-                    
+
                     displayMode = d3.selectAll("#container1.activeSide")[0].length * 2; // Aktív oldal id-je, 0 vagy 2. Csak akkor ételmes, ha 1 aktív oldal van.
                 } else {
                     displayMode = 1;
@@ -238,7 +334,7 @@ var global = function() {
             success: function(result) { // Sikeres autentikáció esetén.
                 global.secretUsername = username;
                 global.secretToken = result;
-                setDialog(); // Esetleges hibaüzenet levétele.
+                setDialog(); // Esetleges hibaüzenet levétele.                
                 callback();
             },
             error: function(jqXHR, textStatus, errorThrown) { // Hálózati, vagy autentikációs hiba esetén.
@@ -784,8 +880,8 @@ var global = function() {
             }, 100);
         } else if (item === null) {
             document.getElementById("helpMask").style.display = "block";
-            d3.selectAll("#helpContent div[id]").style("display", "none");
-            d3.selectAll("#helpContent #helpStart").style("display", null);
+            d3.selectAll(".helpContent > div").style("display", "none");
+            d3.selectAll(".helpContent .helpStart").style("display", null);
             d3.selectAll("#helpControl span").classed("activeHelp", false);
             d3.selectAll("#helpControl .startItem").classed("activeHelp", true);
             setTimeout(function() {
@@ -796,8 +892,8 @@ var global = function() {
             var link = domItem.attr("data-link");
             d3.selectAll("#helpControl .activeHelp").classed("activeHelp", false);
             domItem.classed("activeHelp", true);
-            d3.selectAll("#helpContent div[id]").style("display", "none");
-            d3.selectAll("#helpContent #" + link).style("display", null);
+            d3.selectAll(".helpContent > div").style("display", "none");
+            d3.selectAll(".helpContent ." + link).style("display", null);
         }
     };
 
@@ -891,6 +987,14 @@ var global = function() {
         });
     };
 
+    var mainToolbar_setLanguage = function(lang) {
+        d3.select(".languageSwitch > ul")
+                .style("display", "none")
+                .transition().delay(500)
+                .style("display", null);
+        global.setLanguage(lang);
+        //d3.select(".languageSwitch > ul").style("display", null);
+    };
 
     /**
      * Frissíti az ikonok láthatóságát.
@@ -903,6 +1007,12 @@ var global = function() {
         // Alap láthatósági beállítás: ha osztottkijelzős a mód, akkor inaktívak a lokálisra ható gombok.
         d3.selectAll("#mainToolbar .onlyforreport")
                 .classed("inactive", (numberOfActiveSides === 2));
+
+        // Ha két panel van, de van betöltött report, akkor a bezárógomb engedélyezve.
+        if (numberOfActiveSides === 2 && (!d3.selectAll(".reportHeadPanel").empty())) {
+            d3.selectAll("#mainToolbar #mainCloseButton").classed("inactive", false);
+        }
+
         // Ha nem osztott kijelzős a mód, akkor finomhangoljuk a láthatóságot.
         if (numberOfActiveSides === 1) {
 
@@ -1070,7 +1180,7 @@ var global = function() {
         var panelBackgroundColor = varsFromCSS.panelBackgroundColor;
         var axisTextOpacity = varsFromCSS.axisTextOpacity;
         var fontSizeSmall = parseInt(varsFromCSS.fontSizeSmall);
-        var mainToolbarHeight = parseInt(varsFromCSS.mainToolbarHeight);        
+        var mainToolbarHeight = parseInt(varsFromCSS.mainToolbarHeight);
 
         // Húzd-és-ejtsd működését vezérlő ojektum.
         var dragDropManager = {
@@ -1111,7 +1221,7 @@ var global = function() {
 //////////////////////////////////////////////////
 
     return {
-        // Globálisan elérendő változók.
+        // Globálisan elérendő változók.        
         facts: [], // Az adatokat tartalmazó 2 elemű tömb.
         maxPanelCount: 6, // Egy oldalon levő panelek maximális száma.		
         panelNumberOnScreen: undefined, // Megjelenítendő panelszám soronként.
@@ -1143,6 +1253,8 @@ var global = function() {
         maxEntriesIn1D: 150,
         maxEntriesIn2D: 1000,
         // Globálisan elérendő függvények.
+        tagForLocalization: tagForLocalization, // Nyelvváltoztatás előtt a szövegeket az 'origText' attrib-ba írja.
+        setLanguage: setLanguage, // Nyelvváltoztató függvény.
         axisTextSize: axisTextSize, // Az oszlopdiagram tengelybetű-méretét határozza meg.
         getFromArrayByProperty: getFromArrayByProperty, // Megkeresi egy tömb elemét az elem egyik property-je alapján.
         positionInArrayByProperty: positionInArrayByProperty, // Megkeresi egy tömb elemének indexét az elem egyik property-je alapján.
@@ -1159,9 +1271,11 @@ var global = function() {
         mainToolbar_createNewPanel: mainToolbar_createNewPanel, // Új panelt hoz létre.
         mainToolbar_killCursor: mainToolbar_killCursor, // Panelölővé változtatja a kurzort.		
         mainToolbar_save: mainToolbar_save, // Elindítja az épp aktív oldal adatmentését.
-        mainToolbar_saveAllImages: mainToolbar_saveAllImages,
+        mainToolbar_saveAllImages: mainToolbar_saveAllImages, // Elmenti az összes panelt képként.
+        mainToolbar_setLanguage: mainToolbar_setLanguage, // Nyelvet vált.
         mainToolbar_refreshState: mainToolbar_refreshState, // Frissíti az ikonok láthatóságát.
         getConfig: getConfig, // Kiírja a pillanatnyilag meglevő panelek konfigurációját a konzolra.
+        getUntranslated: getUntranslated, // Kiírja a még lefordítatlan szövegeket a konzolra.
         getConfig2: getConfigToHash, // A böngésző URL-jébe írja boomarkolhatóan hash-ként az állapotot.
         minifyInits: minifyInits, // Minifyol egy init-stringet, hogy az URL-kódolt verzió kisebb legyen.
         setDialog: setDialog, // Dialógusablak beállítása/levétele.

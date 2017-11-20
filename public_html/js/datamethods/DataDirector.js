@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * Egy oldal adatfolyamát intéző osztály.

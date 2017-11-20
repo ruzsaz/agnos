@@ -1,6 +1,6 @@
 /* global Panel, d3, topojson, mapOfHungary, pois */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 var mappanel = panel_map;
 /**

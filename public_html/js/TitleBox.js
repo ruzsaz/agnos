@@ -1,6 +1,6 @@
 /* global d3 */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * Egy panel fejléce. A fejléc az épp aktuális mutatót, és a mértékegységet tartalmazza,

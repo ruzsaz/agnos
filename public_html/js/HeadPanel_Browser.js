@@ -1,6 +1,6 @@
 /* global HeadPanel, d3 */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * A report-böngésző konstruktora.

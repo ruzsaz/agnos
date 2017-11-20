@@ -15,25 +15,25 @@
 
       <nav>
         <ul>
-          <li><span class="startItem" data-link="helpStart" onclick="global.mainToolbar_help(this);">A jelentésről</span></li>
-          <li><span data-link="helpToolbar" onclick="global.mainToolbar_help(this);">Fejléc</span></li>
-          <li><span data-link="helpData" onclick="global.mainToolbar_help(this);">Adatábrázolás</span></li>
-          <li><span data-link="helpDrilling" onclick="global.mainToolbar_help(this);">Irányítás</span></li>
-          <li><span data-link="helpPanels" onclick="global.mainToolbar_help(this);">Panelek kezelése</span>
+          <li><span class="loc startItem" data-link="helpStart" onclick="global.mainToolbar_help(this);">A jelentésről</span></li>
+          <li><span class="loc" data-link="helpAbout" onclick="global.mainToolbar_help(this);">A programról</span>
+          <li><span class="loc" data-link="helpToolbar" onclick="global.mainToolbar_help(this);">Fejléc</span></li>
+          <li><span class="loc" data-link="helpData" onclick="global.mainToolbar_help(this);">Adatábrázolás</span></li>
+          <li><span class="loc" data-link="helpDrilling" onclick="global.mainToolbar_help(this);">Irányítás</span></li>
+          <li><span class="loc" data-link="helpPanels" onclick="global.mainToolbar_help(this);">Panelek kezelése</span>
             <ul>
-              <li><span data-link="helpHeadPanel" onclick="global.mainToolbar_help(this);">Fejpanel</span></li>
-              <li><span data-link="helpPieChartPanel" onclick="global.mainToolbar_help(this);">Kördiagram</span></li>
-              <li><span data-link="helpBarPanel" onclick="global.mainToolbar_help(this);">Oszlopdiagram</span></li>
-              <li><span data-link="helpLinePanel" onclick="global.mainToolbar_help(this);">Vonaldiagram</span></li>
-              <li><span data-link="helpMapPanel" onclick="global.mainToolbar_help(this);">Térkép</span></li>
-              <li><span data-link="helpBar2Panel" onclick="global.mainToolbar_help(this);">2D oszlop</span></li>
-              <li><span data-link="helpHorizontalBarPanel" onclick="global.mainToolbar_help(this);">Vízszintes oszlop</span></li>	
-              <li><span data-link="help_Panel_Table" onclick="global.mainToolbar_help(this);">Táblázat</span></li>	
+              <li><span class="loc" data-link="helpHeadPanel" onclick="global.mainToolbar_help(this);">Fejpanel</span></li>
+              <li><span class="loc" data-link="helpPieChartPanel" onclick="global.mainToolbar_help(this);">Kördiagram</span></li>
+              <li><span class="loc" data-link="helpBarPanel" onclick="global.mainToolbar_help(this);">Oszlopdiagram</span></li>
+              <li><span class="loc" data-link="helpLinePanel" onclick="global.mainToolbar_help(this);">Vonaldiagram</span></li>
+              <li><span class="loc" data-link="helpMapPanel" onclick="global.mainToolbar_help(this);">Térkép</span></li>
+              <li><span class="loc" data-link="helpBar2Panel" onclick="global.mainToolbar_help(this);">2D oszlop</span></li>
+              <li><span class="loc" data-link="helpHorizontalBarPanel" onclick="global.mainToolbar_help(this);">Vízszintes oszlop</span></li>	
+              <li><span class="loc" data-link="help_Panel_Table" onclick="global.mainToolbar_help(this);">Táblázat</span></li>	
             </ul>
-          </li>
+          </li>          
 
-
-          <li><span onclick="global.mainToolbar_help();">Bezárás</span></li>
+          <li><span class="loc" onclick="global.mainToolbar_help();">Bezárás</span></li>
 
         </ul>
       </nav>
@@ -42,25 +42,18 @@
     </div>
 
     <div id="helpScrollPane">
-      <div id="helpContent">
-
-        <div id="helpStart">
-          <h3 class="placeHolder">Nincs jelentés betöltve</h3>          
-          <div class="helpReport0">
-            Nincs jelentés betöltve
-          </div>
-
-          <br class="hideWhenOnlyOne"/>
+      
+      <!-- Magyar nyelvű változat -->
+      <div class="helpContent localized language_hu language_default">
+  
+        <div class="helpStart">
+          <h3 class="noReport">Nincs jelentés betöltve</h3>          
+          <div class="helpReport0"></div>
           <hr class="hideWhenOnlyOne"/>          
-                    
-          <div class="helpReport1">
-            Nincs jelentés betöltve
-          </div>
-
-
+          <div class="helpReport1"></div>
         </div>
 
-        <div id="helpToolbar">
+        <div class="helpToolbar">
           <h3>Fejléc</h3>
 
           <p>
@@ -70,14 +63,14 @@
 
           <ul>
             <li>
-              <svg id="plusButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <svg class="plusButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_plus" />
               </svg>
               <em>Nagyítás.</em> Inaktív, ha már nincs hova nagyítani.
             </li>
 
             <li>
-              <svg id="minusButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <svg class="minusButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_minus" />
               </svg>
               <em>Kicsinytés.</em> Inaktív, ha már nincs hova kicsinyíteni.
@@ -131,7 +124,14 @@
             </li>
 
             <li>
-              <svg id="switchButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
+              <use xlink:href="#icon_flag" />
+              </svg>
+              <em>Nyelv választó.</em>
+            </li>
+                        
+            <li>
+              <svg class="switchButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_switch" />
               </svg>						
               <em>Váltás 1 vagy 2 oldalas kijelzés között.</em> A két oldalas kijelzéssel egyszerre két, egymástól
@@ -139,7 +139,7 @@
             </li>
 
             <li>
-              <svg id="closeButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <svg class="closeButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_close" />
               </svg>
               <em>Jelentés bezárása.</em> Az épp aktív jelentést bezárja, és visszatér a jelentés-választó
@@ -149,12 +149,8 @@
 
         </div>
 
-        <div id="helpData">
+        <div class="helpData">
           <h3>Adatábrázolás</h3>
-
-          <p>
-            Az alkalmazás segítségével a Pulzus egészségügyi adattárház publikus jelentéseit lehet böngészni.
-          </p>
 
           <p>
             Egy jelentés néhány <em>dimenzió</em> szerint bontott <em>mutatókat</em> tartalmaz.
@@ -162,7 +158,7 @@
             illetve valamely más értékhez viszonyított <em>arányosított értékét</em>.
           </p>
           <div class="example">
-            A <em>Demográfiai adatok</em> című jelentésben:
+            Egy hipotetikus, <em>Demográfiai adatok</em> című jelentésben:
 
             <br /><br />
             Dimenziók:
@@ -183,7 +179,7 @@
 
         </div>
 
-        <div id="helpDrilling">
+        <div class="helpDrilling">
           <h3>Irányítás</h3>
 
           <p>
@@ -222,7 +218,7 @@
 
         </div>
 
-        <div id="helpPanels">
+        <div class="helpPanels">
           <h3>Panelek kezelése</h3>
           <p>
             Egy jelentés oldalán két fajta panel látható. A legfelső panel a <em>fejpanel</em>, amelyen
@@ -274,7 +270,7 @@
 
         </div>
 
-        <div id="helpHeadPanel">
+        <div class="helpHeadPanel">
           <h3>Fejpanel</h3>
           <h4>Dimenziók száma: összes, megjelenített mutatók száma: összes.</h4>
 
@@ -307,7 +303,7 @@
           </p>					
         </div>
 
-        <div id="helpPieChartPanel">
+        <div class="helpPieChartPanel">
           <h3>Kördiagram</h3>
           <h4>Dimenziók száma: 1, megjelenített mutatók száma: 1.</h4>
 
@@ -356,7 +352,7 @@
 
         </div>
 
-        <div id="helpBarPanel">
+        <div class="helpBarPanel">
           <h3>Oszlopdiagram</h3>
           <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
 
@@ -446,7 +442,7 @@
           </div>                   
         </div>				
 
-        <div id="helpLinePanel">
+        <div class="helpLinePanel">
           <h3>Vonaldiagram</h3>
           <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
 
@@ -531,7 +527,7 @@
           </div>              
         </div>
 
-        <div id="helpMapPanel">
+        <div class="helpMapPanel">
           <h3>Térkép</h3>
           <h4>Dimenziók száma: 1 területi dimenzió, megjelenített mutatók száma: 1.</h4>
 
@@ -595,7 +591,7 @@
           </p>
         </div>
 
-        <div id="helpBar2Panel">
+        <div class="helpBar2Panel">
           <h3>2 dimenziós oszlopdiagram</h3>
           <h4>Dimenziók száma: 2, megjelenített mutatók száma: 1.</h4>
 
@@ -663,7 +659,7 @@
 
         </div>
 
-        <div id="helpHorizontalBarPanel">
+        <div class="helpHorizontalBarPanel">
           <h3>Vízszintes oszlopdiagram</h3>
           <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
 
@@ -739,7 +735,7 @@
           </div>
         </div>
 
-        <div id="help_Panel_Table">
+        <div class="help_Panel_Table">
           <h3>1 vagy 2 dimenziós táblázat</h3>
           <h4>Dimenziók száma: 1 vagy 2, megjelenített mutatók száma: összes vagy 1.</h4>
 
@@ -803,7 +799,799 @@
 
         </div>
 
+        <div class="helpAbout">
+          <h3>A programról</h3>          
+          <div>
+            A program <em>kurva</em> jó.
+          </div>
+
+          <h3><br />Legutóbbi változások</h3>
+          <div class="changelog">
+            A változások listája nem elérhető.
+          </div>        
+
+        </div>
+
+
+
+
       </div>
+      
+      
+      
+        
+      <!-- Angol nyelvű változat -->
+      <div class="helpContent localized language_en language">
+  
+        <div class="helpStart">
+          <h3 class="noReport">No report loaded</h3>          
+          <div class="helpReport0"></div>
+          <hr class="hideWhenOnlyOne"/>          
+          <div class="helpReport1"></div>
+        </div>
+
+        <div class="helpToolbar">
+          <h3>Header</h3>
+
+          <p>
+            EN Az alkalmazás a fejlécen található gombokkal vezérelhető. Balról jobbra haladva az alábbi gombokat láthatjuk:
+          </p>
+
+
+          <ul>
+            <li>
+              <svg class="plusButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_plus" />
+              </svg>
+              <em>Nagyítás.</em> Inaktív, ha már nincs hova nagyítani.
+            </li>
+
+            <li>
+              <svg class="minusButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_minus" />
+              </svg>
+              <em>Kicsinytés.</em> Inaktív, ha már nincs hova kicsinyíteni.
+            </li>
+
+            <li>
+              <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
+              <path d="M35,12 L35,9 a3,3 0 0 0 -3,-3 L8,6 a3,3 0 0 0 -3,3 L5,23 a3,3 0 0 0 3,3 L22,26"/>
+              <use xlink:href="#icon_newpanel" />	
+              </svg>
+              <em>Új panel hozzáadása.</em> A lenyíló menüből választhatunk a rendelkezésre álló panelek közül.
+              A gomb inaktív, ha még nincs megnyitott jelentés, ha több jelentés is van a képernyőn, vagy ha
+              már elértük a maximális panelszámot (6).
+            </li>
+
+            <li>
+              <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
+              <use xlink:href="#icon_kill" />
+              </svg>
+              <em>Panel törlése.</em> A kurzor átváltozik célkeresztté, amellyel a kiválasztott panel törölhető.
+              A gomb inaktív, ha még nincs megnyitott jelentés, ha több jelentés is van a képernyőn, vagy ha
+              már töröltük az összes panelt.
+            </li>
+
+            <li>
+              <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
+              <use xlink:href="#icon_save" />
+              </svg>
+              <em>Adatok mentése.</em> A pillanatnyi lefúrási szinthez tartozó adatokat menthetjük el, miután
+              a megjelenő ablakban beállítottuk, hogy mely dimenziók szerinti bontásban szeretnénk
+              az adatokat részletezni. Ha a böngésző nem képes közvetlenül fájlba írni, akkor egy szövegmezőben
+              jelenik meg az elmentendő adat. Ezt COPY+PASTE segítségével metsük el egy .csv kiterjesztésű fájlba.
+              A kapott .csv fájl tetszőleges táblázatkezelővel (Excel, Openoffice) megnyitható.
+              A gomb inaktív, ha még nincs megnyitott jelentés, vagy ha több jelentés is van a képernyőn.
+            </li>
+
+            <li>
+              <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
+              <use xlink:href="#icon_save_png" />
+              </svg>
+              <em>Panelek mentése képként.</em> Az összes panelt elmenti 1200x800 pixeles .png-ként.
+              Bizonyos böngészők (Internet Explorer) erre sajnos nem képesek.
+              A gomb inaktív, ha még nincs megnyitott jelentés, vagy ha több jelentés is van a képernyőn.
+            </li>            
+
+            <li>
+              <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
+              <use xlink:href="#icon_help" />
+              </svg>
+              <em>Használati segédlet.</em>
+            </li>
+
+            <li>
+              <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
+              <use xlink:href="#icon_flag" />
+              </svg>
+              <em>Nyelv választó.</em>
+            </li>
+                        
+            <li>
+              <svg class="switchButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_switch" />
+              </svg>						
+              <em>Váltás 1 vagy 2 oldalas kijelzés között.</em> A két oldalas kijelzéssel egyszerre két, egymástól
+              független jelentés böngészhető.
+            </li>
+
+            <li>
+              <svg class="closeButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_close" />
+              </svg>
+              <em>Jelentés bezárása.</em> Az épp aktív jelentést bezárja, és visszatér a jelentés-választó
+              menübe. A gomb inaktív, ha még nincs megnyitott jelentés, vagy ha több jelentés is van a képernyőn.
+            </li>
+          </ul>
+
+        </div>
+
+        <div class="helpData">
+          <h3>Adatábrázolás</h3>
+
+          <p>
+            Egy jelentés néhány <em>dimenzió</em> szerint bontott <em>mutatókat</em> tartalmaz.
+            Minden mutatót kétféleképp ábrázolhatunk, vizsgálhatjuk magának a mutatott mennyiségnek az <em>értékét</em>,
+            illetve valamely más értékhez viszonyított <em>arányosított értékét</em>.
+          </p>
+          <div class="example">
+            Egy hipotetikus, <em>Demográfiai adatok</em> című jelentésben:
+
+            <br /><br />
+            Dimenziók:
+
+            <ul>
+              <li>Vonatkozási év</li>
+              <li>Nem</li>
+              <li>Terület</li>
+            </ul>
+            <br>
+            Mutatók:
+            <ul>
+              <li>Élveszületések (fő, illetve fő/1000 lakos)</li>
+              <li>Halálozások (fő, illetve fő/1000 lakos)</li>
+              <li>65 éven felüliek (fő, illetve fő/1000 lakos)</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="helpDrilling">
+          <h3>Irányítás</h3>
+
+          <p>
+            A mutatók értékeit <em>panelek</em> segítségével vizsgálhatjuk.
+            Minden panel egy vagy több értéket mutat, egy vagy több dimenzió szerinti felbontásban.
+          </p>
+
+          <p class="example">
+            Egy térképpanel valamely mutató területi dimenzió szerinti felbontását mutatja,
+            egy oszlopdiagram akár több értéket, tetszőleges dimenzió szerint felbontva ábrázol.
+          </p>
+
+          <p>
+            Egy panelen egy dimenzióelemre kattintás az adott elemre való <em>lefúrást</em>
+            eredményez. Ez után az összes panel által mutatott érték már csak az adott dimenzióelemre
+            vonatkozik. Egy dimenzó mentén való <em>felfúrást</em> a dimenziót bontó panel hátterére való kattintással
+            kezdeményezhetünk.	
+          </p>
+          <p class="example">
+            Ha egy térképpanelen Heves megyére kattintunk, akkor minden
+            panel a Heves megyei adatokat mutatja, a térképpanel pedig Heves megyét bontja tovább
+            kistérségekre. Ez után, ha egy nem dimenziót ábrázoló oszlopdiagram panelen a
+            Férfi oszlopra kattintunk, akkor minden panelen már csak a Heves megyei férfiakra vonatkozó
+            adat lesz látható.
+          </p>
+          <p>
+            A 2 dimenziós oszlopdiagram és a 2 dimenziós táblázat több dimenziót ábrázol.
+            Ekkor, a megfelelő dimenzióelemre katintással bármely dimenzióban kezdeményezhető
+            lefúrás, illetve a dimenzió mellé kattintva felfúrás is.
+          </p>
+
+          <p>
+            Ha egy panel által megjelenített értékre állítjuk az egeret, akkor a kb. 1 másodperc múlva
+            felbukkanó buborékban a kijelzett mennyiség pontos értékét is láthatjuk.
+          </p>
+
+        </div>
+
+        <div class="helpPanels">
+          <h3>Panelek kezelése</h3>
+          <p>
+            Egy jelentés oldalán két fajta panel látható. A legfelső panel a <em>fejpanel</em>, amelyen
+            a jelentés dimenziói és mutatói láthatóak. A többi panel mindegyike 1 vagy több mutató
+            értékét mutatja, 1 vagy több dimenzió szerint alábontva. Ezen paneleken az ábrázolt mutatók
+            és az alábontott dimenziók állíthatóak, módosíthatóak.
+          </p>	
+
+          <p>
+            A <em>mutatók módosítására</em> három lehetőségünk van.
+          </p>
+
+          <ul> 
+            <li>A fejpanelen egy mutatóra kattintva az összes olyan panel, amely csak 1 mutatót ábrázol, erre a mutatóra vált.</li>
+            <li>Ha egy panel csak egy mutatót ábrázol, akkor a panel színes fejlécén a mutató nevére kattintva a panel 
+              a következő mutató kijelzésére vált.</li>
+            <li>A fejpanelről egy mutatót <em>húzd-és-ejtsd</em> módon a panelre dobhatunk. Ha a panel fejlécére dobjuk,
+              akkor a panel csak ezt az egy mutatót fogja ábrázolni, de a vonal- vagy oszlopdiagramos paneleken
+              több mutató együttes kijelzését és elérhetjük, ha nem a fejlécre, hanem a diagram megfelelő részére ejtjük
+              a mutatót.</li>
+          </ul>
+
+          <p>
+            Egy panel <em>érték / arányosított érték</em> kijelzés közötti váltását kétféleképp tehetjük meg.
+          </p>
+          <ul> 
+            <li>Ha a fejpanelen egy mutatóra kattintunk (ekkor az összes panel ezt fogja mutatni), akkor, ha az
+              <em>arányosított érték</em> oszlopban történik a kattintás, akkor az összes panel az arányosított
+              érték kijelzésére vált.</li>
+            <li>Egy panel fejlécén a mértékegységre kattintva annak az egy panelnek az adatábrázolását
+              változtathatjuk érték / arányosított érték kijelzés között.</li>
+          </ul>
+          Ha egy mutatónak az értéke vagy arányosított értéke <em>nem értelmezett</em>, akkor egyik panel kijelzése
+          se állítható rá.
+
+          <p>
+            Egy panel <em>dimenziójának módosítását</em> a dimenzió fejpanelről történő <em>áthúzásával</em> valósíthatjuk
+            meg. Bizonyos panelek több dimenziót is alábontanak, ezek külön-külön a panel megfelelő helyére ejtéssel
+            módosíthatóak. Térképpanelre pedig csak területi dimenziót dobhatunk.
+          </p>
+
+          <p class="example">
+            Vonal- vagy oszlopdiagramot tartalmazó panelen egyszerre több mutatót is megjeleníthetünk.
+            Ha azonban bizonyos megjelenítendő mutatóknak az értéke, más mutatóknak
+            pedig az arányosított értéke <em>nem értelmezett</em>, akkor a panel nem képes a kért mutatók
+            együttes megjelenítésére. Ekkor a panel egy nagy ?-et tartalmaz csak, de egy új mutató fejlécre való
+            ejtésével visszaállítható a normális működés.
+          </p>
+
+        </div>
+
+        <div class="helpHeadPanel">
+          <h3>Fejpanel</h3>
+          <h4>Dimenziók száma: összes, megjelenített mutatók száma: összes.</h4>
+
+          <p>
+            A jelentés tetején található panel a <em>fejpanel</em>. Nem törölhető, nem is lehet újat létrehozni
+            belőle. Célja kettős:
+          </p>
+          <ul>
+            <li>mutatja a dimenziók pillanatnyi lefúrási szintjét, illetve a mutatók adott szinten felvett értékét,</li>
+            <li>alapul szolgál a többi panel kijelzett dimenzióinak és értékeinek megváltoztatásához.</li>
+          </ul>
+
+          <p>
+            Más panel dimenziójának megváltoztatásához a fejpanel megfelelő dimenzióját kell egérrel megragadni, majd
+            a célpanel megfelelő részére ejteni.
+          </p>
+
+          <p>
+            Egy mutatóra kattintva az összes panel az adott mutató ábrázolására vált. Ha a mutatóra az <em>arányosított érték</em>
+            oszlopban kattintunk, akkor a panelek az arányosított értéket fogják mutatni, különben a mutató normál értékét.
+            Ha csak egy panel mutatóját akarjuk megváltoztatni, vagy egy panelhez újabb mutatót hozzáadni, azt a fejpanel
+            megfelelő mutatójának megragadásával, és a panel fejlécére, vagy megfelelő helyére ejtésével tehetjük.
+          </p>
+
+          <p class="example">
+            Ha egy jelentés sok dimenziót vagy mutatót tartalmaz, előfordulhat, hogy a fejpanelbe nem fér bele az összes egyszerre.
+            Ekkor a dimenziók vagy mutatók táblázata mellett megjelenő görgetősávval tallózhatunk közöttük. Ha egy dimenzió
+            vagy mutató neve olyan hosszú, hogy nem fér el a rendelkezésre álló helyen (...-ra végződik), akkor az egérrel
+            rámutatva a kb. 1 másodperc múlva megjelenő buborékban megjelenik a pontos név.
+          </p>					
+        </div>
+
+        <div class="helpPieChartPanel">
+          <h3>Kördiagram</h3>
+          <h4>Dimenziók száma: 1, megjelenített mutatók száma: 1.</h4>
+
+          <p>
+            A kördiagrammal tetszőleges mutatót, tetszőleges dimenzió szerint bontva ábrázolhatunk.
+            A kördiagram cikkelyei az adott dimenzió elemeit jelképezik, méretük a mutató értékével arányos.
+            A cikkelyek mellett a dimenzióelem neve, és a mutató értékének a teljesből kitöltött százalékos
+            aránya szerepel. Az egeret a körcikk fölé mozgatva a felbukkanó buborékban leolvasható a
+            mutató pontos értéke is.
+          </p>
+
+          <p class="example">
+            Ahol kis körcikkek sűrűn egymás mellé torlódnak, ott az olvashatóság megőrzése érdekében
+            a körcik melletti felirat hiányzik. Az egérmutatót a körcikk fölé mozgatva a megjelenő
+            buborékban ekkor is leolvasható a dimenzióelem neve, és a mutató hozzá tartozó értéke.
+          </p>				
+
+          <p>
+            Egy dimenzióelemre való lefúrást a dimenzióelemhez tartozó körcikkre való kattintással
+            kezdeményezhetünk, felfúrást a panel hátterére kattintva.
+          </p>
+
+          <p>
+            A kördiagram által bontott dimenziót a fejpanelen található dimenziók
+            egyikének panelre dobásával változtathatjuk meg.
+          </p>
+
+          <p>
+            Más mutató ábrázolását a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
+            a kiválasztott mutatónak a kördiagram fejlécére húzásával, vagy a kördiagram fejlécén a mutatóra
+            kattintással kezdeményezhetjük.<br>
+            Az <em>érték / arányosított érték</em> kijelzés között a fejlécen
+            található mértékegységre kattintással, vagy a fejpanelen a megfelelő mutató <em>arányosított érték</em>
+            oszlopába katintással válthatunk (ekkor az összes panel vált).
+          </p>
+
+          <div class="p">
+            Az éppen böngészett jelentésbe új kördiagram-panelt a fejlécen található <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_pie" />
+              </svg>
+            </div>
+            gombjával vehetünk fel.
+          </div>
+
+        </div>
+
+        <div class="helpBarPanel">
+          <h3>Oszlopdiagram</h3>
+          <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
+
+          <p>
+            Oszlopdiagrammal 1 vagy több mutatót tetszőleges dimenzió szerinti bontásban ábrázolhatunk.
+            Az oszlopdiagram lehet <em>hagyományos</em> vagy <em>széthúzott</em>, amelyben minden oszlop azonos
+            magasságúra van széthúzva. A hagyományos oszlopdiagramhoz <em>vonaldiagramokat</em>
+            is hozzáadhatunk.
+          </p>
+
+          <p class="example">
+            Az egérmutatót egy oszlop fölé húzva megjelenik az oszlop által szemléltetett dimenzióelem
+            neve, és a mutatók értékei. Ha az oszlopok olyan sűrűek, hogy a dimenzióelemek
+            nevei nem férnének ki rá, a név így mindenképp megnézhető.
+          </p>					
+
+          <p>
+            Egy dimenzióelemre való lefúrást a dimenzióelemhez tartozó oszlopra kattintással
+            kezdeményezhetünk, felfúrást a panel hátterére kattintva.
+          </p>
+
+          <p>
+            Az oszlopdiagram által bontott dimenziót a fejpanelen található dimenziók
+            egyikének panelre dobásával változtathatjuk meg.
+          </p>
+
+          <p>
+            Ha a diagram csak egy mutatót ábrázol, akkor ennek lecserélését
+            a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
+            a kiválasztott mutatónak fejpanelről az oszlopdiagram fejlécére húzásával, vagy a diagram fejlécén a mutatóra
+            kattintással végezhetjük.<br>
+            Több mutatót együttes ábrázolását csak a mutatónak a fejpanelről való áthúzásával kezdeményezhetjük. Ha az új mutatót a panel alsó felére
+            dobjuk, az oszlopdiagramként, ha a felsőre, akkor vonaldiagramként kerül az ábrára. Ha a mutatót
+            a panel fejlécére dobjuk, akkor csak ezt az egyetlen mutatót fogjuk látni.
+            Több mutató oszlopdiagramon való együttes ábrázolásakor a mutatók egymás fölé kerülnek,
+            azaz <em>halmozott oszlopdiagramként</em> jelennek meg. Ugyanaz a muatató több példányban
+            (pl. oszlopdiagramként és vonaldiagramként) egyszerre nem jeleníthető meg.<br>
+            Az <em>érték / arányosított érték</em> kijelzés között a fejlécen
+            található mértékegységre kattintással válthatunk.
+          </p>
+
+          <p class="example">
+            Ha az egyik megjelenítendő mutatóknak az értéke, más mutatónak pedig az arányosított értéke
+            <em>nem értelmezett</em>, akkor a panel nem képes a kért mutatók együttes megjelenítésére.
+            Ekkor a panel egy nagy ?-et tartalmaz csak, de egy új mutató fejlécre való
+            ejtésével visszaállítható a normális működés.<br>
+            Ha a panelen egyszerre több olyan mutatót jelenítünk meg, amelyek értékkészlete más
+            nagyságrendű (pl. millió forint és doboz gyógyszer), akkor az egyik mutató - mivel értéke
+            nagyságrendekkel kisebb mint a másik - úgy tűnhet, mintha ott se lenne.
+          </p>
+
+          <p>
+            Több mutató ábrázolásakor a panel alsó részén megjelenik a <em>jelkulcs</em>.
+            Egy jelkulcselemre katintással megjeleníthetjük/eltüntethetjük az adott mennyiség
+            átlagos értékét, <em>átlagvonalként</em> ábrázolva.
+          </p>
+
+          <div class="p">
+            Az éppen böngészett jelentésbe normális, illetve széthúzott oszlopdiagram-panelt
+            a fejlécen található <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_bar" />
+              </svg>
+            </div>
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_bar_streched" />
+              </svg>	
+            </div>	
+            gombjaival vehetünk fel.					
+          </div>
+
+          <p class="example">
+            Széthúzott oszlopdiagramnak csak akkor van értelme, ha egyszerre több mutatót ábrázol.
+            Széthúzott oszlopdiagramra nem tehetünk vonaldiagramként további mutatókat.
+          </p>
+
+          <div class="p">
+            Olyan oszlopdiagrammot is használhatunk, amely mindig csak a 10 legnagyobb értéket mutatja. Ilyet az éppen böngészett jelentéshez az <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_top10_bar" />
+              </svg>
+            </div>
+            gombjával adhatunk hozzá.					
+          </div>                   
+        </div>				
+
+        <div class="helpLinePanel">
+          <h3>Vonaldiagram</h3>
+          <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
+
+          <p>
+            Vonaldiagrammal 1 vagy több mutatót tetszőleges dimenzió szerinti bontásban ábrázolhatunk.
+            A vonaldiagrammal egy értéket ábrázolhatunk hagyományosan törtvonallal, de tehetünk rá
+            <em>jelölőket</em> is. A vonaldiagramhoz <em>oszlopdiagramokat</em> is hozzáadhatunk.
+          </p>
+
+          <p class="example">
+            Az egérmutatót egy <em>jelölő</em>, vagy a vonal és egy dimenzióelem képzeletbeli metszéspontja
+            fölé húzva megjelenik az oszlop által szemléltetett dimenzióelem
+            neve, és a mutatók értékei. Ha a dimenzió elemei olyan sűrűek, hogy a nevük nem férnének ki,
+            a név így mindenképp megnézhető.
+          </p>					
+
+          <p>
+            Egy dimenzióelemre való lefúrást a dimenzióelemhez tartozó <em>jelölőre</em>, vagy a dimenzióelemre
+            való kattintással kezdeményezhetünk, felfúrást a panel hátterére kattintva.
+          </p>
+
+          <p>
+            Az vonaldiagram által bontott dimenziót a fejpanelen található dimenziók
+            egyikének panelre dobásával változtathatjuk meg.
+          </p>
+
+          <p>
+            Ha a diagram csak egy mutatót ábrázol, akkor ennek lecserélését
+            a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
+            a kiválasztott mutatónak fejpanelről a vonaldiagram fejlécére húzásával, vagy a diagram fejlécén a mutatóra
+            kattintással végezhetjük.<br>
+            Több mutatót együttes ábrázolását csak a mutatónak a fejpanelről való áthúzásával kezdeményezhetjük. Ha az új mutatót a panel alsó felére
+            dobjuk, az oszlopdiagramként, ha a felsőre, akkor vonaldiagramként kerül az ábrára. Ha a mutatót
+            a panel fejlécére dobjuk, akkor csak ezt az egyetlen mutatót fogjuk látni.
+            Több mutató oszlopdiagramon való együttes ábrázolásakor a mutatók egymás fölé kerülnek,
+            azaz <em>halmozott oszlopdiagramként</em> jelennek meg. Ugyanaz a muatató több példányban
+            (pl. oszlopdiagramként és vonaldiagramként) egyszerre nem jeleníthető meg.<br>
+            Az <em>érték / arányosított érték</em> kijelzés között a fejlécen
+            található mértékegységre kattintással válthatunk.
+          </p>
+
+          <p class="example">
+            Ha az egyik megjelenítendő mutatóknak az értéke, más mutatónak pedig az arányosított értéke
+            <em>nem értelmezett</em>, akkor a panel nem képes a kért mutatók együttes megjelenítésére.
+            Ekkor a panel egy nagy ?-et tartalmaz csak, de egy új mutató fejlécre való
+            ejtésével visszaállítható a normális működés.<br>
+            Ha a panelen egyszerre több olyan mutatót jelenítünk meg, amelyek értékkészlete más
+            nagyságrendű (pl. millió forint és doboz gyógyszer), akkor az egyik mutató - mivel értéke
+            nagyságrendekkel kisebb mint a másik - úgy tűnhet, mintha ott se lenne.
+          </p>
+
+          <p>
+            Több mutató ábrázolásakor a panel alsó részén megjelenik a <em>jelkulcs</em>.
+            Egy jelkulcselemre katintással megjeleníthetjük/eltüntethetjük az adott mennyiség
+            átlagos értékét, <em>átlagvonalként</em> ábrázolva.
+          </p>
+
+          <div class="p">
+            Az éppen böngészett jelentésbe normális, illetve jelölővel ellátott vonaldiagram-panelt
+            a fejlécen található <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_line" />
+              </svg>
+            </div>
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_line_marker" />
+              </svg>
+            </div>	
+            gombbjaival vehetünk fel.					
+          </div>
+
+          <div class="p">
+            Olyan vonaldiagrammot is használhatunk, amely mindig csak a 10 legnagyobb értéket mutatja. Ilyet az éppen böngészett jelentéshez az <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_top10_line" />
+              </svg>
+            </div>
+            gombjával adhatunk hozzá.					
+          </div>              
+        </div>
+
+        <div class="helpMapPanel">
+          <h3>Térkép</h3>
+          <h4>Dimenziók száma: 1 területi dimenzió, megjelenített mutatók száma: 1.</h4>
+
+          <p>
+            A térképpel egy tetszőleges mutatót területi dimenzió szerint bontva ábrázolhatunk.
+            A térképen a pillanatnyi lefúrási szintnek megfelelő terület látható, az ábrázolt mutató
+            értéke szerinti színárnyalattal színezve (területi kartogram).
+            A különböző színértékekhez tartozó érték a térkép alatti <em>jelkulcsról</em>
+            olvasható le. Az egeret egy terület fölé mozgatva a felbukkanó buborékban leolvasható a
+            mutató pontos értéke is.<br>
+            Ha a jelentés <em>POI-kat (érdekes helyszínek)</em> tartalmaz, ezek is megjeleníthetőek.
+          </p>
+
+          <p>
+            Egy területre való lefúrást a területre való kattintással 
+            kezdeményezhetünk, felfúrást a panel hátterére kattintva.
+          </p>
+
+          <p>
+            A térkép által ábrázolt dimenziót egy másik területi dimenzióra a fejpanelen található dimenziók
+            egyikének panelre dobásával változtathatjuk meg.
+          </p>
+
+          <p class="example">
+            Ha térképpanelre nem területi dimenzió dobunk - mivel annak megjelenítése a térképen nem lehetséges -
+            nem történik semmi változás.
+          </p>
+
+          <p>
+            Más mutató ábrázolását a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
+            a kiválasztott mutatónak a térképpanel fejlécére húzásával, vagy a térképpanel fejlécén a mutatóra
+            kattintással kezdeményezhetjük.<br>
+            Az <em>érték / arányosított érték</em> kijelzés között a fejlécen
+            található mértékegységre kattintással, vagy a fejpanelen a megfelelő mutató <em>arányosított érték</em>
+            oszlopába katintással válthatunk (ekkor az összes panel vált).
+          </p>
+
+          <p>
+            Ha a jelentés <em>érdekes pontokat (POI-kat)</em> tartalmaz, a panel jobb alsó
+            sarkában megjelenő <em>POI-jelkulccson</em> ki/be kapcsolható ezek megjelenése.<br>
+          </p>
+
+          <div class="p">
+            Az éppen böngészett jelentésbe térképpanelt, illetve POI-val ellátott térképpanelt a fejlécen található <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="50px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 32">
+              <use xlink:href="#icon_panel_map" />
+              </svg>
+            </div>
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="50px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 32">
+              <use xlink:href="#icon_panel_map_marker" />
+              </svg>
+            </div>
+            gombjával vehetünk fel.
+          </div>	
+
+          <p class="example">
+            Ha a jelentésnek egyáltalán nincs területi dimenziója, akkor a az <em>Új menü</em> térképpanel
+            gombja inaktív.
+          </p>
+        </div>
+
+        <div class="helpBar2Panel">
+          <h3>2 dimenziós oszlopdiagram</h3>
+          <h4>Dimenziók száma: 2, megjelenített mutatók száma: 1.</h4>
+
+          <p>
+            A 2 dimenziós oszlopdiagram az egyik dimenzió értékeit különböző oszlopokkal, a másik
+            dimenzió értékeit az oszlopokon belüli megosztással szemlélteti. E második dimenzió értékei
+            a <em>jelkulcsról</em> olvashatóak le.<br>
+            A diagram lehet <em>hagyományos</em> vagy <em>széthúzott</em>, amelyben minden oszlop azonos
+            magasságúra van széthúzva.
+          </p>
+
+          <p class="example">
+            <img src="image.png">
+            A példán egy mutató területi megoszlását különböző oszlopok, nemek szerinti megoszlását
+            egy oszlopon belüli két szín szemlélteti. A mutató adott (hely,&nbsp;nem) páron felvett értéke
+            az oszlopelem magasságával arányos.
+          </p>				
+
+          <p class="example">
+            Az egérmutatót egy oszlop fölé húzva megjelenik az oszlop által szemléltetett dimenzióelem
+            neve, és a mutatók értékei. Ha az oszlopok olyan sűrűek, hogy a dimenzióelemek
+            nevei nem férnének ki rá, így olvashatjuk le őket.
+            Az egérmutatót a jelkulcs fölé húzva a jelkulcs dimenzióelemének a neve jelenik meg.
+            Ha a jelkulcs olyan sűrű, hogy a dimenzióelemek nevei nem láthatóak, akkor így nézhetjük meg
+            őket.
+          </p>		
+
+          <p>
+            Az oszlopokon ábrázolt dimenzió egy elemére való lefúrást az oszlopra való kattintással
+            kezdeményezhetünk, felfúrást a panel hátterének a vízszintes tengely fölötti részére kattintva.<br>
+            A jelkulcson ábrázolt dimenzióban való lefúrást a jelkulcs egyik elemére
+            kattintással, felfúrást a panel hátterének vízszintes tengely alatti részére kattintással végezhetünk.
+          </p>
+
+          <p>
+            A diagram által bontott dimenziót a fejpanelen található dimenziók
+            egyikének panelre dobásával változtathatjuk meg. Ha a dimenziót a vízszintes tengely fölötti részre
+            ejtjük, akkor az oszlopokkal ábrázolt dimenzió változik meg, ha a vízszintes tengely alá ejtünk,
+            akkor a jelkulcsé.
+          </p>
+
+          <p>
+            Más mutató ábrázolását a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
+            a kiválasztott mutatónak a diagram fejlécére húzásával, vagy a diagram fejlécén a mutatóra
+            kattintással kezdeményezhetjük.<br>
+            Az <em>érték / arányosított érték</em> kijelzés között a fejlécen
+            található mértékegységre kattintással, vagy a fejpanelen a megfelelő mutató <em>arányosított érték</em>
+            oszlopába katintással válthatunk (ekkor az összes panel vált).
+          </p>
+
+          <div class="p">
+            Az éppen böngészett jelentésbe normális, illetve széthúzott 2 dimenziós oszlopdiagram-panelt
+            a fejlécen található <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_2d_bar" />
+              </svg>
+            </div>
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_2d_bar_streched" />
+              </svg>
+            </div> gombjaival vehetünk fel.					
+          </div>
+
+        </div>
+
+        <div class="helpHorizontalBarPanel">
+          <h3>Vízszintes oszlopdiagram</h3>
+          <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
+
+          <p>
+            Vízszintes olszopdiagrammal - hasonlóan az oszlopdiagramhoz - 1 vagy több mutatót ábrázolhatunk, tetszőleges
+            dimenzió szerinti bontásban.
+            Azonban, ellentétben az oszlopdiagrammal, itt lehetőség van bizonyos mutatókat pozitív, bizonyosakat negatív
+            irányban ábrázolni.
+            A vízszintes oszlopdiagram lehet <em>hagyományos</em> vagy <em>centrált</em>, amelyben a diagram pozitív
+            és negatív része azonos szélességű.
+          </p>
+
+          <p class="example">
+            Az egérmutatót egy oszlop fölé húzva megjelenik az oszlop által szemléltetett dimenzióelem
+            neve, és a mutatók értékei. Ha az oszlopok olyan sűrűek, hogy a dimenzióelemek
+            nevei nem férnének ki rá, a név így mindenképp megnézhető.
+          </p>					
+
+          <p>
+            Egy dimenzióelemre való lefúrást a dimenzióelemhez tartozó oszlopra kattintással
+            kezdeményezhetünk, felfúrást a panel hátterére kattintva.
+          </p>
+
+          <p>
+            Az oszlopdiagram által bontott dimenziót a fejpanelen található dimenziók
+            egyikének panelre dobásával változtathatjuk meg.
+          </p>
+
+          <p>
+            Ha a diagram csak egy mutatót ábrázol, akkor ennek lecserélését
+            a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
+            a kiválasztott mutatónak fejpanelről az oszlopdiagram fejlécére húzásával, vagy a diagram fejlécén a mutatóra
+            kattintással végezhetjük.<br>
+            Több mutatót együttes ábrázolását csak a mutatónak a fejpanelről való áthúzásával kezdeményezhetjük.
+            Ha az új mutatót a függőleges tengelytől balra, akkor negatív, ha jobbra, akkor pozitív irányban
+            kerül ábrázolásra.
+            Ha a mutatót
+            a panel fejlécére dobjuk, akkor csak ezt az egyetlen mutatót fogjuk látni.
+            Több mutató oszlopdiagramon való együttes ábrázolásakor a mutatók egymás mellé kerülnek,
+            azaz <em>halmozott oszlopdiagramként</em> jelennek meg. Ugyanaz a muatató több példányban
+            (pl. pozitív és negatív irányban) egyszerre nem jeleníthető meg.<br>
+            Az <em>érték / arányosított érték</em> kijelzés között a fejlécen
+            található mértékegységre kattintással válthatunk.
+          </p>
+
+          <p class="example">
+            Ha az egyik megjelenítendő mutatóknak az értéke, más mutatónak pedig az arányosított értéke
+            <em>nem értelmezett</em>, akkor a panel nem képes a kért mutatók együttes megjelenítésére.
+            Ekkor a panel egy nagy ?-et tartalmaz csak, de egy új mutató fejlécre való
+            ejtésével visszaállítható a normális működés.<br>
+            Ha a panelen egyszerre több olyan mutatót jelenítünk meg, amelyek értékkészlete más
+            nagyságrendű (pl. millió forint és doboz gyógyszer), akkor az egyik mutató - mivel értéke
+            nagyságrendekkel kisebb mint a másik - úgy tűnhet, mintha ott se lenne.
+          </p>
+
+          <p>
+            Több mutató ábrázolásakor a panel alsó részén megjelenik a <em>jelkulcs</em>.
+          </p>
+
+          <div class="p">
+            Az éppen böngészett jelentésbe új hagyományos, illetve centrált vízszintes oszlopdiagram-panelt
+            a fejlécen található <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_horizontalbar" />
+              </svg>							
+            </div>
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_horizontalbar_centered" />
+              </svg>								
+            </div> gombjaival vehetünk fel.					
+          </div>
+        </div>
+
+        <div class="help_Panel_Table">
+          <h3>1 vagy 2 dimenziós táblázat</h3>
+          <h4>Dimenziók száma: 1 vagy 2, megjelenített mutatók száma: összes vagy 1.</h4>
+
+          <p>
+            Az 1 dimenziós táblázattal egyszerre az összes mutatót vizsgálhatjuk tetszőleges
+            dimenzió szerinti bontásban. Ekkor a táblázat sorai a felbontott dimenzió elemeit
+            tartalmazzák, az oszlopok pedig a mutatókat.<br>
+            2 dimenziós táblázattal csak egy mutatót vizsgálhatunk, de két dimenzió szerint
+            bontva. A két dimenzió egyike a sorokban, a másik az oszlopokban szerepel.
+          </p>
+
+          <p class="example">
+            Az egérmutatóval a táblázatok sor- vagy oszlop-fejlécére, illetve valamely
+            cellára mutatva a megjelenik a dimenzióelem vagy mutató neve, illetve a mutató értéke.
+          </p>
+
+          <p>
+            Egy dimenzióelemre való lefúrást a dimenzióelemhez tartozó sor- vagy oszlop-fejlécre
+            kattintással kezdeményezhetünk, felfúrást a panel hátterére kattintva. A 2 dimenziós
+            táblázatban a sorokat alkotó dimenzióban való felfúrást a panel hátterének sor-fejléceket
+            tartalmazó bal oldali részére, az oszlop-dimenzióban felfúrást a maradék részére kattintás
+            indít.
+          </p>
+
+          <p>
+            A táblázat által bontott dimenziót a fejpanelen található dimenziók
+            egyikének panelre dobásával változtathatjuk meg. A 2 dimenziós táblázatban a felfúráshoz
+            hasonlóan a megfelelő részre dobás cseréli le a sorok, illetve oszlopok dimenzióját.
+          </p>
+
+          <p>
+            Az 1 dimenziós táblázat automatikusan tartalmazza az összes mutatót.
+            A 2 dimenziós esetben más mutató ábrázolását a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
+            a kiválasztott mutatónak a panel fejlécére húzásával, vagy a panel fejlécén a mutatóra
+            kattintással kezdeményezhetjük.<br>
+            Az <em>érték / arányosított érték</em> kijelzés között a fejlécen
+            található mértékegységre kattintással, vagy a fejpanelen a megfelelő mutató <em>arányosított érték</em>
+            oszlopába katintással válthatunk (ekkor az összes panel vált).
+          </p>
+
+          <p class="example">
+            Ha a táblázatban az oszlopok vagy sorok nem férnének ki a panelre, alul, illetve a jobb oldalon
+            gördítősávok jelennek meg.
+          </p>					
+
+          <div class="p">
+            Az éppen böngészett jelentésbe 1 vagy 2 dimenziós táblázatot
+            a fejlécen található <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_table_1d" />
+              </svg>								
+            </div>
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_table_2d" />
+              </svg>	
+            </div>
+            gombjaival vehetünk fel.	
+          </div>
+
+        </div>
+
+        <div class="helpAbout">
+          <h3>About</h3>          
+          <div>
+            It is <em>FUCKING</em> cool.
+          </div>
+
+          <h3><br />Changelog</h3>
+          <div class="changelog">
+            No changelog available.
+          </div>        
+
+        </div>
+      </div>
+      
+      
+      
     </div>
 
   </body>

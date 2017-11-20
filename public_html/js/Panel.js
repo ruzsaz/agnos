@@ -1,6 +1,6 @@
 /* global d3 */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * Az összes panel (kivéve a fejléc) közös őse.

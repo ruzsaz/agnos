@@ -1,6 +1,6 @@
 /* global HeadPanel, d3 */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * A report fejlécpanel konstruktora.
@@ -40,11 +40,11 @@ function HeadPanel_Report(init, reportMeta, startScale) {
 			.attr("class", "heading");
 
 	dimHeading.append("html:div")
-			.attr("class", "cell")
+			.attr("class", "cell loc")
 			.text("Dimenzió neve");
 
 	dimHeading.append("html:div")
-			.attr("class", "cell")
+			.attr("class", "cell loc")
 			.text("Lefúrási szint");
 
 	dimHeading.append("html:div")
@@ -72,31 +72,31 @@ function HeadPanel_Report(init, reportMeta, startScale) {
 
 
 	nameRow.append("html:text")
-			.text("Mutató neve")
-			.attr("class", "realText");
+			.attr("class", "realText loc")    
+			.text("Mutató neve");
 
 	nameRow.append("html:text")
-			.text("ArányosítottMérték k k k k k k k k k k k k k k k k k k k k k")
-			.attr("class", "dummyText");
-
+            .attr("class", "dummyText")
+			.text("ArányosítottMérték k k k k k k k k k k k k k k k k k k k k k");
+			
 	var valueRow = valHeading.append("html:div")
 			.attr("class", "cell");
 
 	valueRow.append("html:text")
-			.text("Érték")
-			.attr("class", "realText");
+            .attr("class", "realText loc")
+			.text("Érték");
 
 	valueRow.append("html:text")
-			.text("ArányosítottMérték")
-			.attr("class", "dummyText");
-
+            .attr("class", "dummyText")
+			.text("ArányosítottMérték");
+			
 	var ratioRow = valHeading.append("html:div")
 			.attr("class", "cell");
 
 	ratioRow.append("html:text")
-			.text("Arányosított érték")
-			.attr("class", "realText");
-
+            .attr("class", "realText loc")
+			.text("Arányosított érték");
+			
 	ratioRow.append("html:text")
 			.text("ArányosítottMérték")
 			.attr("class", "dummyText");
@@ -419,4 +419,8 @@ HeadPanel_Report.prototype.update = function(data) {
 			.style("opacity", 1);
 
 	//that.mediator.publish("magnify", 0);
+};
+
+HeadPanel_Report.prototype.refresh = function() {
+    
 };

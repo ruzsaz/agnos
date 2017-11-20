@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * Létrehoz egy html scrollbart, de egy svg-n belül, svg elemek scrollozására.

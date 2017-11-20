@@ -1,6 +1,6 @@
 /* global d3 */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * A fejléc panelek közös szülője.

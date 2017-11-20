@@ -1,6 +1,6 @@
 /* global d3 */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * Tooltip létrehozása. Csak 1x kell, újrahasznosítjuk.
@@ -26,9 +26,9 @@ function Tooltip() {
 		var event = d3.event;
 		var htmlTooltip = $($(event.target).closest("[tooltip]")[0]).attr('tooltip');
 		
-		if (htmlTooltip !== undefined) { // Ha a html elemhez, vagy valamely szülőjéhez tartozik tooltip=... attributum, azt jelenítjük meg.
+		if (htmlTooltip !== undefined) { // Ha a html elemhez, vagy valamely szülőjéhez tartozik tooltip=... attributum, azt jelenítjük meg, lefordítva.
 			that.element = undefined;
-			that.show(htmlTooltip);
+			that.show(_(htmlTooltip));
 		} else {			// Ha nem, megnézzük, hogy az adathoz tartozik-e?
 			var targetData = d3.select(event.target).data()[0];
 			if ((targetData && targetData.tooltip)) {

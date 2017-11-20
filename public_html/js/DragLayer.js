@@ -1,6 +1,6 @@
 /* global d3 */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * Húzd-és-ejtsd réteg konstruktora.

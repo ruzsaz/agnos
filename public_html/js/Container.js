@@ -1,6 +1,6 @@
 /* global d3, version, LZString, URL */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 /**
  * Az adatlekérdezőt tartalmazó konténer konstruktora.
@@ -87,6 +87,9 @@ function Container() {
 
     });
 
+    that.initChangelog();
+    global.tagForLocalization();
+    global.setLanguage("hu");
 }
 
 /**
@@ -278,26 +281,25 @@ Container.prototype.newReport = function(side, reportSuperMeta, startObject) {
 Container.prototype.updateHelp = function(side, reportName, updated, base64EncodedContent) {
     var header = (reportName) ? "<h3>" + reportName + "</h3>" : "";
     var updateTime = (updated) ? "<em>frissítve: " + updated + "</em><br>" : "";
-    var content = (base64EncodedContent) ? ((base64EncodedContent.length > 4) ? LZString.decode(base64EncodedContent) : "Nincs elérhető információ.") : "";
+    var content = "<div class='helpInnerHTML'>" + ((base64EncodedContent) ? ((base64EncodedContent.length > 4) ? LZString.decode(base64EncodedContent) : "Nincs elérhető információ.") : "") + "</div>";
     var html = header + updateTime + content;
 
     if (this.isSideInUse[0] && this.isSideInUse[1]) {   // Ha mindkét oldalon van report
-        d3.selectAll("#helpStart .hideWhenOnlyOne")
+        d3.selectAll(".helpStart .hideWhenOnlyOne")
                 .style("display", "block");
-        d3.select("#helpStart .placeHolder")
+        d3.selectAll(".helpStart .noReport")
                 .style("display", "none");
     } else if (this.isSideInUse[0] || this.isSideInUse[1]) {    // Ha csak az egyik oldalon van report
-        d3.selectAll("#helpStart .hideWhenOnlyOne")
+        d3.selectAll(".helpStart .hideWhenOnlyOne")
                 .style("display", "none");
-        d3.select("#helpStart .placeHolder")
+        d3.selectAll(".helpStart .noReport")
                 .style("display", "none");
     } else {    // Ha egyiken sincs report
-        d3.select("#helpStart .placeHolder")
+        d3.selectAll(".helpStart .noReport")
                 .style("display", "block");
-        d3.selectAll("#helpStart .hideWhenOnlyOne")
+        d3.selectAll(".helpStart .hideWhenOnlyOne")
                 .style("display", "none");
     }
-
     d3.select(".helpReport" + side).html(html);
 };
 
@@ -396,9 +398,10 @@ Container.prototype.newReportReady = function(side, reportMeta) {
  * regisztrálja az adatrendezőt, elindítja a report-böngészőt.
  * 
  * @param {Integer} side Az inicializálandó oldal.
+ * @param {Number} duration A fejlécpanel letörlésének időtartama. Ha undefined, azonnali.
  * @returns {undefined}
  */
-Container.prototype.initSide = function(side) {
+Container.prototype.initSide = function(side, duration) {
     var that = this;
 
     if (global.mediators === undefined || global.mediators[side] === undefined) {
@@ -428,9 +431,19 @@ Container.prototype.initSide = function(side) {
     new Draglayer(side, global.mediators[side]);
 
     var scaleRatio = Container.prototype.getScaleRatio(side, 1, global.panelNumberOnScreen, 0);
-    new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio);						// Fejléc.
+    if (duration) {
+        d3.select('#headPanelP' + side).transition().duration(duration)
+                .style("opacity", 0)
+                .each("end", function() {
+                    d3.select(this).style("opacity", null);
+                    new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio);						// Fejléc.
+                    that.onResize();
+                });
+    } else {
+        new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio);						// Fejléc.
+        that.onResize();
+    }
     this.dataDirector[side] = new DataDirector(side, global.mediators[side]);	// Adatrendező.
-    that.onResize();
 };
 
 /**
@@ -439,8 +452,8 @@ Container.prototype.initSide = function(side) {
  * @param {Integer} side A kérdéses oldal.
  * @returns {undefined}
  */
-Container.prototype.killSide = function(side) {    
-    if (this.panelState / 2 === side && this.isSideInUse[side]) {
+Container.prototype.killSide = function(side) {
+    if (this.isSideInUse[side] && (this.panelState / 2 === side || this.panelState === 1 || this.panelState === 3)) {
         global.mediators[side].publish("killListeners");
         global.mediators[side].publish("killPanel", undefined);
 
@@ -465,7 +478,7 @@ Container.prototype.killSide = function(side) {
         global.facts[side] = null;
         this.dataDirector[side] = undefined;
 
-        this.initSide(side);
+        this.initSide(side, global.selfDuration);
         global.mainToolbar_refreshState();
     }
 };
@@ -712,4 +725,38 @@ Container.prototype.saveAsCsv = function(side, requestedDims) {
             );
         }
     }, false);
+};
+
+/**
+ * Changelog hozzáfűzése a help-hez. Nyelvfüggő.
+ * 
+ * @returns {undefined}
+ */
+Container.prototype.initChangelog = function() {
+
+    if (changelog && changelog.length > 0) {
+        for (var langId = 0, langIdMax = changelog.length; langId < langIdMax; langId++) {
+            var lang = changelog[langId].language;
+            var history = changelog[langId].history;
+            if (history && history.length > 0) {
+                history.sort(function(a, b) {
+                    return a.date < b.date;
+                })
+
+                var changelogAnchorpoint = d3.select(".language_" + lang + " .helpAbout .changelog");
+                if (!changelogAnchorpoint.empty()) {
+                    changelogAnchorpoint.html("");
+                    for (var i = 0, iMax = history.length; i < iMax; i++) {
+                        var date = new Date(history[i].date).toLocaleDateString(lang);
+                        var html = "<em>" + date + "</em>:<span> " +
+                                "&lt;" + history[i].entity + "&gt; </span>" +
+                                history[i].change
+                        changelogAnchorpoint.append("html:span")
+                                .html(html)
+                    }
+                }
+            }
+        }
+    }
+
 };

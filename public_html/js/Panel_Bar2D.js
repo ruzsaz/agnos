@@ -1,6 +1,6 @@
 /* global Panel, d3 */
 
-'use strict';
+'use strict'; // TODO: nyelv
 
 var bar2panel = panel_bar2d;
 /**

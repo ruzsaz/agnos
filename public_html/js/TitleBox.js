@@ -1,6 +1,6 @@
 /* global d3 */
 
-'use strict'; // TODO: nyelv
+'use strict';
 
 /**
  * Egy panel fejléce. A fejléc az épp aktuális mutatót, és a mértékegységet tartalmazza,
@@ -18,6 +18,7 @@ function TitleBox(parentSVG, panelId, mediator) {
 	this.mediator = mediator;	// A panel mediátora, ezen át kommunikál a fejléc a panellel.
 	this.currentId;				// Épp kijelzett mutató id-je, tömb ha többet mutat.
 	this.currentRatio;			// Éppen hányadost jelez-e?
+    this.currentText;           // A teljes kijelzett szöveg.
 
 	// Fejlécet tartalmazó konténer.
 	this.gContainer = parentSVG.append("svg:g")
@@ -80,6 +81,7 @@ TitleBox.prototype.update = function(idA, nameA, szUnitA, ratioUnitA, isRatio, t
 	var that = this;
 
 	var id, name, szUnit, ratioUnit;	// A kijelzésre kerülő értékek.
+    var trans =  d3.transition().duration(tweenDuration);
 
 	// Ha tömböket kaptunk, összefűzzük őket.
 	if (idA instanceof Array) {
@@ -94,23 +96,21 @@ TitleBox.prototype.update = function(idA, nameA, szUnitA, ratioUnitA, isRatio, t
 		ratioUnit = ratioUnitA;
 	}
 
-	// Ne legyen átmenetre idő, ha gradiens is érintett a fejlécben, mert azt nem lehet animálni.
-	var gradientDuration = (idA instanceof Array || that.currentId instanceof Array) ? tweenDuration : tweenDuration;
-
 	// Csak akkor update-olunk, ha változott valami.
-	if (that.currentId !== id || that.currentRatio !== isRatio) {
+	if (that.currentId !== id || that.currentRatio !== isRatio || that.currentText !== name + ratioUnit + szUnit) {
 		that.currentId = id;
 		that.currentRatio = isRatio;
+        that.currentText = name + ratioUnit + szUnit;
 
 		// Háttérszín vagy gradiens beállítása.
 		that.gContainer.selectAll(".titleRect")
-				.transition().duration(gradientDuration)
+				.transition(trans)
 				.style("fill", (id instanceof Array) ? null : global.colorValue(id))
 				.style("opacity", 1);
 
 		// Régi szövegek letörlése.
 		that.gContainer.selectAll(".titleText")
-				.transition().duration(tweenDuration)
+				.transition(trans)
 				.style("opacity", 0)
 				.remove();
 
@@ -122,7 +122,7 @@ TitleBox.prototype.update = function(idA, nameA, szUnitA, ratioUnitA, isRatio, t
 				.attr("dy", ".35em")
 				.attr("dx", "-.15em")
 				.text(name)
-				.transition().duration(tweenDuration)
+				.transition(trans)
 				.style("opacity", 1);
 
 		// Új szöveg a mértékegységnek.
@@ -133,7 +133,7 @@ TitleBox.prototype.update = function(idA, nameA, szUnitA, ratioUnitA, isRatio, t
 				.attr("dy", ".35em")
 				.attr("dx", ".15em")
 				.text((isRatio) ? ratioUnit : szUnit)
-				.transition().duration(tweenDuration)
+				.transition(trans)
 				.style("opacity", 1);
 
 		// Szövegek összenyomása, hogy kiférjen.

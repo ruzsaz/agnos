@@ -1,6 +1,6 @@
 /* global d3 */
 
-'use strict'; // TODO: nyelv
+'use strict';
 
 /**
  * A fejléc panelek közös szülője.
@@ -9,9 +9,10 @@
  * @param {Object} mediator A rendelkezésre álló mediátor.
  * @param {String} additionalClass A html objektumhoz adandó további class-nevek.
  * @param {Number} startScale A méretszorzó, amivel meg kell jeleníteni.
+ * @param {Number} duration Az előtűnisi animáció időtartama.
  * @returns {HeadPanel} A fejlécpanel.
  */
-function HeadPanel(init, mediator, additionalClass, startScale) {
+function HeadPanel(init, mediator, additionalClass, startScale, duration) {
     var that = this;
 
     this.panelSide = init.group || 0;
@@ -21,7 +22,7 @@ function HeadPanel(init, mediator, additionalClass, startScale) {
     that.panelDiv.style("width", (((parseInt(d3.select("#topdiv").style("width"))) / startScale) - global.panelMargin * 2) + "px");
     this.panelId = "#panel" + that.panelSide + "P-1";
     this.divTableBase = undefined;
-    this.init(additionalClass);
+    this.init(additionalClass, duration);
     var med;
     med = this.mediator.subscribe("killPanel", function(panelId) {
         that.killPanel(panelId);
@@ -37,6 +38,13 @@ function HeadPanel(init, mediator, additionalClass, startScale) {
         that.resize(duration, panelNumberPerRow);
     });
     that.mediatorIds.push({"channel": "resize", "id": med.id});
+
+    med = this.mediator.subscribe("langSwitch", function() {
+        that.initPanel(duration);
+    });
+    that.mediatorIds.push({"channel": "langSwitch", "id": med.id});
+
+    
 }
 
 //////////////////////////////////////////////////
@@ -55,9 +63,10 @@ function HeadPanel(init, mediator, additionalClass, startScale) {
  * Inicializálja a fejlécpanelt. A konstruktornak kell meghívnia.
  * 
  * @param {String} additionalClass A html objektumhoz adandó további class-nevek.
+ * @param {Number} duration Az előtűnési animáció időtartama.
  * @returns {undefined}
  */
-HeadPanel.prototype.init = function(additionalClass) {
+HeadPanel.prototype.init = function(additionalClass, duration) {
     var that = this;
 
     if (that.panelDiv.selectAll(".baseDiv").empty()) {
@@ -70,7 +79,7 @@ HeadPanel.prototype.init = function(additionalClass) {
         that.divBase = that.panelDiv.select(".baseDiv");
     }
 
-    that.reset(additionalClass);
+    that.reset(additionalClass, duration);
 };
 
 /**
@@ -89,7 +98,7 @@ HeadPanel.prototype.resize = function(duration, panelNumberPerRow) {
     }
     this.panelDiv.transition().duration(duration)
             .style("width", width + "px")
-            .each("end", function() {                
+            .on("end", function() {                
                 that.panelDiv.selectAll(".halfHead")
                         .classed("vertical", (panelNumberPerRow === 1) ? true : false);
             });
@@ -99,11 +108,14 @@ HeadPanel.prototype.resize = function(duration, panelNumberPerRow) {
  * Letörli, és alaphelyzetbe hozza a fejlécpanelt.
  * 
  * @param {String} additionalClass A html objektumhoz adandó további class-nevek.
+ * @param {Number} duration Az előtűnisi animáció időtartama.
  * @returns {undefined}
  */
-HeadPanel.prototype.reset = function(additionalClass) {
+HeadPanel.prototype.reset = function(additionalClass, duration) {
     var that = this;
-
+    if (duration === undefined) {
+        duration = global.selfDuration;
+    }
     that.panelDiv.selectAll(".divTableBase")
             .attr("class", null)
             .style("width", function() {
@@ -117,7 +129,7 @@ HeadPanel.prototype.reset = function(additionalClass) {
             .attr("class", "divTableBase " + additionalClass)
             .style("opacity", 0);
 
-    that.divTableBase.transition().duration(global.selfDuration)
+    that.divTableBase.transition().duration(duration)
             .style("opacity", 1);
 };
 

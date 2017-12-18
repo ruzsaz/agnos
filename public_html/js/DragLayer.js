@@ -1,6 +1,6 @@
 /* global d3 */
 
-'use strict'; // TODO: nyelv
+'use strict';
 
 /**
  * Húzd-és-ejtsd réteg konstruktora.
@@ -33,7 +33,7 @@ function Draglayer(side, mediator) {
 			d3.selectAll("svg > *:not(.droptarget" + type + ")").style("pointer-events", "none");
 			d3.select(this).classed("dragging", true);
 			dragCircle
-					.style(global.getStyleForScale(1, 1, 1))
+					.styles(global.getStyleForScale(1, 1, 1))
 					.style("opacity", 1)
 					.style("display", "block")
 					.style("margin-left", ((-parseFloat(dragCircle.style("width")) / 2) - 15) + "px")
@@ -52,7 +52,7 @@ function Draglayer(side, mediator) {
 	 */
 	var dragging = function() {
 		if (isDragging) {
-			var coords = d3.mouse(container[0][0]);
+			var coords = d3.mouse(container.nodes()[0]);
 			dragCircle
 					.style("left", (coords[0] / global.scaleRatio) + "px")
 					.style("top", (coords[1] / global.scaleRatio) + "px")
@@ -81,11 +81,11 @@ function Draglayer(side, mediator) {
 			var dragOrigX = parseInt(dragCircle.style("width")) / 2;
 			var dragOrigY = parseInt(dragCircle.style("height")) / 2;
 			dragCircle
-					.style(global.getStyleForScale(1, dragOrigX, dragOrigY))
+					.styles(global.getStyleForScale(1, dragOrigX, dragOrigY))
 					.transition().duration(global.selfDuration / 2)
-					.style(global.getStyleForScale(0, dragOrigX, dragOrigY))
+					.styles(global.getStyleForScale(0, dragOrigX, dragOrigY))
 					.style("opacity", 0)
-					.each("end", function() {
+					.on("end", function() {
 						d3.select(this)
 								.style("display", null)
 								.style("visibility", null);
@@ -99,10 +99,10 @@ function Draglayer(side, mediator) {
 	};
 
 	// A drag-viselkedés definiálása.
-	this.drag = d3.behavior.drag()
-			.on("dragstart", dragStarted)
+	this.drag = d3.drag()
+			.on("start", dragStarted)
 			.on("drag", dragging)
-			.on("dragend", dragEnd);
+			.on("end", dragEnd);
 
 	mediator.subscribe("addDrag", function(elements) {
 		that.addDragBehavior(elements);

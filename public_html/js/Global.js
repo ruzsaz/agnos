@@ -18,11 +18,6 @@ d3.selection.prototype.moveToFront = function() {
     });
 };
 
-// Magyar ezres helyiértékjelzések definiálása.
-d3.formatPrefix(1e12).symbol = "eMrd";
-d3.formatPrefix(1e9).symbol = "Mrd";
-d3.formatPrefix(1e6).symbol = "M";
-d3.formatPrefix(1e3).symbol = "e";
 
 // Nyelv beállító függvény. "blabla" helyett _("blabla") írandó.
 var _ = function(string) {
@@ -52,6 +47,27 @@ var global = function() {
             return _($(this).attr('origText'));
         });
     }
+
+    /**
+     * Átalakítja egy sztring filenévben nem szívesen látott karaktereit.
+     * 
+     * @param {type} input A bemenő sztring.
+     * @returns {unresolved} Ugyanaz, gyanús karakterek nélkül.
+     */
+    var convertFileFriendly = function(input) {
+        return input
+                .replace(/[őóö]/ig, "o")
+                .replace(/[űüú]/ig, "u")
+                .replace(/[á]/ig, "a")
+                .replace(/[é]/ig, "e")
+                .replace(/[í]/ig, "i")
+                .replace(/[ŐÖÓ]/ig, "O")
+                .replace(/[ŰÚÜ]/ig, "U")
+                .replace(/[Á]/ig, "A")
+                .replace(/[É]/ig, "E")
+                .replace(/[Í]/ig, "I")
+                .replace(/[^a-z0-9]/gi, "_");
+    };
 
     /**
      * Kiolvassa a css-be írt változók értékeit.
@@ -117,7 +133,7 @@ var global = function() {
         if (maxSize < 10) { // 10px alatt üres szöveget csinálunk.
             renderedText.text("");
         } else {
-            var textWidth = renderedText[0][0].getBBox().width; // A szöveg pillanatnyi mérete.
+            var textWidth = renderedText.nodes()[0].getBBox().width; // A szöveg pillanatnyi mérete.
 
             // Ha 1.7-szor nagyobb mértékben kéne összenyomni, akkor levágunk belőle.
             if (textWidth > maxSize * maxRatio) {
@@ -130,7 +146,7 @@ var global = function() {
                 var cutPosition = Math.round((offset > -1) ? cutPositionMin + offset : (cutPositionMin + cutPositionMax) / 2);
                 var newText = text.substring(0, cutPosition) + "..";
                 renderedText.text(newText);
-                textWidth = renderedText[0][0].getBBox().width; // A szöveg pillanatnyi mérete.
+                textWidth = renderedText.nodes()[0].getBBox().width; // A szöveg pillanatnyi mérete.
             }
 
             var ratio = 1;
@@ -197,7 +213,44 @@ var global = function() {
                 });
             }
         });
-    }
+    };
+
+    /**
+     * Beállít egy cookie-t.
+     * 
+     * @param {String} name A beállítandó cookie neve.
+     * @param {String} value A beállítandó cooke értéke.
+     * @param {Number} expires Lejárati idő, nap.
+     * @returns {undefined}
+     */
+    var setCookie = function(name, value, expires) {
+        var d = new Date();
+        d.setTime(d.getTime() + (expires * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = name + "=" + value + ";" + expires + ";path=/";
+    };
+
+    /**
+     * Kiolvas egy cookie-t.
+     * 
+     * @param {String} name A kiolvasandó cookie neve.
+     * @returns {String} A kiolvasott cookie értéke, vagy undefined, ha nincs.
+     */
+    var getCookie = function(name) {
+        name = name + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return undefined;
+    };
 
     /**
      * Átáll a kiválasztott nyelvre.
@@ -208,21 +261,44 @@ var global = function() {
     var setLanguage = function(lang) {
         tagForLocalization();
         String.locale = lang;
+
+        // Cookie-ban tárolás.
+        setCookie("language", lang, 730);
+
+        // Statikus szövegek átírása.
         localizeAll();
 
+        // Statikus, soknyelvű szövegpanelek (pl. help) átkapcsolása.
         d3.selectAll(".localized").style("display", "none");
         if (d3.selectAll(".localized.language_" + lang).empty()) {
             d3.selectAll(".localized.language_default").style("display", "block");
         } else {
             d3.selectAll(".localized.language_" + lang).style("display", "block");
         }
+
+        // Féldinamikus (metával megkapott) szövegek átírása.
+        global.mediators[0].publish("langSwitch");
+        global.mediators[1].publish("langSwitch");
+
+        // Dinamikus (adattal megkapott) szövegek átírása egy önmagába fúrással.
+        if (global.facts[0] && global.facts[0].reportMeta) {
+            global.mediators[0].publish("drill", {dim: -1, direction: 0});
+        }
+        if (global.facts[1] && global.facts[1].reportMeta) {
+            global.mediators[1].publish("drill", {dim: -1, direction: 0});
+        }
     };
 
+    /**
+     * Kiírja a konzolra a még lefordítatlan statikus sztringeket.
+     * 
+     * @param {String} lang A kiírandó nyelv nyevlkódja.
+     * @returns {undefined}
+     */
     var getUntranslated = function(lang) {
         var localeToStore = String.locale;
         String.locale = lang;
         tagForLocalization();
-        console.log(lang);
         var untranslated = [];
 
         // A statikus tartalmak kinyerése
@@ -254,7 +330,6 @@ var global = function() {
             untranslatedString = untranslatedString + '"' + untranslated[i] + '": "",\n';
         }
         console.log(untranslatedString);
-
 
         String.locale = localeToStore;
     };
@@ -290,10 +365,10 @@ var global = function() {
 
                 // A megjelenítési mód (bal, jobb, osztott) kinyerése.
                 var displayMode;
-                var numberOfSides = d3.selectAll(".container.activeSide")[0].length; // Hány aktív oldal van? (2 ha osztottkijelzős üzemmód, 1 ha nem.)
+                var numberOfSides = d3.selectAll(".container.activeSide").nodes().length; // Hány aktív oldal van? (2 ha osztottkijelzős üzemmód, 1 ha nem.)
                 if (numberOfSides === 1) {
 
-                    displayMode = d3.selectAll("#container1.activeSide")[0].length * 2; // Aktív oldal id-je, 0 vagy 2. Csak akkor ételmes, ha 1 aktív oldal van.
+                    displayMode = d3.selectAll("#container1.activeSide").nodes().length * 2; // Aktív oldal id-je, 0 vagy 2. Csak akkor ételmes, ha 1 aktív oldal van.
                 } else {
                     displayMode = 1;
                 }
@@ -303,7 +378,9 @@ var global = function() {
                 startObject.n = global.panelNumberOnScreen;
 
                 // Tényleges URL-be írás. Ha nem kell, kikommentelendő.
-                location.hash = LZString.compressToEncodedURIComponent(JSON.stringify(startObject));
+                if (global.saveToBookmarkRequired) {
+                    location.hash = LZString.compressToEncodedURIComponent(JSON.stringify(startObject));
+                }
             }
         };
 
@@ -531,7 +608,7 @@ var global = function() {
         if (typeof renderedParent === "number") {
             maxTextWidth = multiplier * renderedParent;
         } else {
-            maxTextWidth = multiplier * ((isVertical) ? renderedParent[0][0].getBBox().height : renderedParent[0][0].getBBox().width);
+            maxTextWidth = multiplier * ((isVertical) ? renderedParent.nodes()[0].getBBox().height : renderedParent.nodes()[0].getBBox().width);
         }
 
         // Egyesével elvégezzük a tömörítést.
@@ -570,7 +647,7 @@ var global = function() {
      * @returns {String} A kiírandó sztring.
      */
     var cleverRound3 = function(n) {
-        return (n !== undefined) ? ((isFinite(n)) ? (parseFloat(d3.format(".3s")(n)) + d3.formatPrefix(n).symbol).replace(".", ",") : "inf") : "???";
+        return (n !== undefined) ? ((isFinite(n)) ? (parseFloat(d3.format(".3s")(n)).toLocaleString(String.locale) + _(d3.format(".3s")(n).replace(/-*\d*\.*\d*/g, ''))) : _("inf")) : "???";
     };
 
     /**
@@ -580,7 +657,7 @@ var global = function() {
      * @returns {String} A kiírandó sztring.
      */
     var cleverRound5 = function(n) {
-        return (n !== undefined) ? ((isFinite(n)) ? (parseFloat(d3.format(".4s")(n)) + d3.formatPrefix(n).symbol).replace(".", ",") : "inf") : "???";
+        return (n !== undefined) ? ((isFinite(n)) ? (parseFloat(d3.format(".4s")(n)).toLocaleString(String.locale) + _(d3.format(".4s")(n).replace(/-*\d*\.*\d*/g, ''))) : _("inf")) : "???";
     };
 
     /**
@@ -631,8 +708,15 @@ var global = function() {
         var that = this;
         this.tooltip = new Tooltip();
         get(global.url.superMeta, "", function(result, status) {
-            //that.superMeta = JSON.parse(result).reports;
             that.superMeta = result.reports;
+
+            // A default nyelv beállításait hozzáadjuk nyersen a metához.
+            for (var i = 0, iMax = that.superMeta.length; i < iMax; i++) {
+                var reportSuperMeta = that.superMeta[i];
+                var defaultSuperMeta = global.getFromArrayByLang(reportSuperMeta.localizedReports, "");
+                reportSuperMeta.updated = defaultSuperMeta.updated;
+            }
+
             callback();
         });
     };
@@ -648,6 +732,32 @@ var global = function() {
         };
         _subclassOf.prototype = base.prototype;
         return new _subclassOf();
+    };
+
+    /**
+     * Megkeresi egy tömb elemét a nyelvkód alapján. Ha adott nyelvkódú nincs, akkor a
+     * "" nyelvkódut adja vissza. Ha az sincs, akkor a tömb első elemét.
+     * 
+     * @param {Array} array A tömb.
+     * @param {String} lang Nyelvkód. Ha undefined, az aktuálist veszi.
+     * @returns {undefined|Globalglobal.getFromArrayByLang.array}
+     */
+    var getFromArrayByLang = function(array, lang) {
+        if (lang === undefined) {
+            lang = String.locale;
+        }
+        var langPropertyNames = ["language", "lang", "languageId"];
+        var returnIndex = -1;
+        for (var i = 0, iMax = langPropertyNames.length; i < iMax; i++) {
+            returnIndex = global.positionInArrayByProperty(array, langPropertyNames[i], lang);
+            if (returnIndex === -1) {
+                returnIndex = global.positionInArrayByProperty(array, langPropertyNames[i], "");
+            }
+            if (returnIndex !== -1) {
+                break;
+            }
+        }
+        return (returnIndex === -1) ? array[0] : array[returnIndex];
     };
 
     /**
@@ -980,10 +1090,15 @@ var global = function() {
      * @returns {undefined}
      */
     var mainToolbar_saveAllImages = function() {
+        var side = d3.selectAll("#container1.activeSide").nodes().length; // Aktív oldal id-je, 0 vagy 1. Csak akkor ételmes, ha 1 aktív oldal van.
         var today = new Date();
         var todayString = today.toISOString().slice(0, 10) + "_" + today.toTimeString().slice(0, 8).split(":").join("-");
+        var filename = "Agnos"
+                + "_" + global.convertFileFriendly(global.facts[side].reportMeta.caption)
+                + "_" + todayString
+                + "_P";
         d3.selectAll(".activeSide div.panel > svg").each(function(d, i) {
-            saveSvgAsPng(this, todayString + "_P" + (i + 1), 2, panelWidth, panelHeight, 0, 0);
+            saveSvgAsPng(this, filename + (i + 1), 2, panelWidth, panelHeight, 0, 0);
         });
     };
 
@@ -993,7 +1108,6 @@ var global = function() {
                 .transition().delay(500)
                 .style("display", null);
         global.setLanguage(lang);
-        //d3.select(".languageSwitch > ul").style("display", null);
     };
 
     /**
@@ -1002,7 +1116,7 @@ var global = function() {
      * @returns {undefined}
      */
     var mainToolbar_refreshState = function() {
-        var numberOfActiveSides = d3.selectAll(".container.activeSide")[0].length; // Hány aktív oldal van? (2 ha osztottkijelzős üzemmód, 1 ha nem.)
+        var numberOfActiveSides = d3.selectAll(".container.activeSide").nodes().length; // Hány aktív oldal van? (2 ha osztottkijelzős üzemmód, 1 ha nem.)
 
         // Alap láthatósági beállítás: ha osztottkijelzős a mód, akkor inaktívak a lokálisra ható gombok.
         d3.selectAll("#mainToolbar .onlyforreport")
@@ -1017,9 +1131,9 @@ var global = function() {
         if (numberOfActiveSides === 1) {
 
             // Megállapítjuk a program állapotát.
-            var side = d3.selectAll("#container1.activeSide")[0].length; // Aktív oldal id-je, 0 vagy 1. Csak akkor ételmes, ha 1 aktív oldal van.
+            var side = d3.selectAll("#container1.activeSide").nodes().length; // Aktív oldal id-je, 0 vagy 1. Csak akkor ételmes, ha 1 aktív oldal van.
             var isContainsReport = d3.selectAll("#container" + side + " .HeadPanel_Browser").empty(); // True ha épp aktív reportkijelzés van, false ha nem.
-            var panelNumber = d3.selectAll("#container" + side + " .panel")[0].length; // Az épp fennlevő panelek száma.
+            var panelNumber = d3.selectAll("#container" + side + " .panel").nodes().length; // Az épp fennlevő panelek száma.
 
             // Ha már csak a fejlécpanel létezik, akkor a megölő inaktív.
             if (panelNumber === 1) {
@@ -1106,24 +1220,24 @@ var global = function() {
                     .html(body);
             if (leftButtonLabel === undefined) {
                 leftButton.classed("hidden", true);
-                leftButton[0][0].onclick = undefined;
+                leftButton.nodes()[0].onclick = undefined;
             } else {
                 leftButton.html(leftButtonLabel);
-                leftButton[0][0].onclick = leftButtonFunction;
+                leftButton.nodes()[0].onclick = leftButtonFunction;
                 leftButton.classed("hidden", false);
             }
             if (rightButtonLabel === undefined) {
                 rightButton.classed("hidden", true);
-                rightButton[0][0].onclick = undefined;
+                rightButton.nodes()[0].onclick = undefined;
             } else {
                 rightButton.html(rightButtonLabel);
-                rightButton[0][0].onclick = rightButtonFunction;
+                rightButton.nodes()[0].onclick = rightButtonFunction;
                 rightButton.classed("hidden", false);
             }
 
             // Fókusz elvétele bármin is volt.
-            rightButton[0][0].focus();
-            rightButton[0][0].blur();
+            rightButton.nodes()[0].focus();
+            rightButton.nodes()[0].blur();
             dialogMask.style("display", "block");
             setTimeout(function() {
                 dialogMask.style("opacity", 1);
@@ -1254,8 +1368,12 @@ var global = function() {
         maxEntriesIn2D: 1000,
         // Globálisan elérendő függvények.
         tagForLocalization: tagForLocalization, // Nyelvváltoztatás előtt a szövegeket az 'origText' attrib-ba írja.
+        convertFileFriendly: convertFileFriendly, // Átalakítja egy sztring filenévben nem szívesen látott karaktereit.
+        setCookie: setCookie, // Beállít egy cookie-t.
+        getCookie: getCookie, // Kiolvas egy cookie-t.
         setLanguage: setLanguage, // Nyelvváltoztató függvény.
         axisTextSize: axisTextSize, // Az oszlopdiagram tengelybetű-méretét határozza meg.
+        getFromArrayByLang: getFromArrayByLang, // Megkeresi egy tömb elemét a nyalvkód alapján.
         getFromArrayByProperty: getFromArrayByProperty, // Megkeresi egy tömb elemét az elem egyik property-je alapján.
         positionInArrayByProperty: positionInArrayByProperty, // Megkeresi egy tömb elemének indexét az elem egyik property-je alapján.
         positionInArray: positionInArray, // Megnézi, hogy a tömb hányadik eleme egy érték.

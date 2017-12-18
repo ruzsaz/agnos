@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Agnos</title>
+    <title class="loc">Agnos</title>
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -9,10 +9,11 @@
     <!-- A css és a less lefuttatása. A less a loaderbe nem rakható, mert amikor lefut, a css-nek már meg kell lennie. -->
     <link rel="stylesheet/less" type="text/css" href="containerBlack.less?ver=3.0"/>
     <script type="text/javascript" src="js/libs/less/less-1.7.0.min.js"></script>
-    
+
     <link rel="localization" hreflang="en" href="data/languages/en.json" type="application/vnd.oftn.l10n+json"/>
     <link rel="localization" hreflang="hu" href="data/languages/hu.json" type="application/vnd.oftn.l10n+json"/>
-    
+    <link rel="localization" hreflang="ru" href="data/languages/ru.json" type="application/vnd.oftn.l10n+json"/>
+
     <!-- Favicon, külső fájl helyett base64 kódolva, így biztosabban létrejön. -->
     <!-- PULZUS
     <link href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABMLAAATCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFpOwQBbT8EFU0e+BVZKwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQRL0ATkK9GEE0uFtDNbcI///vANXS0gDFxMIBv7u6AKOenQC8urkBxMPCAgAAAAAAAAAAAAAAAAAAAAAAAAAAWU7BAP///wA7LbVtPTC0a7q4sz++vLVSv761Pbu5uUq5trpWube6Vbu5uUmRkSoujo8mApCQJw2OjiRBj5AjQGRdgkRJPL5DSDu6WTgrtMNZT7Z/dWy4bXJpt2WTj4JqoqJjb5+eX1uysZ0wiIgYgYqKG4CMjB6GiIgXsY2NE0hsZ1S8RTqokkA0ukg/Mre7PTC23jgqtbI+MbtIVk2JooaGI6qKixuyjI0gT4mJGiSNjSt8kJA0ipOSOn2op3cukI5WV2xlk3Cxrr8ZUUa2Xjostck8L7ZxRDe/EUk9pEJ8ejhqiYkXaImJGUzLycgAube5M7u5vFu8ur5eube3Wru4uWC8u7hcuri2XLu5t0RCNrVwOy61caej3gFTSL4AAAAAAIqNPwCEiDkAw8C/AL68uwLBvr0Fwb++CcC+vQbBv74Iw8LBCMTCwQjR0cAEWk+9CEAzt2ZFOLkqQTS3AP///wD///8A////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEU4uQBIPLoNUES9GDwvtgD///8A////AP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////Af///wH///8B////AP///wD///8A////AP///wD///8AAAAAAAAAAAAAAAAA//8AAP//AAD//wAA/P8AAPwAAAD8AAAAAAAAAAAAAAAAAAAAgA4AAIAJAAD/yQAA//8AAP//AAD//wAAAB8AAA==" rel="icon" type="image/x-icon" />
@@ -32,9 +33,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="mask-icon" href="safari-pinned-tab.svg" color="#40bddf">
     <meta name="theme-color" content="#ffffff">
-
-
-
 
     <!-- Azok a stílus-definíciók, amelyek a less elindulása előtt is szükségesek már. -->
     <style>
@@ -124,11 +122,11 @@
     <script>
       'use strict';
       var numberOfLoadedResources = 0;	// A már betöltött külső js-ek száma.
-      var numberOfResources = 30;			// Az összes betöltendő külső js-ek száma.
+      var numberOfResources = 31;			// Az összes betöltendő külső js-ek száma.
       var finalThreads = 3;				// Ennyi betöltési szálnak kell lefutnia az elinduláshoz.
       var version = "3.0";
       var min = "";           // "" vagy "min." attól függően, hogy a minify-s verziók kellenek-e?     
-      
+
       /**
        * A betöltöttséget jelző panel betöltöttségi szintjét beállítja a kért értékre.
        * 
@@ -228,9 +226,10 @@
        * 
        * @returns {undefined}
        */
-      function loadLevel1() {        
+      function loadLevel1() {
           loadResourcesAsync([
-              "js/libs/d3-3.0.1/d3.v3.min.js",
+              //"js/libs/d3-3.0.1/d3.v3.min.js",
+              "js/libs/d3-4.12.0/d3.min.js",
               "js/libs/mediator-0.9.6/mediator.min.js",
               "js/libs/topojson/topojson.min.js",
               "js/libs/lz-string-1.3.0/lz-string." + min + "js",
@@ -245,6 +244,7 @@
        */
       function loadLevel2() {
           loadResourcesAsync([
+              "js/libs/d3-4.12.0/d3-selection-multi.min.js",
               "js/Global." + min + "js",
               "js/DragLayer." + min + "js",
               "js/datamethods/DataDirector." + min + "js"
@@ -320,10 +320,10 @@
        * 
        * @returns {undefined}
        */
-      function loadLevelLast() {        
+      function loadLevelLast() {
           finalThreads--;
           if (finalThreads <= 0) {
-            $("#helpPanel").load("help.html?=ver" + version); // help.html betöltése.
+              $("#helpPanel").load("help.html?=ver" + version); // help.html betöltése.
               loadResourcesAsync([
                   "js/Panel_Map." + min + "js"
 
@@ -507,7 +507,7 @@
       <path d="M12 11 Q 20 13 28 11"/>
       <path d="M12 21.5 Q 20 19 28 21.5"/>      
       </g>
-            
+
       <g id="icon_close">
       <line x1="11" y1="11" x2="21" y2="21"/>
       <line x1="11" y1="21" x2="21" y2="11"/>	

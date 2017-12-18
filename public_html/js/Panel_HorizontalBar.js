@@ -1,6 +1,6 @@
 /* global Panel, d3 */
 
-'use strict'; // TODO: nyelv
+'use strict';
 
 var horizontalbarpanel = panel_horizontalbar;
 /**
@@ -22,7 +22,7 @@ function panel_horizontalbar(init) {
     this.buildValueVectors();
 
     Panel.call(that, that.actualInit, global.mediators[that.actualInit.group], !that.singleValMode, global.legendOffsetX, global.legendOffsetX, 0, global.fontSizeSmall + 2); // A Panel konstruktorának meghívása.
-    
+
     this.dimToShow = that.actualInit.dim;				// Ennyiedik dimenzió a panel dimenziója.
     this.valMultipliers = [];							// Ennyiszeresét kell mutatni az értékeknek.
     this.valFraction = that.actualInit.ratio;			// Hányadost mutasson?
@@ -35,18 +35,16 @@ function panel_horizontalbar(init) {
     this.xAxisColor = global.readableColor(global.colorValue(that.valBarsToShow[0]));
 
     // Vízszintes skála.
-    this.xScale = d3.scale.linear()
+    this.xScale = d3.scaleLinear()
             .range([0, that.width])
             .nice(7);
 
     // Függőleges skála.
-    this.yScale = d3.scale.linear()
+    this.yScale = d3.scaleLinear()
             .range([0, that.height]);
 
     // A vízszintes tengely.
-    this.xAxis = d3.svg.axis()
-            .scale(that.xScale)
-            .orient("bottom")
+    this.xAxis = d3.axisBottom(that.xScale)
             .ticks(7)
             .tickFormat(global.cleverRound3);
 
@@ -212,17 +210,18 @@ panel_horizontalbar.prototype.getTooltip = function(d) {
             value = d.values[global.positionInArray(that.valBarsToShow, id)].value;
         }
 
+        var unitProperty = (value === 1) ? "unit" : "unitPlural";
         vals.push({
-            name: that.meta.indicators[id].description,
+            name: that.localMeta.indicators[id].description,
             value: value,
-            dimension: (that.valFraction) ? that.meta.indicators[id].fraction.unit : that.meta.indicators[id].value.unit
+            dimension: (that.valFraction) ? that.localMeta.indicators[id].fraction[unitProperty] : that.localMeta.indicators[id].value[unitProperty]
         });
 
     }
     return that.createTooltip(
             [{
-                    name: that.meta.dimensions[that.dimToShow].description,
-                    value: (d.name) ? d.name : "Nincs adat"
+                    name: that.localMeta.dimensions[that.dimToShow].description,
+                    value: (d.name) ? d.name : _("Nincs adat")
                 }],
             vals);
 };
@@ -281,7 +280,7 @@ panel_horizontalbar.prototype.preUpdate = function(drill) {
                 .remove();
 
         // Felfúrás esetén.
-    } else if (drill.direction === 1) {
+    } else if (drill.direction === 1 && oldPreparedData) {
 
         // Tengelyfeliratok: minden törlése.
         that.gAxisY.selectAll("text")
@@ -473,13 +472,13 @@ panel_horizontalbar.prototype.update = function(data, drill) {
 
     // Ha túl sok megjelenítendő adat van, akkor át se nézzük őket.
     if (that.data.rows.length > that.maxEntries) {
-        that.panic(true, "<html>A panel nem képes " + that.data.rows.length + " értéket megjeleníteni.<br />A maximálisan megjeleníthető értékek száma " + that.maxEntries + ".</html>");
+        that.panic(true, _("<html>A panel nem képes ") + that.data.rows.length + _(" értéket megjeleníteni.<br />A maximálisan megjeleníthető értékek száma ") + that.maxEntries + _(".</html>"));
         that.preparedData = undefined;
     } else {
 
         // Ha meg van tiltva mind az egyenes adat, mint a hányados megjelenítése, akkor pánik!
         if (forbidRatio && forbidNominator) {
-            that.panic(true, "<html>Az ellentétes megjelenítési utasítások miatt<br />az adatok nem megjeleníthetőek.</html>");
+            that.panic(true, _("<html>Az ellentétes megjelenítési utasítások miatt<br />az adatok nem megjeleníthetőek.</html>"));
             that.preparedData = undefined;
 
             // Különben normál működés.
@@ -493,31 +492,31 @@ panel_horizontalbar.prototype.update = function(data, drill) {
                 that.valMultipliers.push((isNaN(mult)) ? 1 : mult);
             }
 
-            var tweenDuration = global.getAnimDuration(-1, that.panelId);
-
             // Adatok feldolgozása, a magejelenési adatok elkészítése.
             that.preparedData = that.prepareData(that.preparedData, that.data.rows, drill);
 
             // Tengelyek, oszlopelemek, vonalelemek, átlagelemek felfrissítése.
-            that.drawAxes(that.preparedData, tweenDuration);
-            that.drawBars(that.preparedData, tweenDuration);
+            var tweenDuration = global.getAnimDuration(-1, that.panelId);
+            var trans = d3.transition().duration(tweenDuration);
+            that.drawAxes(that.preparedData, trans);
+            that.drawBars(that.preparedData, trans);
         }
     }
 
     // A fejléc és a jelkulcs felfrissítése.
     if (that.singleValMode) {
-        var titleMeta = that.meta.indicators[that.legendArray[0].id];
-        that.titleBox.update(that.legendArray[0].id, titleMeta.caption, titleMeta.value.unit, titleMeta.fraction.unit, that.valFraction, tweenDuration);
+        var titleMeta = that.localMeta.indicators[that.legendArray[0].id];
+        that.titleBox.update(that.legendArray[0].id, titleMeta.caption, titleMeta.value.unitPlural, titleMeta.fraction.unitPlural, that.valFraction, tweenDuration);
     } else {
         if (drill.toId === undefined || drill.dim === -1) {
-            var titleMetaArray = that.meta.indicators;
+            var titleMetaArray = that.localMeta.indicators;
             var idA = [], nameA = [], valueUnitA = [], fractionUnitA = [];
             for (var i = 0, iMax = that.legendArray.length; i < iMax; i++) {
                 var id = that.legendArray[i].id;
                 idA.push(id);
                 nameA.push(titleMetaArray[id].caption);
-                valueUnitA.push(titleMetaArray[id].value.unit);
-                fractionUnitA.push(titleMetaArray[id].fraction.unit);
+                valueUnitA.push(titleMetaArray[id].value.unitPlural);
+                fractionUnitA.push(titleMetaArray[id].fraction.unitPlural);
             }
             that.titleBox.update(idA, nameA, valueUnitA, fractionUnitA, that.valFraction, tweenDuration);
             that.drawLegend();
@@ -529,10 +528,10 @@ panel_horizontalbar.prototype.update = function(data, drill) {
  * Kirajzolja és helyére animálja az oszlopdiagramokat.
  * 
  * @param {Object} preparedData Az ábrázoláshoz előkészített adat.
- * @param {Number} tweenDuration Az animáció ideje.
+ * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_horizontalbar.prototype.drawBars = function(preparedData, tweenDuration) {
+panel_horizontalbar.prototype.drawBars = function(preparedData, trans) {
     var that = this;
 
     // Egy téglalap konténere, és az adat.
@@ -540,6 +539,11 @@ panel_horizontalbar.prototype.drawBars = function(preparedData, tweenDuration) {
             .data(preparedData.dataArray, function(d) {
                 return d.uniqueId;
             });
+
+    // Kilépő oszlopkonténer törlése.
+    gBar.exit()
+            .on("click", null)
+            .remove();
 
     // A halmozott oszlopdiagramban az egyes értékek oszlopelemei, és az adat hozzápárosítása.
     gBar.selectAll("rect")
@@ -576,6 +580,9 @@ panel_horizontalbar.prototype.drawBars = function(preparedData, tweenDuration) {
                 return global.colorValue(that.valBarsToShow[i2]);
             });
 
+    // Új és maradó elemek összeöntése.
+    gBar = gBarNew.merge(gBar);
+
     // Lefúrás eseménykezelőjének hozzácsapása az oszlopkonténerhez.
     gBar.classed("listener", true)
             .on("click", function(d) {
@@ -583,12 +590,12 @@ panel_horizontalbar.prototype.drawBars = function(preparedData, tweenDuration) {
             });
 
     // Megjelenési animáció: akárhol is volt, a helyére megy.
-    gBar.transition().duration(tweenDuration)
+    gBar.transition(trans)
             .attr("transform", function(d) {
                 return "translate(0," + d.y + ")";
             })
             .attr("opacity", 1)
-            .each("end", function() {
+            .on("end", function() {
                 d3.select(this).classed("darkenable", true);
             })
             .selectAll("rect")
@@ -606,10 +613,6 @@ panel_horizontalbar.prototype.drawBars = function(preparedData, tweenDuration) {
                 return global.colorValue(that.valBarsToShow[i]);
             });
 
-    // Kilépő oszlopkonténer törlése.
-    gBar.exit()
-            .on("click", null)
-            .remove();
 };
 
 /**
@@ -626,13 +629,10 @@ panel_horizontalbar.prototype.drawLegend = function() {
         var l_width = that.legendWidth / that.legendArray.length;	// A kirajzolandó jelkulcstéglalapok szélessége.
         var l_height = global.legendHeight;							// A kirajzolandó jelkulcstéglalapok magassága.global.legendHeight;
 
-        // Belépő jelkulcselemek, az adatok hozzátársítása.
-        var legendEntry = that.gLegend.selectAll("g.barLegend")
-                .data(that.legendArray).enter();
-
         // Oszlop- vagy vonaldiagramhoz tartozó jelkulcs tartójának kirajzolása. Fontos: a ".bar_group" elé kell tenni, hogy irányíthassa azt.
-        var gLegend = legendEntry.insert("svg:g", ".bar_group")
-                .attr({
+        var gLegend = that.gLegend.selectAll("g.barLegend").data(that.legendArray)
+                .enter().insert("svg:g", ".bar_group")
+                .attrs({
                     class: function(d) {
                         return "listener droptarget droptarget1 legend legendControl" + d.id;
                     }})
@@ -679,7 +679,7 @@ panel_horizontalbar.prototype.drawLegend = function() {
                     return global.readableColor(global.colorValue(d.id));
                 })
                 .text(function(d, i) {
-                    return that.meta.indicators[that.legendArray[i].id].caption;
+                    return that.localMeta.indicators[that.legendArray[i].id].caption;
                 });
 
         // Jelkulcs-szövegek formázása, hogy beférjenek.
@@ -691,18 +691,18 @@ panel_horizontalbar.prototype.drawLegend = function() {
  * A tengelyek, és a pozitív, negatív értékelkapómező kirajzolása.
  * 
  * @param {Object} preparedData A panel által megjelenítendő, feldolgozott adatok.
- * @param {Number} tweenDuration Az animáció időtartalma.
+ * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_horizontalbar.prototype.drawAxes = function(preparedData, tweenDuration) {
+panel_horizontalbar.prototype.drawAxes = function(preparedData, trans) {
     var that = this;
 
     var shadowSize = global.axisTextSize(that.yScale(1));	// A függőleges tengely betűje mögötti klikk-téglalap mérete.
     var axisTextSize = (shadowSize < 6) ? 0 : shadowSize;	// A függőleges tengely betűmérete.
 
     // Vízszintes tengely kirajzolása, animálása.
-    if (that.gAxisX.selectAll("path")[0].length > 0) {
-        that.gAxisX.transition().duration(tweenDuration).call(that.xAxis);
+    if (that.gAxisX.selectAll("path").nodes().length > 0) {
+        that.gAxisX.transition(trans).call(that.xAxis);
     } else {
         that.gAxisX.call(that.xAxis);
     }
@@ -713,10 +713,10 @@ panel_horizontalbar.prototype.drawAxes = function(preparedData, tweenDuration) {
 
     // Függőleges tengely helyreanimálása.
     that.gAxisY.selectAll("line")
-            .transition().duration(tweenDuration)
+            .transition(trans)
             .attr("y2", that.height);
 
-    that.gAxisY.transition().duration(tweenDuration)
+    that.gAxisY.transition(trans)
             .attr("transform", "translate(" + (that.margin.left + that.xScale(0)) + "," + that.margin.top + ")");
 
     that.svg.select(".minus rect")
@@ -737,6 +737,11 @@ panel_horizontalbar.prototype.drawAxes = function(preparedData, tweenDuration) {
                 return d.id + d.name;
             });
 
+    // Kilépő feliratok letörlése.
+    axisLabelY.exit()
+            .transition(trans).attr("opacity", 0)
+            .remove();
+
     // Belépő feliratok elhelyezése.
     var axisLabelYNew = axisLabelY.enter()
             .append("svg:text")
@@ -749,10 +754,7 @@ panel_horizontalbar.prototype.drawAxes = function(preparedData, tweenDuration) {
                 return d.oldY + d.oldHeight / 2 + 0.35 * axisTextSize;
             });
 
-    // Kilépő feliratok letörlése.
-    axisLabelY.exit()
-            .transition().duration(tweenDuration).attr("opacity", 0)
-            .remove();
+    axisLabelY = axisLabelYNew.merge(axisLabelY);
 
     // Megmaradó feliratok beállítása.
     axisLabelY
@@ -764,7 +766,7 @@ panel_horizontalbar.prototype.drawAxes = function(preparedData, tweenDuration) {
 
     // Maradó feliratok helyre animálása.
     axisLabelY
-            .transition().duration(tweenDuration)
+            .transition(trans)
             .attr("font-size", axisTextSize)
             .attr("y", function(d) {
                 return d.y + d.height / 2 + 0.35 * axisTextSize;
@@ -792,7 +794,7 @@ panel_horizontalbar.prototype.drawAxes = function(preparedData, tweenDuration) {
                 .attr("width", function(d) {
                     return Math.max(30, Math.min(0.5 * shadowSize + that.gAxisY.selectAll("text").filter(function(d2) {
                         return d === d2;
-                    })[0][0].getComputedTextLength(), Math.max(that.width - that.xScale(0), that.xScale(0))));
+                    }).nodes()[0].getComputedTextLength(), Math.max(that.width - that.xScale(0), that.xScale(0))));
                 })
                 .attr("y", function(d) {
                     return d.y + (d.height - shadowSize) / 2;
@@ -804,7 +806,7 @@ panel_horizontalbar.prototype.drawAxes = function(preparedData, tweenDuration) {
                 .on("click", function(d) {
                     that.drill(d);
                 });
-    }, tweenDuration);
+    }, trans.duration());
 
 };
 
@@ -1039,5 +1041,18 @@ panel_horizontalbar.prototype.changeConfiguration = function(isLegendRequired, l
         this.yScale.range([0, this.height]);
 
         this.gAxisX.attr('transform', "translate(" + this.margin.left + ", " + (this.margin.top + this.height) + ")");
+    }
+};
+
+/**
+ * Nyelvváltást végrehajtó függvény.
+ * 
+ * @returns {undefined}
+ */
+panel_horizontalbar.prototype.langSwitch = function() {
+    // Jelkulcs letörlése, és újrarajzolása.
+    if (this.isLegendRequired) {
+        this.gLegend.selectAll(".legend").remove();
+        this.drawLegend();
     }
 };

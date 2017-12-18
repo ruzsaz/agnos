@@ -1,6 +1,6 @@
 /* global d3 */
 
-'use strict'; // TODO: nyelv
+'use strict';
 
 /**
  * Tooltip létrehozása. Csak 1x kell, újrahasznosítjuk.
@@ -88,7 +88,7 @@ Tooltip.prototype.hide = function() {
 	that.tooltip.transition()
 			.duration(global.selfDuration / 2)
 			.style("opacity", 0)
-			.each("end", function() {
+			.on("end", function() {
 				that.status = -2;
 			});
 };
@@ -110,7 +110,7 @@ Tooltip.prototype.show = function(html) {
 				.delay((that.status === -1) ? 0 : that.appearDelay)
 				.duration(global.selfDuration / 2)
 				.style("opacity", that.tooltipOpacity)
-				.each("end", function() {
+				.on("end", function() {
 					that.status = 2;
 				});
 		that.status = 1;				

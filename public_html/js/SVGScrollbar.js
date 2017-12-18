@@ -1,4 +1,6 @@
-'use strict'; // TODO: nyelv
+/* global d3 */
+
+'use strict';
 
 /**
  * Létrehoz egy html scrollbart, de egy svg-n belül, svg elemek scrollozására.
@@ -7,6 +9,8 @@
  * @param {Boolean} isHorizontal True: vízszintes, false: függőleges.
  * @param {Number} length A scrollbar hossza, pixelben.
  * @param {Function} scrollFunction A scrollozáskor meghívandó függvény.
+ * @param {Number} wheelScrollSize A görgetés szkrollozandó mennyiség.
+ * @param {Object} additionalWheelTarget Olyan elem, amelyhez a görgetést még extrán hozzárendeljük.
  * @returns {SVGScrollbar} A scollbar.
  */
 function SVGScrollbar(parentElement, isHorizontal, length, scrollFunction, wheelScrollSize, additionalWheelTarget) {
@@ -51,7 +55,7 @@ function SVGScrollbar(parentElement, isHorizontal, length, scrollFunction, wheel
 
     var dragStarted = function() {
         if (d3.event.sourceEvent.which === 1) {
-            var coords = d3.mouse(that.scrollG[0][0]);
+            var coords = d3.mouse(that.scrollG.nodes()[0]);
             dragStartPosition = (that.isHorizontal) ? coords[0] : coords[1];
             dragStartPosition = dragStartPosition - parseFloat(that.scrollThumb.attr(that.positionStringToSet));
             d3.event.sourceEvent.stopPropagation();
@@ -65,19 +69,26 @@ function SVGScrollbar(parentElement, isHorizontal, length, scrollFunction, wheel
      * @returns {undefined}
      */
     var dragging = function() {
-        var coords = d3.mouse(that.scrollG[0][0]);
+        var coords = d3.mouse(that.scrollG.nodes()[0]);
         dragPosition = Math.min(Math.max(0, ((that.isHorizontal) ? coords[0] : coords[1]) - dragStartPosition), that.length - that.scrollThumbLength);
-        that.scrollThumb.attr(that.positionStringToSet, dragPosition + "px")
+        that.scrollThumb.attr(that.positionStringToSet, dragPosition + "px");
         scrollFunction(dragPosition / that.scrollRatio);
     };
 
+    /**
+     * Egérgörgetéskor történő dolgok.
+     * 
+     * @returns {undefined}
+     */
     var zooming = function() {
-        let t = d3.event;        
+        var t = d3.event;
         var delta = t.sourceEvent.deltaY;
-        var oldPos = parseFloat(that.scrollThumb.attr(that.positionStringToSet));
-        dragPosition = Math.min(Math.max(0, oldPos + Math.sign(delta) * that.wheelScrollSize*that.scrollRatio), that.length - that.scrollThumbLength);
-        that.scrollThumb.attr(that.positionStringToSet, dragPosition + "px")
-        scrollFunction(dragPosition / that.scrollRatio);
+        if (delta !== undefined) {
+            var oldPos = parseFloat(that.scrollThumb.attr(that.positionStringToSet));
+            dragPosition = Math.min(Math.max(0, oldPos + Math.sign(delta) * that.wheelScrollSize * that.scrollRatio), that.length - that.scrollThumbLength);
+            that.scrollThumb.attr(that.positionStringToSet, dragPosition + "px");
+            scrollFunction(dragPosition / that.scrollRatio);
+        }
     };
 
     /**
@@ -90,14 +101,16 @@ function SVGScrollbar(parentElement, isHorizontal, length, scrollFunction, wheel
     };
 
     // A drag-viselkedés definiálása.
-    var drag = d3.behavior.drag()
-            .on("dragstart", dragStarted)
+    var drag = d3.drag()
+            .on("start", dragStarted)
             .on("drag", dragging)
-            .on("dragend", dragEnd); 
+            .on("end", dragEnd);
 
-        var zoom = d3.behavior
-            .zoom()
-        .on('zoom', zooming);
+    var zoom = d3.zoom()
+            .filter(function() {
+                return event.type === "wheel";
+            })
+            .on('zoom', zooming);
 
     this.scrollThumb.call(drag);
     this.scrollG.call(zoom);
@@ -123,15 +136,14 @@ SVGScrollbar.prototype.setPosition = function(x, y) {
  * 
  * @param {Number} scrollPaneLength A scrollozott terület nagysága.
  * @param {String} color A scrollbar színe. Ha null vagy undefined, nem változik.
- * @param {Number} duration Az animáció időtartama.
+ * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-SVGScrollbar.prototype.set = function(scrollPaneLength, color, duration) {
+SVGScrollbar.prototype.set = function(scrollPaneLength, color, trans) {
+    trans = trans || d3.transition().duration(0);
 
-//    color = color || "red";
     this.scrollThumbLength = Math.min(this.length * this.length / scrollPaneLength, this.length);
     this.scrollRatio = this.length / scrollPaneLength;
-
     this.scrollG.classed("noEvents", (scrollPaneLength <= this.length) ? true : false);
 
     this.thumbStyle = {};
@@ -155,13 +167,13 @@ SVGScrollbar.prototype.set = function(scrollPaneLength, color, duration) {
         this.color = color;
     }
 
-    this.scrollThumb.transition().duration(duration)
+    this.scrollThumb.transition(trans)
             .attr(this.lengthStringToSet, this.scrollThumbLength + "px")
             .attr(this.positionStringToSet, newX + "px")
-            .style(this.thumbStyle);
+            .styles(this.thumbStyle);
 
-    this.scrollG.transition().duration(duration)
-            .style(this.gStyle);
+    this.scrollG.transition(trans)
+            .styles(this.gStyle);
 
     this.scrollFunction(newX / this.scrollRatio);
 };

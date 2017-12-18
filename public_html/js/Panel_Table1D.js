@@ -1,6 +1,6 @@
 /* global Panel, d3 */
 
-'use strict'; // TODO: nyelv
+'use strict';
 
 /**
  * A tábla-diagram konstruktora.
@@ -26,37 +26,9 @@ function panel_table1d(init) {
     // A mutatók elrejtésvektora, és a fejlécvektor.
     this.columnHeadVector = [];						// Mit kell elrejteni? 0: semmit, 1: az értéket, 2: a hányadost, 3: mindkettőt.	
     this.columnColorIndex = [];						// A táblázat i. oszlopához tartozó indikátor színe.
-    var idA = [];									// Megjelenítendő értékek id-vektora a tooltiphez.
-    var valueNamesVector = [];						// A megjelenítendő értékek neveinek tömbje.
     this.valuePositionVector = [];					// A megjelenítendő érték-felirat kezdőpozíciója.
-    var pos = 0;
 
-    // Az oszlopfejléc-adatok összerakása.
-    for (var i = 0, iMax = that.meta.indicators.length; i < iMax; i++) {
-        var ind = that.meta.indicators[i];
-        that.columnHeadVector.push({
-            hide: ((ind.value.hide) ? 1 : 0) + ((ind.fraction.hide) ? 2 : 0),
-            tooltip: that.createTooltip(
-                    [{name: that.meta.indicators[i].description}], [])
-        });
-        this.valuePositionVector.push(pos);
-
-        if (that.columnHeadVector[i].hide !== 3) {
-            idA.push(i);
-            valueNamesVector.push(that.meta.indicators[i].caption);
-            pos += (that.columnHeadVector[i].hide === 0) ? 2 : 1;
-            if (that.columnHeadVector[i].hide % 2 === 0) {
-                that.columnColorIndex.push(d3.rgb(global.colorValue(i)).brighter(that.darkenBrightenFactor));
-            }
-            if (that.columnHeadVector[i].hide >> 1 === 0) {
-                that.columnColorIndex.push(d3.rgb(global.colorValue(i)).darker(that.darkenBrightenFactor));
-            }
-        }
-    }
-
-    // Fejléc beállítása. (Ennek a panelnek a fejléce nem változik.)
     that.titleBox.titleSplitRatio = 1;
-    that.titleBox.update(idA, valueNamesVector, [], [], true, global.selfDuration);
     that.titleBox.gContainer.classed("droptarget", false);
     that.titleBox.gContainer.classed("droptarget1", false);
 
@@ -128,11 +100,14 @@ function panel_table1d(init) {
         that.gColumnHeads.attr("viewBox", left + " 0 " + that.tableWidth + " " + that.tableHeadHeight);
         that.gTable.attr("viewBox", left + " " + currentExtent[1] + " " + that.tableWidth + " " + that.tableHeight);
     };
-
+    
+    // Nyelv-beállítás meghívása. Ez kialakítja az oszlopfejléceket, és a titleBoxot. Frissíti az oszlopadatokat.
+    that.langSwitch(global.getAnimDuration(-1, that.panelId), true);
+    
     // Vízszintes scrollbar elhelyezése.
     this.horizontalScrollbar = new SVGScrollbar(that.svg, true, that.tableWidth, horizontalScrollFunction, that.tableSpacingHorizontal);
     that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - that.innerScrollbarWidth + that.tableElementGap);
-    that.horizontalScrollbar.set(that.columnColorIndex.length * that.tableSpacingHorizontal, null, 0);
+    that.horizontalScrollbar.set(that.columnColorIndex.length * that.tableSpacingHorizontal, null);
 
     // Függőleges scrollbar elhelyezése.
     this.verticalScrollbar = new SVGScrollbar(that.svg, false, that.tableHeight, verticalScrollFunction, that.tableSpacingVerical * 2, tableHolder);
@@ -146,10 +121,6 @@ function panel_table1d(init) {
 
     // Panel regisztrálása a nyilvántartóba.
     that.mediator.publish("register", that, that.panelId, [that.dimToShow], that.preUpdate, that.update, that.getConfig);
-
-    // Oszlopfejlécek kirajzolása.
-    that.drawColumnHeaders(global.getAnimDuration(-1, that.panelId));
-
 }
 
 //////////////////////////////////////////////////
@@ -197,16 +168,17 @@ panel_table1d.prototype.valuesToShow = function(d) {
                 if (isNaN(parseFloat(val))) {
                     val = 0;
                 }
+                var unitProperty = (val === 1) ? "unit" : "unitPlural";
                 vals.push({value: val,
                     tooltip: that.createTooltip(
                             [{
-                                    name: that.meta.dimensions[that.dimToShow].description,
-                                    value: (d.dims[0].name !== undefined) ? d.dims[0].name : "Nincs adat"
+                                    name: that.localMeta.dimensions[that.dimToShow].description,
+                                    value: (d.dims[0].name !== undefined) ? d.dims[0].name : _("Nincs adat")
                                 }],
                             [{
-                                    name: that.meta.indicators[i].description,
+                                    name: that.localMeta.indicators[i].description,
                                     value: val,
-                                    dimension: that.meta.indicators[i].value.unit
+                                    dimension: that.localMeta.indicators[i].value[unitProperty]
                                 }])
                 });
             }
@@ -215,16 +187,17 @@ panel_table1d.prototype.valuesToShow = function(d) {
                 if (isNaN(parseFloat(val))) {
                     val = 0;
                 }
+                var unitProperty = (val === 1) ? "unit" : "unitPlural";
                 vals.push({value: val,
                     tooltip: that.createTooltip(
                             [{
-                                    name: that.meta.dimensions[that.dimToShow].description,
-                                    value: (d.dims[0].name !== undefined) ? d.dims[0].name : "Nincs adat"
+                                    name: that.localMeta.dimensions[that.dimToShow].description,
+                                    value: (d.dims[0].name !== undefined) ? d.dims[0].name : _("Nincs adat")
                                 }],
                             [{
-                                    name: that.meta.indicators[i].description,
+                                    name: that.localMeta.indicators[i].description,
                                     value: val,
-                                    dimension: that.meta.indicators[i].fraction.unit
+                                    dimension: that.localMeta.indicators[i].fraction[unitProperty]
                                 }])
                 });
             }
@@ -310,8 +283,8 @@ panel_table1d.prototype.prepareData = function(oldPreparedData, newDataRows, dri
         };
         element.tooltip = that.createTooltip(
                 [{
-                        name: that.meta.dimensions[that.dimToShow].description,
-                        value: (element.name) ? element.name : "Nincs adat"
+                        name: that.localMeta.dimensions[that.dimToShow].description,
+                        value: (element.name) ? element.name : _("Nincs adat")
                     }],
                 []);
         dataArray.push(element);
@@ -349,22 +322,23 @@ panel_table1d.prototype.update = function(data, drill) {
     drill = drill || {dim: -1, direction: 0};
 
     var tweenDuration = global.getAnimDuration(-1, that.panelId);
+    var trans = d3.transition().duration(tweenDuration);
 
     // Ha túl sok értéket kéne megjeleníteni, pánik
     if (that.data.rows.length > that.maxEntries) {
-        that.verticalScrollbar.set(0, null, tweenDuration);
-        that.panic(true, "<html>A panel nem képes " + that.data.rows.length + " értéket megjeleníteni.<br />A maximálisan megjeleníthető értékek száma " + that.maxEntries + ".</html>");
+        that.verticalScrollbar.set(0, null, trans);
+        that.panic(true, _("<html>A panel nem képes ") + that.data.rows.length + _(" értéket megjeleníteni.<br />A maximálisan megjeleníthető értékek száma ") + that.maxEntries + _(".</html>"));
         that.preparedData = undefined;
     } else {
         that.panic(false);
         that.preparedData = that.prepareData(that.preparedData, that.data.rows, drill);
 
         // Sorfejlécek és cellák kirajzolása.
-        that.drawRowHeaders(that.preparedData, tweenDuration);
-        that.drawCells(that.preparedData, tweenDuration);
+        that.drawRowHeaders(that.preparedData, trans);
+        that.drawCells(that.preparedData, trans);
 
         // Függőleges scrollbar beállítása.
-        that.verticalScrollbar.set(that.preparedData.length * that.tableSpacingVerical, null, tweenDuration);
+        that.verticalScrollbar.set(that.preparedData.length * that.tableSpacingVerical, null, trans);
     }
 };
 
@@ -373,10 +347,10 @@ panel_table1d.prototype.update = function(data, drill) {
  * A táblázat celláinak kirajzolása.
  * 
  * @param {Array} preparedData A megjelenítendő adatokat tartalmazó előkészített adattömb.
- * @param {Number} tweenDuration Az animáció időtartama.
+ * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_table1d.prototype.drawCells = function(preparedData, tweenDuration) {
+panel_table1d.prototype.drawCells = function(preparedData, trans) {
     var that = this;
 
     // A sorok adathoz társítása. Kulcs: a táblázatsor dimenziója.
@@ -385,31 +359,35 @@ panel_table1d.prototype.drawCells = function(preparedData, tweenDuration) {
                 return d.name;
             });
 
-    // A belépő sorok tartója.
-    row.enter().append("svg:g")
+    // Kilépő sorok törlése.
+    row.exit().remove();
+
+    // A belépő sorok tartója, egyesítés a maradókkal.
+    row = row.enter().append("svg:g")
             .attr("class", "svgTableRow")
             .attr("transform", function(d) {
                 return "translate(0," + (d.oldRowIndex * that.tableSpacingVerical) + ")";
             })
             .attr("opacity", function(d) {
                 return d.startOpacity;
-            });
+            })
+            .merge(row);
 
     // A sor helyremozgási animációja.
-    row.transition().duration(tweenDuration)
+    row.transition(trans)
             .attr("transform", function(d) {
                 return "translate(0, " + d.index * that.tableSpacingVerical + ")";
             })
             .attr("opacity", 1);
-
-    // Kilépő sorok törlése.
-    row.exit().remove();
 
     // Cellákhoz való adattársítás.
     var cell = row.selectAll(".svgTableCell")
             .data(function(d) {
                 return d.values;
             });
+
+    // Kilépő cellák letörlése.
+    cell.exit().remove();
 
     // Új cella tartójának elkészítése.
     var newCell = cell.enter().append("svg:g")
@@ -430,8 +408,8 @@ panel_table1d.prototype.drawCells = function(preparedData, tweenDuration) {
             .attr("y", that.tableSpacingVerical / 2)
             .attr("dy", ".35em");
 
-    // Kilépő cellák letörlése.
-    cell.exit().remove();
+    // Maradók és új elemek összeöntése.
+    cell = newCell.merge(cell);
 
     // Cellák váltakozó háttérszínének beállítása.
     cell.select("rect")
@@ -447,17 +425,17 @@ panel_table1d.prototype.drawCells = function(preparedData, tweenDuration) {
             .text(function(d) {
                 return global.cleverRound5(d.value);
             })
-            .transition().duration(tweenDuration)
+            .transition(trans)
             .attr("opacity", 1);
 };
 
 /**
  * Kirajzolja az oszlopfejlécet. Csak 1x kell meghívni, mert nem változik.
  * 
- * @param {Number} tweenDuration Az animáció időtartama.
+ * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_table1d.prototype.drawColumnHeaders = function(tweenDuration) {
+panel_table1d.prototype.drawColumnHeaders = function(trans) {
     var that = this;
 
     // Feliratok az oszlopok elején.
@@ -497,7 +475,7 @@ panel_table1d.prototype.drawColumnHeaders = function(tweenDuration) {
                 return (d.hide === 0);
             })
             .text(function(d, i) {
-                return (d.hide !== 3) ? that.meta.indicators[i].caption : "";
+                return (d.hide !== 3) ? that.localMeta.indicators[i].caption : "";
             });
 
     // Az indikátor érték-fejléce.
@@ -521,7 +499,7 @@ panel_table1d.prototype.drawColumnHeaders = function(tweenDuration) {
             .attr("dy", "0.35em")
             .attr("dx", "0em")
             .text(function(d, i) {
-                return (d.hide % 2 === 0) ? that.meta.indicators[i].value.unit : "";
+                return (d.hide % 2 === 0) ? that.localMeta.indicators[i].value.unitPlural : "";
             });
 
     // Az indikátor hányados-fejléce.
@@ -550,11 +528,14 @@ panel_table1d.prototype.drawColumnHeaders = function(tweenDuration) {
             .attr("dy", "0.35em")
             .attr("dx", "0em")
             .text(function(d, i) {
-                return (d.hide >> 1 === 0) ? that.meta.indicators[i].fraction.unit : "";
+                return (d.hide >> 1 === 0) ? that.localMeta.indicators[i].fraction.unitPlural : "";
             });
 
+    // Maradók és új elemek összeöntése.
+    gColumnHead = newGColumnHead.merge(gColumnHead);
+
     // Helyremozgási, színezési animáció.
-    gColumnHead.transition().duration(tweenDuration)
+    gColumnHead.transition(trans)
             .attr("opacity", 1);
 
     // Szöveg belepaszírozása a rendelkezésre álló helyre.
@@ -566,10 +547,10 @@ panel_table1d.prototype.drawColumnHeaders = function(tweenDuration) {
  * Kirajzolja a táblázat oszlopfejlécét.
  * 
  * @param {Array} preparedData Az előkészített adat.
- * @param {Number} tweenDuration Az animáció ideje.
+ * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_table1d.prototype.drawRowHeaders = function(preparedData, tweenDuration) {
+panel_table1d.prototype.drawRowHeaders = function(preparedData, trans) {
     var that = this;
 
     // Feliratok a sorok elején.
@@ -577,6 +558,11 @@ panel_table1d.prototype.drawRowHeaders = function(preparedData, tweenDuration) {
             .data(preparedData, function(d) {
                 return d.uniqueId + d.name;
             });
+
+    // Kilépő sorfejkonténer törlése.
+    gRowHead.exit()
+            .on("click", null)
+            .remove();
 
     // Belépő sorfejkonténerek elhelyezése.
     var newGRowHead = gRowHead.enter().append("svg:g")
@@ -604,27 +590,30 @@ panel_table1d.prototype.drawRowHeaders = function(preparedData, tweenDuration) {
             .attr("y", that.tableSpacingVerical / 2)
             .attr("x", 0)
             .attr("dy", "0.35em")
-            .attr("dx", ".26em")
-            .text(function(d) {
-                return d.name;
-            });
+            .attr("dx", ".26em");
 
-    // Kilépő sorfejkonténer törlése.
-    gRowHead.exit()
-            .on("click", null)
-            .remove();
+    // Maradók és új elemek összeöntése.
+    gRowHead = newGRowHead.merge(gRowHead);
+
+    gRowHead.select("text").text(function(d) {
+        return d.name;
+    });
+
+    // A sorfejlécekhez tartozó adat befrissítése.
+    gRowHead.select("rect");
+    gRowHead.select("text");
 
     // Helyremozgási, színezési animáció.
     gRowHead.attr("parity", function(d) {
         return d.index % 2;
     })
             .classed("darkenable", false)
-            .transition().duration(tweenDuration)
+            .transition(trans)
             .attr("opacity", 1)
             .attr("transform", function(d) {
                 return "translate(0, " + d.index * that.tableSpacingVerical + ")";
             })
-            .each("end", Panel.prototype.classedDarkenable);
+            .on("end", Panel.prototype.classedDarkenable);
 
     // Felirat összenyomása a kitöltendő területre.
     global.cleverCompress(that.gRowHeads.selectAll("text"), that.tableHeadWidth, 0.94, 1.4);
@@ -667,4 +656,48 @@ panel_table1d.prototype.doChangeDimension = function(panelId, newDimId) {
         global.tooltip.kill();
         this.mediator.publish("drill", {dim: -1, direction: 0, toId: undefined});
     }
+};
+
+/**
+ * Nyelvváltást végrehajtó függvény.
+ * 
+ * @param {Number} duration A megjelenítési animáció ideje.
+ * @param {Boolean} isInitial Ez az első megjelenés?
+ * @returns {undefined}
+ */
+panel_table1d.prototype.langSwitch = function(duration, isInitial) {
+    var that = this;
+    var idA = [];									// Megjelenítendő értékek id-vektora a tooltiphez.
+    var valueNamesVector = [];						// A megjelenítendő értékek neveinek tömbje.
+    this.valuePositionVector = [];					// A megjelenítendő érték-felirat kezdőpozíciója.
+    var pos = 0;
+    that.columnHeadVector = [];
+
+    // Az oszlopfejléc-adatok összerakása.
+    for (var i = 0, iMax = that.meta.indicators.length; i < iMax; i++) {
+        var ind = that.meta.indicators[i];
+        that.columnHeadVector.push({
+            hide: ((ind.value.hide) ? 1 : 0) + ((ind.fraction.hide) ? 2 : 0),
+            tooltip: that.createTooltip(
+                    [{name: that.localMeta.indicators[i].description}], [])
+        });
+        this.valuePositionVector.push(pos);
+
+        if (that.columnHeadVector[i].hide !== 3) {
+            idA.push(i);
+            valueNamesVector.push(that.localMeta.indicators[i].caption);
+            pos += (that.columnHeadVector[i].hide === 0) ? 2 : 1;
+            if (that.columnHeadVector[i].hide % 2 === 0) {
+                that.columnColorIndex.push(d3.rgb(global.colorValue(i)).brighter(that.darkenBrightenFactor));
+            }
+            if (that.columnHeadVector[i].hide >> 1 === 0) {
+                that.columnColorIndex.push(d3.rgb(global.colorValue(i)).darker(that.darkenBrightenFactor));
+            }
+        }
+    }
+    
+    var trans =  d3.transition().duration((isInitial) ? duration : 0);
+    that.gColumnHeads.selectAll(".svgColumnHead").remove();
+    that.drawColumnHeaders(trans);
+    that.titleBox.update(idA, valueNamesVector, [], [], true, global.selfDuration);
 };

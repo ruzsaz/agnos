@@ -7,7 +7,7 @@
  *   See LICENSE.md
  */
 
-/*global XMLHttpRequest, setTimeout, document, navigator, ActiveXObject*/
+/*global XMLHttpRequest, setTimeout, document, navigator, ActiveXObject, Function*/
 
 /*! @source http://purl.eligrey.com/github/l10n.js/blob/master/l10n.js*/
 

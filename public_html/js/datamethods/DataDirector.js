@@ -1,4 +1,6 @@
-'use strict'; // TODO: nyelv
+/* global d3 */
+
+'use strict';
 
 /**
  * Egy oldal adatfolyamát intéző osztály.
@@ -39,22 +41,20 @@ function DataDirector(side, mediator) {
  * @returns {undefined}
  */
 DataDirector.prototype.register = function(context, panelId, dimsToShow, preUpdateFunction, updateFunction, getConfigFunction) {
-
-    // Ha már regisztrálva van ilyen panelId-jű, töröljük.
+    // Ha már regisztrálva van ilyen panelId-jű, akkor azt kell majd kicserélni.
     var oldPosition = global.positionInArrayByProperty(this.panelRoster, "panelId", panelId);
-    if (oldPosition >= 0) {
-        this.panelRoster.splice(oldPosition, 1);
-    }
 
-    // Ha nem csak törölni kell, akkor hozzá is adja.
+    // Ha nem törölni kell, akkor cseréljük, vagy ha még nem volt ilyen, akkor hozzáadjuk.
     if (context !== undefined) {
-
+        if (oldPosition === -1) {
+            oldPosition = this.panelRoster.length;
+        }
         var ds = [];
         for (var d = 0, dMax = global.facts[this.side].reportMeta.dimensions.length; d < dMax; d++) {
             ds.push((dimsToShow.indexOf(d) > -1) ? 1 : 0);
         }
 
-        this.panelRoster.push({
+        this.panelRoster[oldPosition] = {
             context: context,
             panelId: panelId,
             dimsToShow: ds,
@@ -62,8 +62,13 @@ DataDirector.prototype.register = function(context, panelId, dimsToShow, preUpda
             updateFunction: updateFunction,
             getConfigFunction: getConfigFunction,
             data: undefined
-        });
-
+        };
+        
+    // Ha törölni kell, akkor kiszedjük a tömbből.
+    } else {
+        if (oldPosition >= 0) {
+            this.panelRoster.splice(oldPosition, 1);
+        }
     }
 };
 
@@ -194,11 +199,11 @@ DataDirector.prototype.requestNewData = function(drill) {
     });
 
     var queriesString = uniqueQueries.toString().replace(/,/g, ";");
-    var query = cubeNameString + ";" + baseLevelQueryString + ";" + queriesString;
+    var query = cubeNameString + ":" + String.locale + ";" + baseLevelQueryString + ";" + queriesString;
     var encodedQuery = "queries=" + window.btoa(query);
 
     // A letöltés élesben.
-    global.get(global.url.fact, encodedQuery, function(result, status) {
+    global.get(global.url.fact, encodedQuery, function(result) {
         that.processNewData(drill, result);
     });
 };
@@ -249,14 +254,18 @@ DataDirector.prototype.getConfigs = function(callback) {
     var configs = "";
     var separator = "";
 
-    // Egyesével elkéri a panelek konfigurőciós szkriptjét, és ;-vel elválasztottan összegyűjti.
-    for (var i = 0, iMax = this.panelRoster.length; i < iMax; i++) {
-        if (typeof this.panelRoster[i].getConfigFunction === 'function') {
-            configs = configs + separator + this.panelRoster[i].getConfigFunction.call(this.panelRoster[i].context);
+    // Egyesével elkéri a panelek konfigurőciós szkriptjét, és ;-vel elválasztottan összegyűjti.    
+    // Fontos: nem a panelroster sorrendjében, hanem a képernyőn megjelenés sorrendjében kell végigmenni.
+    var panels = d3.selectAll("#container" + this.side + " .panel.single:not(.dying)").nodes();
+    for (var i = 0, iMax = panels.length; i < iMax; i++) {
+        var panelId = "#" + d3.select(panels[i]).attr('id');
+        var p = global.getFromArrayByProperty(this.panelRoster, "panelId", panelId);
+        if (typeof p.getConfigFunction === 'function') {
+            configs = configs + separator + p.getConfigFunction.call(p.context);
             separator = ";";
-        }
+        }        
     }
-    
+
     // Ha callbackolni kell, íme.
     if (typeof callback === 'function') {
         var configObject = {};

@@ -1,6 +1,6 @@
 /* global Panel, d3 */
 
-'use strict'; // TODO: nyelv
+'use strict';
 
 var bar2panel = panel_bar2d;
 /**
@@ -35,32 +35,28 @@ function panel_bar2d(init) {
     this.shadowTimeout;										// A háttértéglalapokat létrehozó időzítés.
 
     // Vízszintes skála.
-    this.xScale = d3.scale.linear()
+    this.xScale = d3.scaleLinear()
             .range([0, that.width]);
 
     // Függőleges skála.
-    this.yScale = d3.scale.linear()
+    this.yScale = d3.scaleLinear()
             .range([that.height, 0])
             .nice(10);
 
     // A vízszintes tengely.
-    d3.svg.axis()
-            .scale(that.xScale)
-            .orient("bottom");
+    d3.axisBottom(that.xScale);
 
     // A függőleges tengelyt generáló függvény.
-    this.yAxis = d3.svg.axis()
-            .scale(that.yScale)
-            .orient("left")
+    this.yAxis = d3.axisLeft(that.yScale)
             .ticks(10)
             .tickFormat(global.cleverRound3);
 
     // Széthúzott módban a függőleges tengely %-okat kell hogy mutasson.
     if (that.isStretched) {
-        that.yAxis.scale(d3.scale.linear()
+        that.yAxis.scale(d3.scaleLinear()
                 .range([that.height, 0])
                 .domain([0, 1]))
-                .tickFormat(d3.format("%"));
+                .tickFormat(d3.format(".0%"));
     }
 
     // A fő alapréteg, ami mentén az X dimenzóban való furkálás történik.
@@ -182,19 +178,21 @@ panel_bar2d.prototype.valueToShow = function(d) {
  */
 panel_bar2d.prototype.getTooltip = function(xElement, yElement) {
     var that = this;
+    //var xUnitProperty = (xElement.value === 1) ? "unit" : "unitPlural";
+    var yUnitProperty = (yElement.value === 1) ? "unit" : "unitPlural";
     return that.createTooltip(
             [{
-                    name: that.meta.dimensions[that.dimXToShow].description,
-                    value: (xElement.name) ? xElement.name : "Nincs adat"
+                    name: that.localMeta.dimensions[that.dimXToShow].description,
+                    value: (xElement.name) ? xElement.name : _("Nincs adat")
                 }, {
-                    name: that.meta.dimensions[that.dimYToShow].description,
-                    value: (yElement.dimYName) ? yElement.dimYName : "Nincs adat"
+                    name: that.localMeta.dimensions[that.dimYToShow].description,
+                    value: (yElement.dimYName) ? yElement.dimYName : _("Nincs adat")
 
                 }],
             [{
-                    name: that.meta.indicators[that.valToShow].description,
+                    name: that.localMeta.indicators[that.valToShow].description,
                     value: yElement.value,
-                    dimension: ((that.valFraction) ? that.meta.indicators[that.valToShow].fraction.unit : that.meta.indicators[that.valToShow].value.unit)
+                    dimension: ((that.valFraction) ? that.localMeta.indicators[that.valToShow].fraction[yUnitProperty] : that.localMeta.indicators[that.valToShow].value[yUnitProperty])
                 }]
             );
 };
@@ -269,6 +267,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
                         return (d.id !== drill.toId);
                     })
                     .remove();
+
             that.gAxisXShadow.selectAll("rect")
                     .on("click", null)
                     .remove();
@@ -283,7 +282,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
         }
 
         // Ha felfúrás történik.
-        else if (drill.direction === 1 && (that.dimXToShow !== that.dimYToShow)) {
+        else if (drill.direction === 1 && (that.dimXToShow !== that.dimYToShow) && oldPreparedData) {
 
             // Tengelyfeliratok: minden törlése.
             that.gAxisX.selectAll("text")
@@ -291,6 +290,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
                         return (d.id !== drill.fromId);
                     })
                     .remove();
+
             that.gAxisXShadow.selectAll("rect")
                     .on("click", null)
                     .remove();
@@ -482,7 +482,7 @@ panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill
     var yMagRatio = ((that.isStretched) ? 1 : that.yScale.domain()[1] / oldDataMax);
 
     // Identikus skála; ha széthúzott üzemmódban vagyunk, akkor minden egyes elemnél átalakítjuk.
-    var strechScale = d3.scale.linear()
+    var strechScale = d3.scaleLinear()
             .domain([0, dataMax])
             .range([0, dataMax]);
 
@@ -628,33 +628,34 @@ panel_bar2d.prototype.update = function(data, drill) {
 
     var tweenDuration = global.getAnimDuration(-1, that.panelId);
     if (that.data.rows.length > that.maxEntries) {
-        that.panic(true, "<html>A panel nem képes " + that.data.rows.length + " értéket megjeleníteni.<br />A maximálisan megjeleníthető értékek száma " + that.maxEntries + ".</html>");
+        that.panic(true, _("<html>A panel nem képes ") + that.data.rows.length + _(" értéket megjeleníteni.<br />A maximálisan megjeleníthető értékek száma ") + that.maxEntries + _(".</html>"));
         that.preparedData = undefined;
     } else {
         that.preparedData = that.prepareData(that.preparedData, that.data.rows, drill);
         var maxInDim = Math.max(that.preparedData.dimYArray.length, Math.ceil(that.data.rows.length / that.preparedData.dimYArray.length));
         if (maxInDim > that.maxEntries1D) {
-            that.panic(true, "<html>A panel nem képes " + maxInDim + " értéket egy dimenzió mentén megjeleníteni.<br />A maximálisan megjeleníthető értékek száma " + that.maxEntries1D + ".</html>");
+            that.panic(true, _("<html>A panel nem képes ") + maxInDim + " értéket egy dimenzió mentén megjeleníteni.<br />A maximálisan megjeleníthető értékek száma " + that.maxEntries1D + ".</html>");
             that.preparedData = undefined;
         } else {
             that.panic(false);
-            that.drawAxes(that.preparedData, tweenDuration);
-            that.drawBars(that.preparedData, tweenDuration);
-            that.drawLegend(that.preparedData, tweenDuration);
+            var trans = d3.transition().duration(tweenDuration);
+            that.drawAxes(that.preparedData, trans);
+            that.drawBars(that.preparedData, trans);
+            that.drawLegend(that.preparedData, trans);
         }
     }
-    var titleMeta = that.meta.indicators[that.valToShow];
-    that.titleBox.update(that.valToShow, titleMeta.caption, titleMeta.value.unit, titleMeta.fraction.unit, that.valFraction, tweenDuration);
+    var titleMeta = that.localMeta.indicators[that.valToShow];
+    that.titleBox.update(that.valToShow, titleMeta.caption, titleMeta.value.unitPlural, titleMeta.fraction.unitPlural, that.valFraction, tweenDuration);
 };
 
 /**
  * Kirajzolja és helyére animálja az oszlopdiagramokat.
  * 
  * @param {Object} preparedData Az ábrázoláshoz előkészített adat.
- * @param {Number} tweenDuration Az animáció ideje.
+ * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drawBars = function(preparedData, tweenDuration) {
+panel_bar2d.prototype.drawBars = function(preparedData, trans) {
     var that = this;
 
     // Egy téglalap konténere, és a hozzá tartozó adat hozzácsapása.
@@ -663,23 +664,24 @@ panel_bar2d.prototype.drawBars = function(preparedData, tweenDuration) {
                 return d.uniqueId;
             });
 
+    // Kilépő oszlopkonténer törlése.
+    gBar.exit()
+            .on("click", null)
+            .remove();
+
     // Az új oszlopok tartójának elkészítése.
-    gBar.enter().append("svg:g")
+    gBar = gBar.enter().append("svg:g")
             .attr("class", "bar bordered darkenable")
             .attr("transform", function(d) {
                 return "translate(" + d.oldX + ", 0)";
-            });
+            })
+            .merge(gBar);
 
     // Lefúrás eseménykezelőjének hozzácsapása az oszlopkonténerhez.
     gBar.classed("listener", true)
             .on("click", function(d) {
                 that.drill(that.dimX, d);
             });
-
-    // Kilépő oszlopkonténer törlése.
-    gBar.exit()
-            .on("click", null)
-            .remove();
 
     // Elemi oszlopelemek megrajzolása, kilépők letörlése.
     var oldWidth = preparedData.dataArray[0].oldWidth; // A régi téglalapszélesség; ki kell szedni, hogy minden elemhez használhassuk.
@@ -689,6 +691,8 @@ panel_bar2d.prototype.drawBars = function(preparedData, tweenDuration) {
             }, function(d) {
                 return d.dimYUniqueId;
             });
+
+    barRect.exit().remove();
 
     barRect.enter().append("svg:rect")
             .attr("x", 0)
@@ -706,10 +710,8 @@ panel_bar2d.prototype.drawBars = function(preparedData, tweenDuration) {
                 return d2.startOpacity;
             });
 
-    barRect.exit().remove();
-
     // Megjelenési animáció: akárhol is volt, a helyére megy.
-    gBar.transition().duration(tweenDuration)
+    gBar.transition(trans)
             .attr("transform", function(d) {
                 return "translate(" + d.x + ", 0)";
             })
@@ -722,7 +724,7 @@ panel_bar2d.prototype.drawBars = function(preparedData, tweenDuration) {
             })
             .attr("width", that.xScale(1 - that.barPadding))
             .attr("opacity", 1)
-            .each("end", function() {
+            .on("end", function() {
                 d3.select(this).attr("class", function(d2) {
                     return "controlled controlled" + d2.index;
                 });
@@ -733,10 +735,10 @@ panel_bar2d.prototype.drawBars = function(preparedData, tweenDuration) {
  * Jelkulcs (ami egyben az Y dimenziók vezérlője) felrajzolása.
  * 
  * @param {Object} preparedData Az ábrázoláshoz előkészített adat.
- * @param {Number} tweenDuration Az animáció ideje.
+ * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drawLegend = function(preparedData, tweenDuration) {
+panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
     var that = this;
     var legendArray = preparedData.dimYArray;
 
@@ -745,6 +747,13 @@ panel_bar2d.prototype.drawLegend = function(preparedData, tweenDuration) {
             .data(legendArray, function(d) {
                 return d.uniqueId;
             });
+
+    // Kilépő tartók letörlése.
+    legend.exit()
+            .on("click", null)
+            .on("mouseover", null)
+            .on("mouseout", null)
+            .remove();
 
     // Új elemek létrehozása.
     var legend_new = legend.enter().insert("svg:g", ".bar_group")
@@ -760,10 +769,6 @@ panel_bar2d.prototype.drawLegend = function(preparedData, tweenDuration) {
             .on("mouseout", function() {
                 d3.select(this).classed("triggered", false);
             });
-
-    legend.attr("class", function(d) {
-        return "legendEntry listener legendControl" + d.index;
-    });
 
     // Kezdőtéglalap rajzolása az új tartókba.
     legend_new.append("svg:path")
@@ -797,12 +802,19 @@ panel_bar2d.prototype.drawLegend = function(preparedData, tweenDuration) {
                 return d.name;
             });
 
+    legend = legend_new.merge(legend);
+            
+    legend.attr("class", function(d) {
+        return "legendEntry listener legendControl" + d.index;
+    });
+
     // A téglalapok helyre animálása.
-    legend.transition().duration(tweenDuration)
+    legend.transition(trans)
             .attr("transform", function(d) {
                 return "translate(" + (d.x + global.legendOffsetX) + ", " + (that.h - global.legendHeight - global.legendOffsetY) + ")";
             });
-    legend.select("path").transition().duration(tweenDuration)
+            
+    legend.select("path").transition(trans)
             .attr("d", function(d, i) {
                 return global.rectanglePath(
                         0, // x
@@ -815,7 +827,7 @@ panel_bar2d.prototype.drawLegend = function(preparedData, tweenDuration) {
                         (i === 0) ? global.rectRounding : 0); // balalsó
             })
             .attr("opacity", 1)
-            .each("end", function() {
+            .on("end", function() {
                 d3.select(this).classed("darkenable", true);
             });
 
@@ -824,15 +836,8 @@ panel_bar2d.prototype.drawLegend = function(preparedData, tweenDuration) {
             .text(function(d) {
                 return d.name;
             })
-            .transition().duration(tweenDuration)
+            .transition(trans)
             .attr("opacity", 1);
-
-    // Kilépő tartók letörlése.
-    legend.exit()
-            .on("click", null)
-            .on("mouseover", null)
-            .on("mouseout", null)
-            .remove();
 
     // A szövegek összenyomása, hogy elférjenek.
     var legendText = legend.selectAll("text");
@@ -843,18 +848,18 @@ panel_bar2d.prototype.drawLegend = function(preparedData, tweenDuration) {
  * A tengelyek kirajzolása.
  * 
  * @param {Object} preparedData A panel által megjelenítendő, feldolgozott adatok.
- * @param {Number} tweenDuration Az animáció időtartalma.
+ * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drawAxes = function(preparedData, tweenDuration) {
+panel_bar2d.prototype.drawAxes = function(preparedData, trans) {
     var that = this;
 
     var shadowSize = global.axisTextSize(that.xScale(1));	// A vízszintes tengely betűje mögötti klikk-téglalap mérete.
     var axisTextSize = (shadowSize < 6) ? 0 : shadowSize;	// A vízszintes tengely betűmérete.
 
     // Függőleges tengely kirajzolása, animálása.
-    if (that.gAxisY.selectAll("path")[0].length > 0) {
-        that.gAxisY.transition().duration(tweenDuration).call(that.yAxis);
+    if (that.gAxisY.selectAll("path").nodes().length > 0) {
+        that.gAxisY.transition(trans).call(that.yAxis);
     } else {
         that.gAxisY.call(that.yAxis);
     }
@@ -864,6 +869,11 @@ panel_bar2d.prototype.drawAxes = function(preparedData, tweenDuration) {
             .data(preparedData.dataArray, function(d) {
                 return d.id + d.name;
             });
+
+    // Kilépő feliratok letörlése.
+    axisLabelX.exit()
+            .transition(trans).attr("opacity", 0)
+            .remove();
 
     // Belépő feliratok elhelyezése.
     var axisLabelXText = axisLabelX.enter()
@@ -886,13 +896,10 @@ panel_bar2d.prototype.drawAxes = function(preparedData, tweenDuration) {
                 return d.name;
             });
 
-    // Kilépő feliratok letörlése.
-    axisLabelX.exit()
-            .transition().duration(tweenDuration).attr("opacity", 0)
-            .remove();
+    axisLabelX = axisLabelXText.merge(axisLabelX);
 
     // Maradó feliratok helyre animálása.
-    axisLabelX.transition().duration(tweenDuration)
+    axisLabelX.transition(trans)
             .attr("font-size", axisTextSize)
             .attr("x", -that.height + 0.26 * axisTextSize)
             .attr("y", function(d) {
@@ -922,12 +929,12 @@ panel_bar2d.prototype.drawAxes = function(preparedData, tweenDuration) {
                 .attr("height", function(d) {
                     return Math.max(30, 0.5 * shadowSize + Math.min(that.gAxisX.selectAll("text").filter(function(d2) {
                         return d === d2;
-                    })[0][0].getComputedTextLength(), 0.7 * that.h));
+                    }).nodes()[0].getComputedTextLength(), 0.7 * that.h));
                 })
                 .attr("y", function(d) {
                     return that.height - Math.max(30, 0.5 * shadowSize + Math.min(that.gAxisX.selectAll("text").filter(function(d2) {
                         return d === d2;
-                    })[0][0].getComputedTextLength(), 0.7 * that.h));
+                    }).nodes()[0].getComputedTextLength(), 0.7 * that.h));
                 })
                 .attr("x", function(d) {
                     return d.x + (d.width - shadowSize) / 2;
@@ -936,7 +943,7 @@ panel_bar2d.prototype.drawAxes = function(preparedData, tweenDuration) {
                 .on("click", function(d) {
                     that.drill(that.dimX, d);
                 });
-    }, tweenDuration);
+    }, trans.duration());
 
 };
 

@@ -1,6 +1,21 @@
 {
+    "Y": "yotta",
+    "Z": "zetta",
+    "E": "exa",
+    "P": "peta",
+    "T": "eMrd",
+    "G": "Mrd",
+    "M": "M",
+    "k": "e",
+    "m": "mili",
+    "µ": "µ",
+    "n": "nano",
+    "inf": "végtelen",
 	"Fejléc": "Fejléc",
     "A programról": "A programról",
     "Irányítás": "Irányítás",
     "Dimenzió neve": "Dimenzió neve"
+    
+    
+    
 }

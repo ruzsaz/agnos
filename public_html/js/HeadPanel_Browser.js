@@ -1,6 +1,6 @@
 /* global HeadPanel, d3 */
 
-'use strict'; // TODO: nyelv
+'use strict';
 
 /**
  * A report-böngésző konstruktora.
@@ -8,29 +8,32 @@
  * @param {Object} init Inicializáló objektum. (Valójában csak a panel oldalát tartalmazza.)
  * @param {Object} superMeta A reportokat leíró meta.
  * @param {Number} startScale A méretszorzó, amivel meg kell jeleníteni.
+ * @param {Number} duration Az előtűnisi animáció időtartama.
  * @returns {HeadPanel_Browser} A report böngésző panel.
  */
-function HeadPanel_Browser(init, superMeta, startScale) {
+function HeadPanel_Browser(init, superMeta, startScale, duration) {
     var that = this;
 
-    HeadPanel.call(this, init, global.mediators[init.group], "HeadPanel_Browser", startScale);
+    this.superMeta = superMeta;
+
+    HeadPanel.call(this, init, global.mediators[init.group], "HeadPanel_Browser", startScale, duration);
 
     // A keresés mező.
     that.divTableBase.append("html:input")
             .attr("type", "text")
             .attr("id", "searchP" + that.panelSide)
-            .attr("placeholder", "Aki keres, talál...")
+            .attr("placeholder", "???")
             .on("keyup", that.searchFilter);
 
     // Táblázat létrehozása.
-    var table = that.divTableBase.append("html:div")
+    this.table = that.divTableBase.append("html:div")
             .attr("class", "tableScrollPane")
             .append("html:div")
             .attr("class", "table reportsTable")
             .attr("id", "reportsTableP" + that.panelSide);
 
     // Táblázat fejléce.
-    var heading = table.append("html:div")
+    var heading = that.table.append("html:div")
             .attr("class", "heading");
 
     heading.append("html:div")
@@ -53,8 +56,7 @@ function HeadPanel_Browser(init, superMeta, startScale) {
     heading.append("html:div")
             .attr("class", "cell backgroundCell");
 
-    // Sorok feltöltése a reportokkal.
-    var row = table.selectAll(".row").data(superMeta)
+    that.table.selectAll(".row").data(that.superMeta)
             .enter().append("html:div")
             .attr("class", "row alterColored listener")
             .attr("parity", function(d, i) {
@@ -64,69 +66,8 @@ function HeadPanel_Browser(init, superMeta, startScale) {
                 that.showReport(d);
             });
 
-    var tempRowCell;
-
-    // Az első cella: report neve.
-    {
-        tempRowCell = row.append("html:div")
-                .attr("class", "cell");
-
-        tempRowCell.append("html:text")
-                .text(function(d) {
-                    return d.caption;
-                });
-
-        tempRowCell.append("html:span")
-                .html("&nbsp;");
-    }
-
-    // A második cella: report leírása.
-    {
-        tempRowCell = row.append("html:div")
-                .attr("class", "cell");
-
-        tempRowCell.append("html:text")
-                .text(function(d) {
-                    return d.description;
-                });
-
-        tempRowCell.append("html:span")
-                .html("&nbsp;");
-    }
-
-    // A harmadik cella: report adatforrása.
-    {
-        tempRowCell = row.append("html:div")
-                .attr("class", "cell");
-
-        tempRowCell.append("html:text")
-                .text(function(d) {
-                    return  d.datasource;
-                });
-
-        tempRowCell.append("html:span")
-                .html("&nbsp;");
-    }
-
-    // A negyedik cella: utolsó adatfeltöltés ideje.
-    {
-        tempRowCell = row.append("html:div")
-                .attr("class", "cell");
-
-        tempRowCell.append("html:text")
-                .text(function(d) {
-                    return d.updated;
-                });
-
-        tempRowCell.append("html:span")
-                .html("&nbsp;");
-    }
-
-    // A háttércella.
-    {
-        row.append("html:div")
-                .attr("class", "cell backgroundCell");
-    }
+    // A supermetába kódolt dinamikus tartalom létrehozása.
+    that.initPanel();
 }
 
 //////////////////////////////////////////////////
@@ -163,6 +104,93 @@ HeadPanel_Browser.prototype.searchFilter = function() {
             .attr("parity", function(d, i) {
                 return i % 2;
             });
+};
+
+//////////////////////////////////////////////////
+// Rajzolási folyamat függvényei
+//////////////////////////////////////////////////
+
+/**
+ * Feltölti a panelt a supermetában megkapott dinamikus tartalommal.
+ * Nyelvváltás esetén elég ezt lefuttatni.
+ * 
+ * @param {Number} duration Animáció ideje.
+ * @returns {undefined}
+ */
+HeadPanel_Browser.prototype.initPanel = function(duration) {
+
+    // Elemek nyelvfüggő sorbarendezése.
+    this.superMeta.sort(function(a, b) {
+        return (global.getFromArrayByLang(a.localizedReports, String.locale).caption).localeCompare(global.getFromArrayByLang(b.localizedReports, String.locale).caption, String.locale, {sensitivity: 'variant', caseFirst: 'upper'});
+    });
+    
+    // Adatok újratársítása, sorok letörlése.
+    var row = this.table.selectAll(".row").data(this.superMeta)
+            .html("");
+
+    var tempRowCell;
+
+    // Az első cella: report neve.
+    {
+        tempRowCell = row.append("html:div")
+                .attr("class", "cell");
+
+        tempRowCell.append("html:text")
+                .text(function(d) {
+                    return global.getFromArrayByLang(d.localizedReports, String.locale).caption;
+                });
+
+        tempRowCell.append("html:span")
+                .html("&nbsp;");
+    }
+
+    // A második cella: report leírása.
+    {
+        tempRowCell = row.append("html:div")
+                .attr("class", "cell");
+
+        tempRowCell.append("html:text")
+                .text(function(d) {
+                    return global.getFromArrayByLang(d.localizedReports, String.locale).description;
+                });
+
+        tempRowCell.append("html:span")
+                .html("&nbsp;");
+    }
+
+    // A harmadik cella: report adatforrása.
+    {
+        tempRowCell = row.append("html:div")
+                .attr("class", "cell");
+
+        tempRowCell.append("html:text")
+                .text(function(d) {
+                    return global.getFromArrayByLang(d.localizedReports, String.locale).datasource;
+                });
+
+        tempRowCell.append("html:span")
+                .html("&nbsp;");
+    }
+
+    // A negyedik cella: utolsó adatfeltöltés ideje.
+    {
+        tempRowCell = row.append("html:div")
+                .attr("class", "cell");
+
+        tempRowCell.append("html:text")
+                .text(function(d) {
+                    return (new Date(d.updated)).toLocaleString(String.locale);
+                });
+
+        tempRowCell.append("html:span")
+                .html("&nbsp;");
+    }
+
+    // A háttércella.
+    {
+        row.append("html:div")
+                .attr("class", "cell backgroundCell");
+    }
 };
 
 //////////////////////////////////////////////////

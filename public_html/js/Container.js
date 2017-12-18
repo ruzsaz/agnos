@@ -19,7 +19,17 @@ function Container() {
             .attr("class", "mainToolbar")
             .attr("id", "mainToolbar");
 
-    $("#mainToolbar").load("mainToolbar.html?ver=" + version);
+    var browserLocale = (navigator.language || navigator.userLanguage || "en").replace(/[_-].*/ig, "");
+    var langFromCookie = global.getCookie("language");
+    console.log(langFromCookie, browserLocale);
+    $("#mainToolbar").load("mainToolbar.html?ver=" + version, undefined, function() {
+        if (global.i18nRequired) {
+            d3.select(".languageSwitch").style("display", "block");
+            browserLocale = langFromCookie || browserLocale;
+        } else {
+            browserLocale = "hu";
+        }
+    });
 
     // Progress-réteg.
     topdiv.append("html:div")
@@ -30,7 +40,9 @@ function Container() {
                 .attr("id", "scrollPaneP" + i)
                 .append("html:div")
                 .attr("id", "cutter" + i)
-                .append("html:div")
+                .append("html:div");
+
+        container
                 .attr("id", "container" + i)
                 .attr("class", "container")
                 .style(global.getStyleForScale(1, 0, 0));
@@ -84,12 +96,12 @@ function Container() {
         } else {
             that.resizeContainers(0, 1, global.panelNumberOnScreen);
         }
-
+        global.setLanguage(browserLocale);
     });
 
     that.initChangelog();
     global.tagForLocalization();
-    global.setLanguage("hu");
+
 }
 
 /**
@@ -204,9 +216,9 @@ Container.prototype.resizeContainer = function(side, duration, sizePercentage, p
 
     // Animálva átméretezi a tartó konténert.
     d3.select("#container" + side).transition().duration(duration)
-            .style({"width": parseInt((bodyWidth * sizePercentage / scaleRatio) + 20) + "px"})
-            .style(global.getStyleForScale(scaleRatio, 0, 0))
-            .each("end", function() {
+            .style("width", parseInt((bodyWidth * sizePercentage / scaleRatio) + 20) + "px")
+            .styles(global.getStyleForScale(scaleRatio, 0, 0))
+            .on("end", function() {
                 var cutterHeight = parseInt(d3.select("#container" + side).style("height")) * scaleRatio;
                 if (cutterHeight < parseFloat(d3.select("body").style("height")) - global.mainToolbarHeight) {
                     d3.select("#cutter" + side).style("height", "100%");
@@ -239,7 +251,7 @@ Container.prototype.getScaleRatio = function(side, sizePercentage, panelsPerRow,
     var panelRealWidth = global.panelWidth + 2 * panelMargin; // Egy panel ténylegesen ennyi pixelt folgalna el nagyítás nélkül.
     var panelRealHeight = global.panelHeight + 2 * panelMargin; // Egy panel ténylegesen ennyi pixelt folgalna el nagyítás nélkül.
 
-    panelNumber = panelNumber || d3.selectAll("#container" + side + " .panel:not(.dying)")[0].length - 1; // A pillanatnyilag meglévő normál panelek száma. A magasság megállapításához kell.
+    panelNumber = panelNumber || d3.selectAll("#container" + side + " .panel:not(.dying)").nodes().length - 1; // A pillanatnyilag meglévő normál panelek száma. A magasság megállapításához kell.
     var unscaledPageWidth = panelsPerRow * panelRealWidth;
     var unscaledPageHeight = parseFloat(d3.select("#headPanelP" + side).style("height")) + 2 * panelMargin + panelRealHeight * parseInt(panelNumber / panelsPerRow + 0.99);
 
@@ -265,7 +277,7 @@ Container.prototype.getScaleRatio = function(side, sizePercentage, panelsPerRow,
 Container.prototype.newReport = function(side, reportSuperMeta, startObject) {
     global.mediators[side].remove("killListeners");
     this.isSideInUse[side] = true;
-    this.updateHelp(side, reportSuperMeta.description, reportSuperMeta.updated, reportSuperMeta.helpHTML);
+    this.updateHelp(side, reportSuperMeta);
     global.facts[side] = new Fact(reportSuperMeta, side, this.newReportReady, this, startObject);
 };
 
@@ -273,34 +285,38 @@ Container.prototype.newReport = function(side, reportSuperMeta, startObject) {
  * Beállítja a reportra vonatkozó help-et.
  * 
  * @param {Integer} side Erre az oldalra vonatkozó helpről van szó.
- * @param {String} reportName A report neve, meg fog jelenni a help-ben. (üres: törlés)
- * @param {String} updated A report Frissítési dátuma, meg fog jelenni a help-ben. (üres: törlés)
- * @param {String} base64EncodedContent A beállítandó HTML base64 kódolva. (üres: törlés)
+ * @param {Object} reportSuperMeta A report supermetája. (üres: törlés)
  * @returns {undefined}
  */
-Container.prototype.updateHelp = function(side, reportName, updated, base64EncodedContent) {
-    var header = (reportName) ? "<h3>" + reportName + "</h3>" : "";
-    var updateTime = (updated) ? "<em>frissítve: " + updated + "</em><br>" : "";
-    var content = "<div class='helpInnerHTML'>" + ((base64EncodedContent) ? ((base64EncodedContent.length > 4) ? LZString.decode(base64EncodedContent) : "Nincs elérhető információ.") : "") + "</div>";
-    var html = header + updateTime + content;
+Container.prototype.updateHelp = function(side, reportSuperMeta) {
+    var localHelps = d3.selectAll(".localized.helpContent").nodes();
+    for (var i = 0, iMax = localHelps.length; i < iMax; i++) {
+        var localHelp = d3.select(localHelps[i]);
+        var lang = localHelp.attr("lang");
+        var localMeta = (reportSuperMeta !== undefined) ? global.getFromArrayByLang(reportSuperMeta.localizedReports, lang) : undefined;
+        var header = (localMeta !== undefined) ? "<h3>" + localMeta.description + "</h3>" : "";
+        var updateTime = (localMeta !== undefined) ? "<em>frissítve: " + localMeta.updated + "</em><br>" : "";
+        var content = "<div class='helpInnerHTML'>" + ((localMeta !== undefined) ? ((localMeta.helpHTML.length > 4) ? LZString.decode(localMeta.helpHTML) : "Nincs elérhető információ.") : "") + "</div>";
+        var html = header + updateTime + content;
 
-    if (this.isSideInUse[0] && this.isSideInUse[1]) {   // Ha mindkét oldalon van report
-        d3.selectAll(".helpStart .hideWhenOnlyOne")
-                .style("display", "block");
-        d3.selectAll(".helpStart .noReport")
-                .style("display", "none");
-    } else if (this.isSideInUse[0] || this.isSideInUse[1]) {    // Ha csak az egyik oldalon van report
-        d3.selectAll(".helpStart .hideWhenOnlyOne")
-                .style("display", "none");
-        d3.selectAll(".helpStart .noReport")
-                .style("display", "none");
-    } else {    // Ha egyiken sincs report
-        d3.selectAll(".helpStart .noReport")
-                .style("display", "block");
-        d3.selectAll(".helpStart .hideWhenOnlyOne")
-                .style("display", "none");
+        if (this.isSideInUse[0] && this.isSideInUse[1]) {   // Ha mindkét oldalon van report
+            localHelp.selectAll(".helpStart .hideWhenOnlyOne")
+                    .style("display", "block");
+            localHelp.selectAll(".helpStart .noReport")
+                    .style("display", "none");
+        } else if (this.isSideInUse[0] || this.isSideInUse[1]) {    // Ha csak az egyik oldalon van report
+            localHelp.selectAll(".helpStart .hideWhenOnlyOne")
+                    .style("display", "none");
+            localHelp.selectAll(".helpStart .noReport")
+                    .style("display", "none");
+        } else {    // Ha egyiken sincs report
+            localHelp.selectAll(".helpStart .noReport")
+                    .style("display", "block");
+            localHelp.selectAll(".helpStart .hideWhenOnlyOne")
+                    .style("display", "none");
+        }
+        localHelp.select(".helpReport" + side).html(html);
     }
-    d3.select(".helpReport" + side).html(html);
 };
 
 
@@ -312,11 +328,9 @@ Container.prototype.updateHelp = function(side, reportName, updated, base64Encod
  */
 Container.prototype.navigateTo = function(startObject) {
     var that = this;
-
     that.resizeInProgress = true;
     that.panelState = startObject.d;
     global.panelNumberOnScreen = startObject.n;
-
     for (var side = 0; side < 2; side++) {
         var sideInit = startObject.p[side];
         var sizePercentage = 0;
@@ -373,8 +387,9 @@ Container.prototype.newReportReady = function(side, reportMeta) {
 
     global.mediators[side].publish("killPanel", "#panel" + side + "P-1");	// Esetleges régi fejlécpanel megölése.    
     var scaleRatio = Container.prototype.getScaleRatio(side, sizePercentage, global.panelNumberOnScreen, reportMeta.visualization.length);
-    new HeadPanel_Report({group: side}, reportMeta, scaleRatio);						// Fejlécpanel létrehozása.
-    global.mediators[side].publish("drill", {dim: -1, direction: 0});		// Kezdeti belefúrás.
+    new HeadPanel_Report({group: side}, reportMeta, scaleRatio);			// Fejlécpanel létrehozása.
+
+//    global.mediators[side].publish("drill", {dim: -1, direction: 0});		// Kezdeti belefúrás.
 
 
     var sizePercentage = 0;
@@ -390,6 +405,7 @@ Container.prototype.newReportReady = function(side, reportMeta) {
     that.counter--;
     if (that.counter <= 0) {
         global.mainToolbar_refreshState();                                      // A toolbar kiszürkültségi állapotának felfrissítése.
+        global.setLanguage(String.locale);                                      // Nyelvi beállítások érvényesítése az új paneleken is.
     }
 };
 
@@ -434,13 +450,13 @@ Container.prototype.initSide = function(side, duration) {
     if (duration) {
         d3.select('#headPanelP' + side).transition().duration(duration)
                 .style("opacity", 0)
-                .each("end", function() {
+                .on("end", function() {
                     d3.select(this).style("opacity", null);
-                    new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio);						// Fejléc.
+                    new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio, 0); // Fejléc.
                     that.onResize();
                 });
     } else {
-        new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio);						// Fejléc.
+        new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio); // Fejléc.
         that.onResize();
     }
     this.dataDirector[side] = new DataDirector(side, global.mediators[side]);	// Adatrendező.
@@ -472,6 +488,7 @@ Container.prototype.killSide = function(side) {
         global.mediators[side].remove("addPanel");
         global.mediators[side].remove("getConfig");
         global.mediators[side].remove("save");
+        global.mediators[side].remove("langSwitch");
 
         global.baseLevels[side] = [];
 
@@ -616,7 +633,7 @@ Container.prototype.saveAsCsv = function(side, requestedDims) {
         }
         separator0 = ":";
     }
-    var query = meta.cube_unique_name + ";" + baseLevelQueryString + ";" + requestedDims.toString().replace(/,/g, ":");
+    var query = meta.cube_unique_name + ":" + String.locale + ";" + baseLevelQueryString + ";" + requestedDims.toString().replace(/,/g, ":");
     var encodedQuery = "queries=" + window.btoa(query);
 
     // Adatok letöltése, és a belőlük származó csv-törzs összerakása.
@@ -675,18 +692,11 @@ Container.prototype.saveAsCsv = function(side, requestedDims) {
         resultString = headerString + "\n" + resultString;
 
         // A mentéshez használt fájlnév.
-        var filename = "Pulzus_" + global.facts[side].reportMeta.caption
-                .replace(/[őóö]/ig, "o")
-                .replace(/[űüú]/ig, "u")
-                .replace(/[á]/ig, "a")
-                .replace(/[é]/ig, "e")
-                .replace(/[í]/ig, "i")
-                .replace(/[ŐÖÓ]/ig, "O")
-                .replace(/[ŰÚÜ]/ig, "U")
-                .replace(/[Á]/ig, "A")
-                .replace(/[É]/ig, "E")
-                .replace(/[Í]/ig, "I")
-                .replace(/[^a-z0-9]/gi, "_")
+        var today = new Date();
+        var todayString = today.toISOString().slice(0, 10) + "_" + today.toTimeString().slice(0, 8).split(":").join("-");
+        var filename = "Agnos"
+                + "_" + global.convertFileFriendly(global.facts[side].reportMeta.caption)
+                + "_" + todayString
                 + ".csv";
 
         var blob = new Blob([resultString], {type: 'text/csv; charset=utf-8;'});
@@ -741,7 +751,7 @@ Container.prototype.initChangelog = function() {
             if (history && history.length > 0) {
                 history.sort(function(a, b) {
                     return a.date < b.date;
-                })
+                });
 
                 var changelogAnchorpoint = d3.select(".language_" + lang + " .helpAbout .changelog");
                 if (!changelogAnchorpoint.empty()) {
@@ -750,9 +760,9 @@ Container.prototype.initChangelog = function() {
                         var date = new Date(history[i].date).toLocaleDateString(lang);
                         var html = "<em>" + date + "</em>:<span> " +
                                 "&lt;" + history[i].entity + "&gt; </span>" +
-                                history[i].change
+                                history[i].change;
                         changelogAnchorpoint.append("html:span")
-                                .html(html)
+                                .html(html);
                     }
                 }
             }

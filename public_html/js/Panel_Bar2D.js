@@ -160,10 +160,14 @@ panel_bar2d.prototype.valueToShow = function(d) {
     var that = this;
     if (d !== undefined && d.vals !== undefined) {
         var val = (that.valFraction) ? that.valMultiplier * d.vals[that.valToShow].sz / d.vals[that.valToShow].n : d.vals[that.valToShow].sz;
-        if (isNaN(parseInt(val))) {
+        var origVal = val;
+        if (!isFinite(parseFloat(val))) {
             val = 0;
         }
-        return val;
+        if (isNaN(parseFloat(origVal))) {
+            origVal = "???";
+        }        
+        return {value: val, originalValue: origVal};
     } else {
         return null;
     }
@@ -191,7 +195,7 @@ panel_bar2d.prototype.getTooltip = function(xElement, yElement) {
                 }],
             [{
                     name: that.localMeta.indicators[that.valToShow].description,
-                    value: yElement.value,
+                    value: yElement.originalValue,
                     dimension: ((that.valFraction) ? that.localMeta.indicators[that.valToShow].fraction[yUnitProperty] : that.localMeta.indicators[that.valToShow].value[yUnitProperty])
                 }]
             );
@@ -452,11 +456,12 @@ panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill
         var val = that.valueToShow(d);
         element.values.push({
             index: index,
-            value: val,
+            value: val.value,
+            originalValue: val.originalValue,
             dimYId: dimY.id,
             dimYUniqueId: levelY + "L" + dimY.id,
             dimYName: dimY.name.trim()});
-        element.sumValues = element.sumValues + val;
+        element.sumValues = element.sumValues + val.value;
     }
 
     // X irányú lefúrás esetén: ebből a régi elemből kell kinyitni mindent.

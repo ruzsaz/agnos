@@ -181,10 +181,14 @@ panel_map.prototype.valueToShow = function(d) {
     var that = this;
     if (d !== undefined && d.vals !== undefined) {
         var val = (that.valFraction) ? that.valMultiplier * d.vals[that.valToShow].sz / d.vals[that.valToShow].n : d.vals[that.valToShow].sz;
-        if (isNaN(parseInt(val))) {
+        var origVal = val;
+        if (!isFinite(parseFloat(val))) {
             val = 0;
         }
-        return val;
+        if (isNaN(parseFloat(origVal))) {
+            origVal = "???";
+        }        
+        return {value: val, originalValue: origVal};
     } else {
         return null;
     }
@@ -206,7 +210,7 @@ panel_map.prototype.getTooltip = function(d) {
                 }],
             [{
                     name: that.localMeta.indicators[that.valToShow].description,
-                    value: d.value,
+                    value: d.originalValue,
                     dimension: ((that.valFraction) ? that.localMeta.indicators[that.valToShow].fraction[unitProperty] : that.localMeta.indicators[that.valToShow].value[unitProperty])
                 }]
             );
@@ -470,14 +474,16 @@ panel_map.prototype.prepareData = function(newDataRows) {
                     if (newDataRows[w].dims[0].knownId === d.properties.shapeid) {
                         var datarow = newDataRows[w];
                         var b = bounds(d);
-                        var element = {};
+                        var val = that.valueToShow(datarow);
+                        var element = {};                        
                         element.geometry = d.geometry;
                         element.properties = d.properties;
                         element.type = d.type;
                         element.id = datarow.dims[0].id;
                         element.uniqueId = that.currentLevel + "L" + element.id;
                         element.name = datarow.dims[0].name.trim();
-                        element.value = that.valueToShow(datarow);
+                        element.value = val.value;
+                        element.originalValue = val.originalValue;
                         element.centerX = (b[1][0] + b[0][0]) / 2;
                         element.centerY = (b[1][1] + b[0][1]) / 2;
                         element.tooltip = that.getTooltip(element);

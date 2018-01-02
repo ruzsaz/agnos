@@ -183,7 +183,7 @@ panel_table1d.prototype.valuesToShow = function(d) {
                 });
             }
             if (that.columnHeadVector[i].hide >> 1 === 0) { // Ha a hányadost meg kell mutatni.
-                var val = that.meta.indicators[i].fraction.multiplier * d.vals[i].sz / d.vals[i].n; // TODO: valmultipliert az 1 helyébe
+                var val = that.meta.indicators[i].fraction.multiplier * d.vals[i].sz / d.vals[i].n;
                 if (isNaN(parseFloat(val))) {
                     val = 0;
                 }

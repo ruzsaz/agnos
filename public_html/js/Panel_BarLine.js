@@ -245,10 +245,14 @@ panel_barline.prototype.barValuesToShow = function(d) {
         var accumulation = 0; // Az alatta levő oszlopelemek érték-összege.
         for (var i = 0, iMax = this.valBarNumber; i < iMax; i++) {
             var val = (this.valFraction) ? this.valBarMultipliers[i] * d.vals[this.valBarsToShow[i]].sz / d.vals[this.valBarsToShow[i]].n : d.vals[this.valBarsToShow[i]].sz;
-            if (isNaN(parseInt(val))) {
+            var origVal = val;
+            if (!isFinite(parseFloat(val))) {
                 val = 0;
             }
-            vals.push({value: val, accumulation: accumulation}); // value: az érték, accumulation: az alatta levő elemek érték-összege.
+            if (isNaN(parseFloat(origVal))) {
+                origVal = "???";
+            }
+            vals.push({value: val, originalValue: origVal, accumulation: accumulation}); // value: az érték, accumulation: az alatta levő elemek érték-összege.
             accumulation += val;
         }
     }
@@ -266,21 +270,25 @@ panel_barline.prototype.lineValuesToShow = function(d) {
     if (d !== undefined && d.vals !== undefined) {
         for (var i = 0; i < this.valLineNumber; i++) {
             var val = (this.valFraction) ? this.valLineMultipliers[i] * d.vals[this.valLinesToShow[i]].sz / d.vals[this.valLinesToShow[i]].n : d.vals[this.valLinesToShow[i]].sz;
-            if (isNaN(parseInt(val))) {
+            var origVal = val;
+            if (!isFinite(parseFloat(val))) {
                 val = 0;
             }
-            vals[i] = val;
+            if (isNaN(parseFloat(origVal))) {
+                origVal = "???";
+            }
+            vals.push({value: val, originalValue: origVal});
         }
     } else {
         for (var i = 0; i < this.valLineNumber; i++) {
-            vals[i] = 0;
+            vals.push({value: 0, originalValue: "???"});
         }
     }
     return vals;
 };
 
 /**
- * Egy adatsorból meghatározza a megmutatandó vonaldiagramokhoz tartozó értékek összegét.
+ * Egy adatsorból meghatározza a megmutatandó értékek összegét.
  * 
  * @param {Object} d Nyers adatsor.
  * @returns {Number} Az értéek abszolútértékének összege.
@@ -290,7 +298,7 @@ panel_barline.prototype.sumValueToShow = function(d) {
     var lineVals = this.lineValuesToShow(d);
     var barVals = this.barValuesToShow(d);
     for (var i = 0, iMax = lineVals.length; i < iMax; i++) {
-        val = val + Math.abs(lineVals[i]);
+        val = val + Math.abs(lineVals[i].value);
     }
     for (var i = 0, iMax = barVals.length; i < iMax; i++) {
         val = val + Math.abs(barVals[i].value);
@@ -340,9 +348,9 @@ panel_barline.prototype.getTooltip = function(d) {
         var id = lVal.id;
         var value = undefined, avgValue = undefined;
         if (lVal.isBarRequired) {
-            value = d.barValues[global.positionInArray(that.valBarsToShow, id)].value;
+            value = d.barValues[global.positionInArray(that.valBarsToShow, id)].originalValue;
         } else if (lVal.isLineRequired) {
-            value = d.lineValues[global.positionInArray(that.valLinesToShow, id)];
+            value = d.lineValues[global.positionInArray(that.valLinesToShow, id)].originalValue;
         }
         if (lVal.isAvgRequired) {
             avgValue = d.avgValues[global.positionInArray(that.valAvgToShow, id)].value;
@@ -676,9 +684,12 @@ panel_barline.prototype.prepareData = function(oldPreparedData, newDataRows, dri
         element.lineValues = that.lineValuesToShow(dataRow);
         element.avgValues = avgValues;
         element.sumBarValues = (that.valBarNumber > 0) ? element.barValues[that.valBarNumber - 1].value + element.barValues[that.valBarNumber - 1].accumulation : 0;
-
-        var currentMaxValue = Math.max((element.sumBarValues || 0), (d3.max(element.lineValues) || 0));
-        var currentMinValue = Math.min((element.sumBarValues || 0), (d3.min(element.lineValues) || 0));
+        
+        var mx = 0;
+        
+        var lineValsArray = global.getArrayFromObjectArrayByProperty(element.lineValues, 'value');
+        var currentMaxValue = Math.max((element.sumBarValues || 0), (d3.max(lineValsArray) || 0));
+        var currentMinValue = Math.min((element.sumBarValues || 0), (d3.min(lineValsArray) || 0));
 
         if (currentMaxValue >= maxValue) {
             max2ndValue = maxValue;
@@ -819,7 +830,7 @@ panel_barline.prototype.prepareData = function(oldPreparedData, newDataRows, dri
             lineElement.number = j;
             lineElement.uniqueId = dataArray[i].uniqueId;
             lineElement.name = dataArray[i].name.trim();
-            lineElement.value = dataArray[i].lineValues[j];
+            lineElement.value = dataArray[i].lineValues[j].value;
             lineElement.x = that.xScale(i + 0.5);
             lineElement.y = that.yScale(lineElement.value);
             lineElement.tooltip = dataArray[i].tooltip;
@@ -1532,7 +1543,7 @@ panel_barline.prototype.drawAxes = function(preparedData, trans) {
                     that.drill(d);
                 });
     }, trans.duration());
-    
+
 };
 
 //////////////////////////////////////////////////

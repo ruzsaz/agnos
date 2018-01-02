@@ -454,12 +454,14 @@ Container.prototype.initSide = function(side, duration) {
                     d3.select(this).style("opacity", null);
                     new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio, 0); // Fejléc.
                     that.onResize();
+                    global.mainToolbar_refreshState();
                 });
     } else {
         new HeadPanel_Browser({group: side}, global.superMeta, scaleRatio); // Fejléc.
         that.onResize();
+        global.mainToolbar_refreshState();
     }
-    this.dataDirector[side] = new DataDirector(side, global.mediators[side]);	// Adatrendező.
+    this.dataDirector[side] = new DataDirector(side, global.mediators[side]);	// Adatrendező.    
 };
 
 /**

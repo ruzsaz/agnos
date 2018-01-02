@@ -180,10 +180,14 @@ panel_horizontalbar.prototype.valuesToShow = function(d, pos) {
         for (var i = 0; i < valToShow.length; i++) {
             var mult = (pos) ? this.valMultipliers[this.valNegNumber + i] : this.valMultipliers[i];
             var val = (this.valFraction) ? mult * d.vals[valToShow[i]].sz / d.vals[valToShow[i]].n : d.vals[valToShow[i]].sz;
-            if (isNaN(parseInt(val))) {
+            var origVal = val;
+            if (!isFinite(parseFloat(val))) {
                 val = 0;
             }
-            vals[i] = {value: val, accumulation: accumulation};
+            if (isNaN(parseFloat(origVal))) {
+                origVal = "???";
+            }
+            vals[i] = {value: val, originalValue: origVal, accumulation: accumulation};
             accumulation += val;
         }
     }
@@ -205,9 +209,9 @@ panel_horizontalbar.prototype.getTooltip = function(d) {
         var id = lVal.id;
         var value = undefined;
         if (lVal.isNegRequired) {
-            value = d.values[global.positionInArray(that.valBarsToShow, id)].value;
+            value = d.values[global.positionInArray(that.valBarsToShow, id)].originalValue;
         } else {
-            value = d.values[global.positionInArray(that.valBarsToShow, id)].value;
+            value = d.values[global.positionInArray(that.valBarsToShow, id)].originalValue;
         }
 
         var unitProperty = (value === 1) ? "unit" : "unitPlural";

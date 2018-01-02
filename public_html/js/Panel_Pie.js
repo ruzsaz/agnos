@@ -109,10 +109,14 @@ panel_pie.prototype.valueToShow = function(d) {
     var that = this;
     if (d !== undefined && d.vals !== undefined) {
         var val = (that.valFraction) ? that.valMultiplier * d.vals[that.valToShow].sz / d.vals[that.valToShow].n : d.vals[that.valToShow].sz;
-        if (isNaN(parseFloat(val))) {
+        var origVal = val;
+        if (!isFinite(parseFloat(val))) {
             val = 0;
         }
-        return val;
+        if (isNaN(parseFloat(origVal))) {
+            origVal = "???";
+        }        
+        return {value: val, originalValue: origVal};
     } else {
         return null;
     }
@@ -134,7 +138,7 @@ panel_pie.prototype.getTooltip = function(d) {
                 }],
             [{
                     name: that.localMeta.indicators[that.valToShow].description,
-                    value: d.value,
+                    value: d.originalValue,
                     dimension: ((that.valFraction) ? that.localMeta.indicators[that.valToShow].fraction[unitProperty] : that.localMeta.indicators[that.valToShow].value[unitProperty])
                 }]
             );
@@ -247,12 +251,12 @@ panel_pie.prototype.prepareData = function(oldPieData, newDataRows, drill) {
     var newPieData = d3.pie()
             .sort(that.cmp)	// Használjuk a sorbarendezést [null: nincs rendezés, egész kihagyása: érték szerinti]
             .value(function(d) {
-                return that.valueToShow(d);
+                return that.valueToShow(d).value;
             })(newDataRows);
 
     var total = 0; // A mutatott összérték meghatározása.
     for (var i = 0, iMax = newDataRows.length; i < iMax; i++) {
-        total += that.valueToShow(newDataRows[i]);
+        total += that.valueToShow(newDataRows[i]).value;
     }
 
     // Kidobjuk a nempozitív elemeket.
@@ -274,10 +278,12 @@ panel_pie.prototype.prepareData = function(oldPieData, newDataRows, drill) {
     for (var i = 0, iMax = newPieData.length; i < iMax; i++) {
         var element = newPieData[i];
         var dataRow = element.data;
+        var val = that.valueToShow(dataRow);
         element.id = dataRow.dims[0].id;
         element.uniqueId = level + "L" + element.id;
         element.name = dataRow.dims[0].name.trim();
-        element.value = that.valueToShow(dataRow);
+        element.value = val.value;
+        element.originalValue = val.originalValue;
         element.percentage = ((element.value / total) * 100).toFixed(1);
         element.tooltip = that.getTooltip(element);
 

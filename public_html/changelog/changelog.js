@@ -9,8 +9,9 @@ var changelog = [
             {"entity": "AgnosCSVImporter", "date": "2017-10-24", "change": "Rögzített formájú .xls és .xlsx fájlok automatikus betöltése."},
             {"entity": "AgnosServer", "date": "2017-12-01", "change": "A szerver felkészítése több nyelv támogatására."},
             {"entity": "Agnos", "date": "2017-12-13", "change": "A panelek húzással áthelyezhetőek."},
+            {"entity": "Agnos", "date": "2018-01-02", "change": "A 0-val osztás kezelése."},
         ],
-        "updated": "2017-12-13"
+        "updated": "2017-01-02"
     },
     {
         "language": "en",
@@ -19,7 +20,8 @@ var changelog = [
             {"entity": "AgnosCSVImporter", "date": "2017-10-24", "change": "Automatic processing of .xls and .xlsx files."},
             {"entity": "AgnosServer", "date": "2017-12-01", "change": "Localization supported in the server."},
             {"entity": "Agnos", "date": "2017-12-13", "change": "Panels can be rearranged."},
+            {"entity": "Agnos", "date": "2018-01-02", "change": "Division by zero allowed."},
         ],
-        "updated": "2017-12-13"
+        "updated": "2018-01-02"
     }
 ];

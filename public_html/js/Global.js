@@ -716,7 +716,6 @@ var global = function() {
                 var defaultSuperMeta = global.getFromArrayByLang(reportSuperMeta.localizedReports, "");
                 reportSuperMeta.updated = defaultSuperMeta.updated;
             }
-
             callback();
         });
     };
@@ -790,6 +789,21 @@ var global = function() {
             }
         }
         return returnIndex;
+    };
+
+    /**
+     * Egy objektum-tömbből egy tömböt csinál, amely az objektumok egyik propertyeit tartalmazza.
+     * 
+     * @param {Array} objectArray Az objektumok tömbje.
+     * @param {String} property Az elemek propertyje.
+     * @returns {Array} A propertykhez tartozó értékek tömbje.
+     */
+    var getArrayFromObjectArrayByProperty = function(objectArray, property) {
+        var arr = [];
+        for (var i = 0, iMax = objectArray.length; i < iMax; i++) {
+            arr.push(objectArray[i][property]);
+        }
+        return arr;
     };
 
     /**
@@ -1132,7 +1146,7 @@ var global = function() {
 
             // Megállapítjuk a program állapotát.
             var side = d3.selectAll("#container1.activeSide").nodes().length; // Aktív oldal id-je, 0 vagy 1. Csak akkor ételmes, ha 1 aktív oldal van.
-            var isContainsReport = d3.selectAll("#container" + side + " .HeadPanel_Browser").empty(); // True ha épp aktív reportkijelzés van, false ha nem.
+            var isContainsReport = !(d3.selectAll("#container" + side + " .reportHeadPanel").empty()); // True ha épp aktív reportkijelzés van, false ha nem.
             var panelNumber = d3.selectAll("#container" + side + " .panel").nodes().length; // Az épp fennlevő panelek száma.
 
             // Ha már csak a fejlécpanel létezik, akkor a megölő inaktív.
@@ -1377,6 +1391,7 @@ var global = function() {
         getFromArrayByProperty: getFromArrayByProperty, // Megkeresi egy tömb elemét az elem egyik property-je alapján.
         positionInArrayByProperty: positionInArrayByProperty, // Megkeresi egy tömb elemének indexét az elem egyik property-je alapján.
         positionInArray: positionInArray, // Megnézi, hogy a tömb hányadik eleme egy érték.
+        getArrayFromObjectArrayByProperty: getArrayFromObjectArrayByProperty, // Egy objektum-tömbből egy tömböt csinál, amely az objektumok egyik propertyeit tartalmazza.
         valueInRange: valueInRange, // Eldönti, hogy egy érték a [min, max) intervallumba esik-e?
         initGlobals: initGlobals, // Inicializálja a globális változókat a belépés után.
         readableColor: readableColor, //  Olvasható színt választ egy adott háttérszínhez.

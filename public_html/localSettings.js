@@ -15,8 +15,8 @@ global.url = {
     meta: baseUrl + "/meta/cube",
     fact: baseUrl + "/cube"};
 
-global.i18nRequired = true;
-global.saveToBookmarkRequired = false;
+global.i18nRequired = false;
+global.saveToBookmarkRequired = true;
 
 // Astar demo
 //global.url = {

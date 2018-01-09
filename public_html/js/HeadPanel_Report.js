@@ -291,7 +291,7 @@ HeadPanel_Report.prototype.ratioToShow = function(data, ratioMeta, i) {
  */
 HeadPanel_Report.prototype.initPanel = function(trans) {
     var that = this;
-    that.localMeta = global.getFromArrayByLang(that.meta.localizedReports);
+    that.localMeta = global.facts[that.panelSide].getLocalMeta();
     trans = trans || d3.transition().duration(global.selfDuration);
     
     // A fejléc-szöveg frissítése

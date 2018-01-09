@@ -151,7 +151,7 @@ panel_pie.prototype.getTooltip = function(d) {
  * @returns {Function} A tortadarab animációját leíró függvény.
  */
 panel_pie.prototype.pieTween = function(d) {
-    var int = d3.interpolate({startAngle: d.oldStartAngle - 0.000001, endAngle: d.oldEndAngle + 0.000001}, {startAngle: d.startAngle - 0.000001, endAngle: d.endAngle + 0.000001});
+    var int = d3.interpolate({startAngle: d.oldStartAngle - 0.0001, endAngle: d.oldEndAngle + 0.0001}, {startAngle: d.startAngle - 0.0001, endAngle: d.endAngle + 0.0001});
     return function(t) {
         var b = int(t);
         return panel_pie.prototype.arc(b);

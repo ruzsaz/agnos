@@ -292,11 +292,11 @@ Container.prototype.updateHelp = function(side, reportSuperMeta) {
     var localHelps = d3.selectAll(".localized.helpContent").nodes();
     for (var i = 0, iMax = localHelps.length; i < iMax; i++) {
         var localHelp = d3.select(localHelps[i]);
-        var lang = localHelp.attr("lang");
-        var localMeta = (reportSuperMeta !== undefined) ? global.getFromArrayByLang(reportSuperMeta.localizedReports, lang) : undefined;
-        var header = (localMeta !== undefined) ? "<h3>" + localMeta.description + "</h3>" : "";
-        var updateTime = (localMeta !== undefined) ? "<em>frissítve: " + localMeta.updated + "</em><br>" : "";
-        var content = "<div class='helpInnerHTML'>" + ((localMeta !== undefined) ? ((localMeta.helpHTML.length > 4) ? LZString.decode(localMeta.helpHTML) : "Nincs elérhető információ.") : "") + "</div>";
+        var lang = localHelp.attr("lang");        
+        var localMeta = (reportSuperMeta !== undefined) ? global.getFromArrayByLangArray(reportSuperMeta.languages, reportSuperMeta.helpHTMLs, lang) : undefined;
+        var header = (localMeta !== undefined) ? "<h3>" + global.getFromArrayByLangArray(reportSuperMeta.languages, reportSuperMeta.descriptions, lang) + "</h3>" : "";
+        var updateTime = (localMeta !== undefined) ? "<em>frissítve: " + reportSuperMeta.updated + "</em><br>" : "";
+        var content = "<div class='helpInnerHTML'>" + ((localMeta !== undefined) ? ((global.getFromArrayByLangArray(reportSuperMeta.languages, reportSuperMeta.helpHTMLs, lang).length > 4) ? LZString.decode(global.getFromArrayByLangArray(reportSuperMeta.languages, reportSuperMeta.helpHTMLs, lang)) : "Nincs elérhető információ.") : "") + "</div>";
         var html = header + updateTime + content;
 
         if (this.isSideInUse[0] && this.isSideInUse[1]) {   // Ha mindkét oldalon van report

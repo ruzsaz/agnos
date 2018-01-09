@@ -46,7 +46,7 @@ var global = function() {
         $("[origText]").html(function() {
             return _($(this).attr('origText'));
         });
-    }
+    };
 
     /**
      * Átalakítja egy sztring filenévben nem szívesen látott karaktereit.
@@ -493,7 +493,9 @@ var global = function() {
         $.ajax({
             url: url,
             data: data,
+            timeout: 2000,
             beforeSend: function(xhr) {
+                
                 xhr.setRequestHeader('Authorization', 'Basic ' + btoa(global.secretUsername + ':' + global.secretToken));
             },
             success: function(result, status) { // Sikeres letöltés esetén.
@@ -504,6 +506,7 @@ var global = function() {
                 callback(result, status);
             },
             error: function(jqXHR, textStatus, errorThrown) { // Hálózati, vagy autentikációs hiba esetén.
+                console.log(jqXHR.responseText);
                 $(':focus').blur();
                 // Esetleges homokóra letörlése.
                 clearTimeout(progressCounter);
@@ -707,15 +710,9 @@ var global = function() {
     var initGlobals = function(callback) {
         var that = this;
         this.tooltip = new Tooltip();
-        get(global.url.superMeta, "", function(result, status) {
+        console.log("kérek");
+        get(global.url.superMeta, "", function(result, status) {            
             that.superMeta = result.reports;
-
-            // A default nyelv beállításait hozzáadjuk nyersen a metához.
-            for (var i = 0, iMax = that.superMeta.length; i < iMax; i++) {
-                var reportSuperMeta = that.superMeta[i];
-                var defaultSuperMeta = global.getFromArrayByLang(reportSuperMeta.localizedReports, "");
-                reportSuperMeta.updated = defaultSuperMeta.updated;
-            }
             callback();
         });
     };
@@ -731,6 +728,33 @@ var global = function() {
         };
         _subclassOf.prototype = base.prototype;
         return new _subclassOf();
+    };
+
+    /**
+     * Megkeresi egy tömb elemének indexét a nyelvkód alapján.
+     * Ha adott nyelvkódú nincs, akkor a
+     * "" nyelvkódut adja vissza. Ha az sincs, akkor 0-t.
+     * 
+     * @param {Array} array A tömb.
+     * @param {String} lang Nyelvkód. Ha undefined, az aktuálist veszi.
+     * @returns {undefined|Globalglobal.getFromArrayByLang.array}
+     */
+    var getIndexOfLang = function(array, lang) {
+        var returnIndex = -1;
+        var indexOfDefault = 0;
+        if (lang === undefined) {
+            lang = String.locale;
+        }
+        
+        for (var i = 0, iMax = array.length; i < iMax; i++) {
+            if (array[i] === "") {
+                indexOfDefault = i;
+            }
+            if (array[i] === lang) {
+                returnIndex = i;
+            }
+        }
+        return (returnIndex === -1) ? indexOfDefault : returnIndex;
     };
 
     /**
@@ -757,6 +781,25 @@ var global = function() {
             }
         }
         return (returnIndex === -1) ? array[0] : array[returnIndex];
+    };
+
+    /**
+     * Megkeresi egy tömb elemét a nyelvkód, és a nyelvkód-tömb alapján.
+     * A két tömbben a nyelveknek azonos sorrendben kell lenniük.
+     * Ha nem találja a nyelvet, a "" nyelvkódut adja vissza.
+     * Ha az sincs, akkor a tömb első elemét.
+     * 
+     * @param {Array} langArray A nyelvkódok tömbje.
+     * @param {Array} subArray A kiolvasandó értékek tömbje.
+     * @param {String} lang Nyelvkód. Ha undefined, az aktuálist veszi.
+     * @returns {undefined|Globalglobal.getFromArrayByLang.array}
+     */
+    var getFromArrayByLangArray = function(langArray, subArray, lang) {
+        if (lang === undefined) {
+            lang = String.locale;
+        }        
+        var returnIndex = global.getIndexOfLang(langArray, lang);
+        return (returnIndex === -1) ? subArray[0] : subArray[returnIndex];
     };
 
     /**
@@ -1387,7 +1430,9 @@ var global = function() {
         getCookie: getCookie, // Kiolvas egy cookie-t.
         setLanguage: setLanguage, // Nyelvváltoztató függvény.
         axisTextSize: axisTextSize, // Az oszlopdiagram tengelybetű-méretét határozza meg.
+        getIndexOfLang: getIndexOfLang, // Megkeresi egy tömb elemének indexét a nyelvkód alapján.
         getFromArrayByLang: getFromArrayByLang, // Megkeresi egy tömb elemét a nyalvkód alapján.
+        getFromArrayByLangArray: getFromArrayByLangArray,
         getFromArrayByProperty: getFromArrayByProperty, // Megkeresi egy tömb elemét az elem egyik property-je alapján.
         positionInArrayByProperty: positionInArrayByProperty, // Megkeresi egy tömb elemének indexét az elem egyik property-je alapján.
         positionInArray: positionInArray, // Megnézi, hogy a tömb hányadik eleme egy érték.

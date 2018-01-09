@@ -18,6 +18,7 @@ function Fact(reportSuperMeta, side, callbackFunction, callContext, startObject)
     this.side = side;
 
     this.reportMeta = undefined;
+    this.localMeta = undefined;
     this.reportSuperMeta = reportSuperMeta;
 
     // Reporthoz tartozó meták betöltése.
@@ -25,7 +26,6 @@ function Fact(reportSuperMeta, side, callbackFunction, callContext, startObject)
         that.reportMetaReady.call(that, that.reportSuperMeta, result, startObject);
     });
 }
-;
 
 /**
  * A meták betöltése után meghívandó függvény. Beállít néhány változót,
@@ -40,54 +40,31 @@ Fact.prototype.reportMetaReady = function(reportSuperMeta, reportMetaJson, start
 
     // A report metáját kiegészítjük a supermeta rá vonatkozó részével.
     this.reportMeta = reportMetaJson;
-    for (var i = 0, iMax = this.reportMeta.localizedReports.length; i < iMax; i++) {
-        var localizedMeta = this.reportMeta.localizedReports[i];
-        var lang = localizedMeta.language;
-        var localizedSuperMeta = global.getFromArrayByLang(reportSuperMeta.localizedReports, lang);
-        localizedMeta.updated = localizedSuperMeta.updated;
-        localizedMeta.caption = localizedSuperMeta.caption;
-        localizedMeta.description = localizedSuperMeta.description;
-        localizedMeta.datasource = localizedSuperMeta.datasource;
-    }
-
-    // A default nyelv beállításait hozzáadjuk nyersen a metához.
-    var defaultMeta = global.getFromArrayByLang(this.reportMeta.localizedReports, "");
-    for (var property in defaultMeta) {
-        if (defaultMeta.hasOwnProperty(property)) {
-            this.reportMeta[property] = defaultMeta[property];
-        }
-    }
+    this.reportMeta.captions = reportSuperMeta.captions;
+    this.reportMeta.descriptions = reportSuperMeta.descriptions;
+    this.reportMeta.datasources = reportSuperMeta.datasources;
+    this.reportMeta.updated = reportSuperMeta.updated;
 
     // A bázisszintet tartalmazó tömb kezdeti beállítása.
-    for (var i = 0, iMax = this.getLocalMeta().dimensions.length; i < iMax; i++) {
+    for (var i = 0, iMax = this.reportMeta.dimensions.length; i < iMax; i++) {
         (global.baseLevels[this.side]).push([]); // Kezdetben a legfelsőbb szint a bázisszint.
     }
     if (startObject) {
         global.baseLevels[this.side] = startObject.b;
-        for (var i = 0, iMax = this.reportMeta.localizedReports.length; i < iMax; i++) {
-            this.reportMeta.localizedReports[i].visualization = startObject.v;
-        }
         this.reportMeta.visualization = startObject.v;
     }
-    this.callback.call(this.callContext, this.side, this.reportMeta);
 
     // A dimenziók id-jének beállítása, tooltip beállítása;
     for (var i = 0, iMax = this.reportMeta.dimensions.length; i < iMax; i++) {
         this.reportMeta.dimensions[i].id = i;
-        for (var l = 0, lMax = this.reportMeta.localizedReports.length; l < lMax; l++) {
-            var localizedMeta = this.reportMeta.localizedReports[l];
-            localizedMeta.dimensions[i].id = i;
-        }
     }
 
     // A mutatók id-jének beállítása, tooltip beállítása.
     for (var i = 0, iMax = this.reportMeta.indicators.length; i < iMax; i++) {
         this.reportMeta.indicators[i].id = i;
-        for (var l = 0, lMax = this.reportMeta.localizedReports.length; l < lMax; l++) {
-            var localizedMeta = this.reportMeta.localizedReports[l];
-            localizedMeta.indicators[i].id = i;
-        }        
     }
+
+    this.callback.call(this.callContext, this.side, this.reportMeta);
 };
 
 /**
@@ -96,5 +73,61 @@ Fact.prototype.reportMetaReady = function(reportSuperMeta, reportMetaJson, start
  * @returns {Globalglobal.getFromArrayByLang.array|undefined}
  */
 Fact.prototype.getLocalMeta = function() {
-    return global.getFromArrayByLang(this.reportMeta.localizedReports);
+    var language = global.getIndexOfLang(this.reportMeta.languages, String.locale);
+    if (language === -1) {
+        language = 0;
+    }
+
+    // Ha nem a jó nyelvről szól a localMeta, akkor elkészítjük.
+    if (!(this.localMeta && this.localMeta.actualLanguage === language)) {
+        this.localMeta = {};
+        this.localMeta.actualLanguage = language;
+        this.localMeta.caption = this.reportMeta.captions[language];
+        this.localMeta.cube_unique_name = this.reportMeta.cube_unique_name;
+        this.localMeta.datasource = this.reportMeta.datasources[language];
+        this.localMeta.description = this.reportMeta.descriptions[language];
+        this.localMeta.dimensions = [];
+        for (var i = 0, iMax = this.reportMeta.dimensions.length; i < iMax; i++) {
+            var d = this.reportMeta.dimensions[i];
+            var dimension = {
+                'caption': d.captions[language],
+                'description': d.descriptions[language],
+                'hierarchy_unique_name': d.hierarchy_unique_name,
+                'id': d.id,
+                'is_territorial': (d.isTerritorial === "") ? 0 : 1,
+                'levels': d.levels,
+                'top_level_caption': d.top_level_captions[language]
+            };
+            this.localMeta.dimensions.push(dimension);
+        }
+
+        this.localMeta.indicators = [];
+        for (var i = 0, iMax = this.reportMeta.indicators.length; i < iMax; i++) {
+            var d = this.reportMeta.indicators[i];
+            var indicator = {
+                'caption': d.captions[language],
+                'description': d.descriptions[language],
+                'fraction': {
+                    'hide': d.fraction.hide,
+                    'measure_unique_name': d.fraction.measure_unique_name,
+                    'multiplier': d.fraction.multiplier,
+                    'sign': d.fraction.sign,
+                    'unit': d.fraction.units[language],
+                    'unitPlural': d.fraction.unitPlurals[language]
+                },
+                'id': d.id,
+                'value': {
+                    'hide': d.value.hide,
+                    'measure_unique_name': d.value.measure_unique_name,
+                    'sign': d.value.sign,
+                    'unit': d.value.units[language],
+                    'unitPlural': d.value.unitPlurals[language]
+                }
+            };
+            this.localMeta.indicators.push(indicator);
+        }
+        this.localMeta.visualization = this.reportMeta.visualization;
+    }
+    
+    return this.localMeta;
 };

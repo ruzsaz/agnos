@@ -118,10 +118,10 @@ HeadPanel_Browser.prototype.searchFilter = function() {
  * @returns {undefined}
  */
 HeadPanel_Browser.prototype.initPanel = function(duration) {
-
+    
     // Elemek nyelvfüggő sorbarendezése.
     this.superMeta.sort(function(a, b) {
-        return (global.getFromArrayByLang(a.localizedReports, String.locale).caption).localeCompare(global.getFromArrayByLang(b.localizedReports, String.locale).caption, String.locale, {sensitivity: 'variant', caseFirst: 'upper'});
+        return global.getFromArrayByLangArray(a.languages, a.captions).localeCompare(global.getFromArrayByLangArray(b.languages, b.captions), {sensitivity: 'variant', caseFirst: 'upper'});
     });
     
     // Adatok újratársítása, sorok letörlése.
@@ -137,7 +137,7 @@ HeadPanel_Browser.prototype.initPanel = function(duration) {
 
         tempRowCell.append("html:text")
                 .text(function(d) {
-                    return global.getFromArrayByLang(d.localizedReports, String.locale).caption;
+                    return global.getFromArrayByLangArray(d.languages, d.captions);
                 });
 
         tempRowCell.append("html:span")
@@ -151,7 +151,7 @@ HeadPanel_Browser.prototype.initPanel = function(duration) {
 
         tempRowCell.append("html:text")
                 .text(function(d) {
-                    return global.getFromArrayByLang(d.localizedReports, String.locale).description;
+                    return global.getFromArrayByLangArray(d.languages, d.descriptions);
                 });
 
         tempRowCell.append("html:span")
@@ -165,7 +165,7 @@ HeadPanel_Browser.prototype.initPanel = function(duration) {
 
         tempRowCell.append("html:text")
                 .text(function(d) {
-                    return global.getFromArrayByLang(d.localizedReports, String.locale).datasource;
+                    return global.getFromArrayByLangArray(d.languages, d.datasources);
                 });
 
         tempRowCell.append("html:span")

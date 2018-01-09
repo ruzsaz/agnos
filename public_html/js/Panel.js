@@ -27,7 +27,7 @@ function Panel(panelInitString, mediator, isLegendRequired, leftOffset, rightOff
     this.panelSide = panelInitString.group || 0;
     this.isLegendRequired = isLegendRequired;
     this.meta = global.facts[that.panelSide].reportMeta;
-    this.localMeta = global.getFromArrayByLang(that.meta.localizedReports);
+    this.localMeta = global.facts[that.panelSide].getLocalMeta();
     this.containerId = "#container" + that.panelSide;
     this.divPosition = (panelInitString.position !== undefined) ? panelInitString.position : d3.selectAll(that.containerId + " .panel.single").nodes().length;
     this.panelId = "#panel" + that.panelSide + "P" + that.divPosition;
@@ -78,7 +78,7 @@ function Panel(panelInitString, mediator, isLegendRequired, leftOffset, rightOff
 
     // Feliratkozás a nyelvváltó mediátorra.
     med = this.mediator.subscribe("langSwitch", function() {
-        that.localMeta = global.getFromArrayByLang(that.meta.localizedReports);
+        that.localMeta = global.facts[that.panelSide].getLocalMeta();
         Panel.prototype.defaultPanicText = _("<html>Nincs megjeleníthető adat.<html>");
         that.langSwitch(global.selfDuration);
     });

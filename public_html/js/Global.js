@@ -431,8 +431,14 @@ var global = function() {
                             function() {
                                 location.reload();
                             },
-                            1
-                            );
+                            1,
+                            (global.demoEntry) ? "Anonymous login" : undefined,
+                            function() {
+                                login('agnos.demo',
+                                        'zolikaokos',
+                                        callback);
+                            }
+                    );
                 } else if (jqXHR.status === 403) { // Ha az autentikáció jó, de nincs olvasási jog az adathoz
                     setDialog(
                             "Hozzáférés megtagadva",
@@ -445,8 +451,14 @@ var global = function() {
                             function() {
                                 location.reload();
                             },
-                            2
-                            );
+                            2,
+                            (global.demoEntry) ? "Anonymous login" : undefined,
+                            function() {
+                                login('agnos.demo',
+                                        'zolikaokos',
+                                        callback);
+                            }
+                    );
                 } else { // Más hiba esetén...                    
                     setDialog(
                             "Hálózati hiba",
@@ -461,9 +473,14 @@ var global = function() {
                             function() {
                                 location.reload();
                             },
-                            1
-
-                            );
+                            1,
+                            (global.demoEntry) ? "Anonymous login" : undefined,
+                            function() {
+                                login('agnos.demo',
+                                        'zolikaokos',
+                                        callback);
+                            }
+                    );
                 }
             },
             complete: function() {
@@ -495,7 +512,7 @@ var global = function() {
             data: data,
             timeout: 2000,
             beforeSend: function(xhr) {
-                
+
                 xhr.setRequestHeader('Authorization', 'Basic ' + btoa(global.secretUsername + ':' + global.secretToken));
             },
             success: function(result, status) { // Sikeres letöltés esetén.
@@ -528,8 +545,16 @@ var global = function() {
                             function() {
                                 location.reload();
                             },
-                            1
-                            );
+                            1,
+                            (global.demoEntry) ? "Anonymous login" : undefined,
+                            function() {
+                                login('agnos.demo',
+                                        'zolikaokos',
+                                        function() {
+                                            get(url, data, callback, isDeleteDialogRequired);
+                                        });
+                            }
+                    );
                 } else if (jqXHR.status === 403) { // Ha az autentikáció jó, de nincs olvasási jog az adathoz
                     setDialog(
                             "Hozzáférés megtagadva",
@@ -542,7 +567,15 @@ var global = function() {
                             function() {
                                 location.reload();
                             },
-                            2
+                            2,
+                            (global.demoEntry) ? "Anonymous login" : undefined,
+                            function() {
+                                login('agnos.demo',
+                                        'zolikaokos',
+                                        function() {
+                                            get(url, data, callback, isDeleteDialogRequired);
+                                        });
+                            }
                             );
                 } else { // Más hiba esetén...                    
                     if (errorThrown === "") {
@@ -711,7 +744,7 @@ var global = function() {
         var that = this;
         this.tooltip = new Tooltip();
         console.log("kérek");
-        get(global.url.superMeta, "", function(result, status) {            
+        get(global.url.superMeta, "", function(result, status) {
             that.superMeta = result.reports;
             callback();
         });
@@ -745,7 +778,7 @@ var global = function() {
         if (lang === undefined) {
             lang = String.locale;
         }
-        
+
         for (var i = 0, iMax = array.length; i < iMax; i++) {
             if (array[i] === "") {
                 indexOfDefault = i;
@@ -797,7 +830,7 @@ var global = function() {
     var getFromArrayByLangArray = function(langArray, subArray, lang) {
         if (lang === undefined) {
             lang = String.locale;
-        }        
+        }
         var returnIndex = global.getIndexOfLang(langArray, lang);
         return (returnIndex === -1) ? subArray[0] : subArray[returnIndex];
     };
@@ -1244,7 +1277,7 @@ var global = function() {
      * @param {Integer} enterFunctionNumber Az enter melyik gombklikkelést hajtsa végre? (1: bal, 2: jobb, undefined: semmit se)
      * @returns {undefined}
      */
-    var setDialog = function(title, body, leftButtonLabel, leftButtonFunction, rightButtonLabel, rightButtonFunction, enterFunctionNumber) {
+    var setDialog = function(title, body, leftButtonLabel, leftButtonFunction, rightButtonLabel, rightButtonFunction, enterFunctionNumber, extraButtonLabel, extraButtonFunction) {
         clearTimeout(dialogTimeoutVar);
         var dialogMask = d3.select("#dialogMask");
         if (enterFunctionNumber) {
@@ -1263,6 +1296,7 @@ var global = function() {
 
         var leftButton = dialogMask.select("#dialogFirstButton");
         var rightButton = dialogMask.select("#dialogSecondButton");
+        var extraButton = dialogMask.select("#dialogExtraButton");
         if (title === undefined) { // Ha üres a cím, eltüntetjük a panelt.
             if (dialogMask.style("display") !== "none") {
                 dialogMask.style("opacity", 0);
@@ -1290,6 +1324,14 @@ var global = function() {
                 rightButton.html(rightButtonLabel);
                 rightButton.nodes()[0].onclick = rightButtonFunction;
                 rightButton.classed("hidden", false);
+            }
+            if (extraButtonLabel === undefined) {
+                extraButton.classed("hidden", true);
+                extraButton.nodes()[0].onclick = undefined;
+            } else {
+                extraButton.html(extraButtonLabel);
+                extraButton.nodes()[0].onclick = extraButtonFunction;
+                extraButton.classed("hidden", false);
             }
 
             // Fókusz elvétele bármin is volt.

@@ -307,7 +307,8 @@ HeadPanel_Report.prototype.initPanel = function(trans) {
     var dimRow = that.dimTable.selectAll(".row").data(that.localMeta.dimensions);
         
     // Updateljük a dobóréteghez tartozó feliratot.
-    dimRow.select(".dragable");
+    dimRow.select(".dragable:nth-child(1)");
+    dimRow.select(".dragable:nth-child(2)");
         
     // Első dimenzió cella: a dimenzió neve.
     dimRow.select(".tableText0:not(.spacer)")
@@ -329,7 +330,9 @@ HeadPanel_Report.prototype.initPanel = function(trans) {
     var valRow = that.valTable.selectAll(".row").data(that.localMeta.indicators);
 
     // Updateljük a dobóréteghez tartozó feliratot.
-    valRow.select(".dragable");
+    valRow.select(".dragable:nth-child(1)");
+    valRow.select(".dragable:nth-child(2)");
+    valRow.select(".dragable:nth-child(3)");
 
     // Első cella: a mutató neve.
     valRow.select(".tableText0:not(.spacer)")
@@ -352,7 +355,6 @@ HeadPanel_Report.prototype.initPanel = function(trans) {
             .text(function(d) {
                 return (d.value.hide) ? _("nem értelmezett") : _("99.9Mrd ") + _(d.value.unitPlural);
             });
-
 
     // Harmadik cella: a mutató arányosított értéke.
     valRow.select(".tableText2.spacer")

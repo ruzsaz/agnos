@@ -307,8 +307,7 @@ HeadPanel_Report.prototype.initPanel = function(trans) {
     var dimRow = that.dimTable.selectAll(".row").data(that.localMeta.dimensions);
         
     // Updateljük a dobóréteghez tartozó feliratot.
-    dimRow.select(".dragable:nth-child(1)");
-    dimRow.select(".dragable:nth-child(2)");
+    dimRow.select(".dragable");
         
     // Első dimenzió cella: a dimenzió neve.
     dimRow.select(".tableText0:not(.spacer)")

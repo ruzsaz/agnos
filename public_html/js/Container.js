@@ -578,8 +578,8 @@ Container.prototype.save = function(side) {
     var that = this;
     if (this.panelState / 2 === side && this.isSideInUse[side]) {
         var str = "";
-        for (var d = 0, dMax = global.facts[side].reportMeta.dimensions.length; d < dMax; d++) {
-            str = str + "<input class = 'saveCheckBox' type='checkbox' checked/>" + global.facts[side].reportMeta.dimensions[d].caption + "<br>";
+        for (var d = 0, dMax = global.facts[side].localMeta.dimensions.length; d < dMax; d++) {
+            str = str + "<input class = 'saveCheckBox' type='checkbox' checked/>" + global.facts[side].localMeta.dimensions[d].caption + "<br>";
         }
 
         global.setDialog(
@@ -611,7 +611,7 @@ Container.prototype.save = function(side) {
  * @returns {undefined}
  */
 Container.prototype.saveAsCsv = function(side, requestedDims) {
-    var meta = global.facts[side].reportMeta;
+    var meta = global.facts[side].localMeta;
     var baseLevels = global.baseLevels[side];
 
     // A csv fejléce: Report neve, dimenziók lefúrási szintje.
@@ -696,7 +696,7 @@ Container.prototype.saveAsCsv = function(side, requestedDims) {
         var today = new Date();
         var todayString = today.toISOString().slice(0, 10) + "_" + today.toTimeString().slice(0, 8).split(":").join("-");
         var filename = "Agnos"
-                + "_" + global.convertFileFriendly(global.facts[side].reportMeta.caption)
+                + "_" + global.convertFileFriendly(global.facts[side].localMeta.caption)
                 + "_" + todayString
                 + ".csv";
 

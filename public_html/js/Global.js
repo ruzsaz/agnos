@@ -405,6 +405,7 @@ var global = function() {
 
         $.ajax({
             url: global.url.auth,
+            timeout: 5000,
             beforeSend: function(xhr) {
                 xhr.setRequestHeader('Authorization', 'Basic ' + btoa(username + ':' + password));
             },
@@ -510,7 +511,7 @@ var global = function() {
         $.ajax({
             url: url,
             data: data,
-            timeout: 2000,
+            timeout: 5000,
             beforeSend: function(xhr) {
 
                 xhr.setRequestHeader('Authorization', 'Basic ' + btoa(global.secretUsername + ':' + global.secretToken));
@@ -523,7 +524,6 @@ var global = function() {
                 callback(result, status);
             },
             error: function(jqXHR, textStatus, errorThrown) { // Hálózati, vagy autentikációs hiba esetén.
-                console.log(jqXHR.responseText);
                 $(':focus').blur();
                 // Esetleges homokóra letörlése.
                 clearTimeout(progressCounter);
@@ -743,7 +743,6 @@ var global = function() {
     var initGlobals = function(callback) {
         var that = this;
         this.tooltip = new Tooltip();
-        console.log("kérek");
         get(global.url.superMeta, "", function(result, status) {
             that.superMeta = result.reports;
             callback();
@@ -1184,7 +1183,7 @@ var global = function() {
         var today = new Date();
         var todayString = today.toISOString().slice(0, 10) + "_" + today.toTimeString().slice(0, 8).split(":").join("-");
         var filename = "Agnos"
-                + "_" + global.convertFileFriendly(global.facts[side].reportMeta.caption)
+                + "_" + global.convertFileFriendly(global.facts[side].localMeta.caption)
                 + "_" + todayString
                 + "_P";
         d3.selectAll(".activeSide div.panel > svg").each(function(d, i) {
@@ -1244,9 +1243,9 @@ var global = function() {
             // Ha nincs területi dimenzió, a mappanel letiltása.
             if (global.facts[side]) {
                 var isHaveTerritorial = false;
-                if (global.facts[side].reportMeta) {
-                    for (var d = 0, dMax = global.facts[side].reportMeta.dimensions.length; d < dMax; d++) {
-                        if (global.facts[side].reportMeta.dimensions[d].is_territorial === 1) {
+                if (global.facts[side].localMeta) {
+                    for (var d = 0, dMax = global.facts[side].localMeta.dimensions.length; d < dMax; d++) {
+                        if (global.facts[side].localMeta.dimensions[d].is_territorial === 1) {
                             isHaveTerritorial = true;
                             break;
                         }

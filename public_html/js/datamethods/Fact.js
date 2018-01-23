@@ -94,7 +94,7 @@ Fact.prototype.getLocalMeta = function() {
                 'description': d.descriptions[language],
                 'hierarchy_unique_name': d.hierarchy_unique_name,
                 'id': d.id,
-                'is_territorial': (d.isTerritorial === "") ? 0 : 1,
+                'is_territorial': (d.type === "" || d.type === "null") ? 0 : 1,
                 'levels': d.levels,
                 'top_level_caption': d.top_level_captions[language]
             };

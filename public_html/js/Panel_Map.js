@@ -20,11 +20,10 @@ function panel_map(init) {
     this.isColorsLocked = (that.actualInit.range !== undefined);
 
     Panel.call(that, that.actualInit, global.mediators[that.actualInit.group], true, 0, 0); // A Panel konstruktorának meghívása.
-
     // Ha a kért dimenzió nem ábrázolható, keresünk egy olyat, ami igen.
-    if (that.meta.dimensions[that.actualInit.dim].is_territorial !== 1) {
-        for (var d = 0, dMax = that.meta.dimensions.length; d < dMax; d++) {
-            if (that.meta.dimensions[d].is_territorial === 1) {
+    if (that.localMeta.dimensions[that.actualInit.dim].is_territorial !== 1) {
+        for (var d = 0, dMax = that.localMeta.dimensions.length; d < dMax; d++) {
+            if (that.localMeta.dimensions[d].is_territorial === 1) {
                 that.actualInit.dim = d;
                 break;
             }

@@ -4,10 +4,9 @@
 
 // Az adatok beszerzési url-je
 // Lokális gép
-
-//var baseUrl = "http://localhost:8080/AgnosReportingServer";
+var baseUrl = "http://localhost:8080/AgnosReportingServer";
 //var baseUrl = "http://192.168.123.18/AgnosReportingServer";
-var baseUrl = "http://10.64.4.21:7979/AgnosReportingServer";  // Zsolt gépe
+//var baseUrl = "http://10.64.4.21:7979/AgnosReportingServer";  // Zsolt gépe
 
 global.url = {
     auth: baseUrl + "/auth/login",

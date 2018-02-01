@@ -758,7 +758,7 @@ Container.prototype.initChangelog = function() {
                 if (!changelogAnchorpoint.empty()) {
                     changelogAnchorpoint.html("");
                     for (var i = 0, iMax = history.length; i < iMax; i++) {
-                        var date = new Date(history[i].date).toLocaleDateString(lang);
+                        var date = new Date(history[i].date.replace(/-/g, "/")).toLocaleDateString(lang);
                         var html = "<em>" + date + "</em>:<span> " +
                                 "&lt;" + history[i].entity + "&gt; </span>" +
                                 history[i].change;

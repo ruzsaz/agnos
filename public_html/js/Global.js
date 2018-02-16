@@ -513,7 +513,7 @@ var global = function() {
             data: data,
             timeout: 5000,
             beforeSend: function(xhr) {
-
+                console.log('küldöm', global.secretUsername + ':' + global.secretToken)
                 xhr.setRequestHeader('Authorization', 'Basic ' + btoa(global.secretUsername + ':' + global.secretToken));
             },
             success: function(result, status) { // Sikeres letöltés esetén.
@@ -1513,3 +1513,9 @@ var global = function() {
     };
 
 }();
+
+global.secretToken = global.getCookie("token");
+console.log('token' , global.secretToken)
+global.secretUsername = global.getCookie("user");
+
+console.log('token' , global.secretToken, 'user', global.secretUsername);

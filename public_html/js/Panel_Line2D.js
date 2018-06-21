@@ -2,37 +2,37 @@
 
 'use strict';
 
-var bar2panel = panel_bar2d;
+var line2panel = panel_line2d;
 /**
  * A 2 dimenzió mentén ábrázoló oszlopdiagram konstruktora.
  * 
  * @param {Object} init Inicializáló objektum.
- * @returns {panel_bar2d}
+ * @returns {panel_line2d}
  */
-function panel_bar2d(init) {
+function panel_line2d(init) {
     var that = this;
 
-    this.constructorName = "panel_bar2d";
+    this.constructorName = "panel_line2d";
 
     // Inicializáló objektum beolvasása, feltöltése default értékekkel.
-    this.defaultInit = {group: 0, position: undefined, dimx: 0, dimy: 1, val: 0, multiplier: 1, ratio: false, streched: false, domain: [], domainr: [], mag: 1, fromMag: 1};
+    this.defaultInit = {group: 0, position: undefined, dimx: 0, dimy: 1, val: 0, multiplier: 1, ratio: false, symbols: false, domain: [], domainr: [], mag: 1, fromMag: 1};
     this.actualInit = global.combineObjects(that.defaultInit, init);
 
     Panel.call(that, that.actualInit, global.mediators[that.actualInit.group], true, global.numberOffset, 0); // A Panel konstruktorának meghívása.
 
     this.valToShow = that.actualInit.val;					// Az ennyiedik mutatót mutatja.
     this.valFraction = that.actualInit.ratio;				// Hányadost mutasson, vagy abszolútértéket?
-    this.isStretched = that.actualInit.streched;			// 100%-ra széthúzott diagram kell-e?
     this.dimXToShow = that.actualInit.dimx;					// Az X tengely mentén mutatott dimenzió.
     this.dimYToShow = that.actualInit.dimy;					// Az Y tengely mentén mutatott dimenzió.
     this.valMultiplier = that.actualInit.multiplier;		// Ennyiszeresét kell mutatni az értékeknek.
     this.dimX = (that.dimXToShow <= that.dimYToShow) ? 0 : 1;// Az x tengelyen megjelenítendő dimenzió sorszáma (a data-n belül).
     this.dimY = (that.dimXToShow < that.dimYToShow) ? 1 : 0;// Az oszloposztásban megjelenítendő dimenzió sorszáma (a data-n belül).
-
+    this.isSymbolsRequired = that.actualInit.symbols;	// Rajzoljunk jelölőt a vonaldiagramra?
     this.preparedData;										// A feldolgozott adat.
     this.maxEntries = global.maxEntriesIn2D;                // A panel által maximálisan megjeleníthető adatok száma.
     this.maxEntries1D = global.maxEntriesIn1D;              // A panel által 1 dimenzióban maximálisan megjeleníthető adatok száma.
-    this.shadowTimeout;										// A háttértéglalapokat létrehozó időzítés.
+    this.shadowTimeout;                                     // A háttértéglalapokat létrehozó időzítés.
+    this.maskId = global.randomString(12);                  // A maszk réteg id-je. Véletlen, nehogy kettő azonos legyen.    
 
     // Vízszintes skála.
     this.xScale = d3.scaleLinear()
@@ -50,14 +50,6 @@ function panel_bar2d(init) {
     this.yAxis = d3.axisLeft(that.yScale)
             .ticks(10)
             .tickFormat(global.cleverRound3);
-
-    // Széthúzott módban a függőleges tengely %-okat kell hogy mutasson.
-    if (that.isStretched) {
-        that.yAxis.scale(d3.scaleLinear()
-                .range([that.height, 0])
-                .domain([0, 1]))
-                .tickFormat(d3.format(".0%"));
-    }
 
     // A fő alapréteg, ami mentén az X dimenzóban való furkálás történik.
     that.svg.insert("svg:g", ".title_group")
@@ -97,11 +89,6 @@ function panel_bar2d(init) {
             .attr("class", "axisX axis")
             .attr("transform", "translate(" + that.margin.left + ", " + that.margin.top + ")");
 
-    // Oszlopdiagram rétege.
-    this.gBars = that.svg.insert("svg:g", ".title_group")
-            .attr("class", "bar_group")
-            .attr("transform", "translate(" + that.margin.left + ", " + that.margin.top + ")");
-
     // Vízszintes tengely rétege.
     this.gAxisX = that.svg.insert("svg:g", ".title_group")
             .attr("class", "axisX axis noEvents")
@@ -114,10 +101,40 @@ function panel_bar2d(init) {
             .attr("x2", that.width)
             .attr("y2", that.height);
 
+    // Vonaldiagramok rétege.
+    this.gLines = that.svg.insert("svg:g", ".title_group")
+            .attr("class", "line_group")
+            .attr("transform", "translate(" + that.margin.left + ", " + that.margin.top + ")")
+            .attr("mask", "url(#maskurl" + that.maskId + ")");
+
+
     // Függőleges tengely rétege.
     this.gAxisY = that.svg.insert("svg:g", ".title_group")
             .attr("class", "axis axisY noEvents")
             .attr("transform", "translate(" + that.margin.left + ", " + that.margin.top + ")");
+
+    // A kilógó oszlopok végét elhalványító.
+    this.mask = that.svg.append("svg:mask")
+            .attr("id", "maskurl" + that.maskId);
+
+    // A halványító gradiens maszkra rajzolása.
+    that.mask
+            .append("svg:rect")
+            .attr("x", 0)
+            .attr("width", "100%")
+            .attr("y", -that.margin.top)
+            .attr("height", that.h)
+            .attr("fill", (that.magLevel === 1) ? "url(#overflow)" : "url(#overflow2)");
+
+    // A jelkulcs maszkra rajzolása.
+    that.mask.append("svg:rect")
+            .attr("x", that.legendOffsetX - that.margin.left)
+            .attr("y", (that.h - global.legendHeight - global.legendOffsetY - that.margin.top))
+            .attr("rx", global.rectRounding)
+            .attr("ry", global.rectRounding)
+            .attr("width", that.legendWidth)
+            .attr("height", global.legendHeight)
+            .attr("fill", "black");
 
     // Feliratkozás az értékváltás mediátorra.
     var med;
@@ -141,9 +158,29 @@ function panel_bar2d(init) {
 //////////////////////////////////////////////////
 
 {
-    panel_bar2d.prototype = global.subclassOf(Panel); // A Panel metódusainak átvétele.
-    panel_bar2d.prototype.barPadding = 0.1;			// Az oszlopok közötti rés az oszlopok szélességében.
-    panel_bar2d.prototype.xAxisTectColor = global.panelBackgroundColor; // A vízszintes dimenziókra írás színe.
+    panel_line2d.prototype = global.subclassOf(Panel); // A Panel metódusainak átvétele.
+    panel_line2d.prototype.barPadding = 0.1;			// Az oszlopok közötti rés az oszlopok szélességében.
+    panel_line2d.prototype.xAxisTectColor = global.panelBackgroundColor; // A vízszintes dimenziókra írás színe.
+    panel_line2d.prototype.symbolSize = 128;			// A jelölő mérete.
+    panel_line2d.prototype.symbolSize_background = 140;// A jelölő takaró hátterének mérete.
+
+    // Vonaldiagram path-generátora, az objektum x,y property-éből dolgozik.
+    panel_line2d.prototype.lineBarGenerator = d3.line()
+            .x(function(d) {
+                return d.x;
+            })
+            .y(function(d) {
+                return d.y;
+            });
+
+    // A régi vonaldiagram path-generátora, az objektum oldX,oldY property-éből dolgozik.
+    panel_line2d.prototype.oldLineBarGenerator = d3.line()
+            .x(function(d) {
+                return d.oldX;
+            })
+            .y(function(d) {
+                return d.oldY;
+            });
 }
 
 //////////////////////////////////////////////////
@@ -156,7 +193,7 @@ function panel_bar2d(init) {
  * @param {Object} d Nyers adatsor.
  * @returns {Number} Az értékek.
  */
-panel_bar2d.prototype.valueToShow = function(d) {
+panel_line2d.prototype.valueToShow = function(d) {
     var that = this;
     if (d !== undefined && d.vals !== undefined) {
         var val = (that.valFraction) ? that.valMultiplier * d.vals[that.valToShow].sz / d.vals[that.valToShow].n : d.vals[that.valToShow].sz;
@@ -166,7 +203,7 @@ panel_bar2d.prototype.valueToShow = function(d) {
         }
         if (isNaN(parseFloat(origVal))) {
             origVal = "???";
-        }        
+        }
         return {value: val, originalValue: origVal};
     } else {
         return null;
@@ -177,12 +214,11 @@ panel_bar2d.prototype.valueToShow = function(d) {
  * Egy elemhez tartozó tooltipet legyártó függvény;
  * 
  * @param {Object} xElement Az X dimenzió mentén az elemet tartalmazó objektum.
- * @param {type} yElement Az Y dimenzió mentén az érték.
+ * @param {Object} yElement Az Y dimenzió mentén az érték.
  * @returns {String} A megjelenítendő tooltip.
  */
-panel_bar2d.prototype.getTooltip = function(xElement, yElement) {
+panel_line2d.prototype.getTooltip = function(xElement, yElement) {
     var that = this;
-    //var xUnitProperty = (xElement.value === 1) ? "unit" : "unitPlural";
     var yUnitProperty = (yElement.value === 1) ? "unit" : "unitPlural";
     return that.createTooltip(
             [{
@@ -207,7 +243,7 @@ panel_bar2d.prototype.getTooltip = function(xElement, yElement) {
  * 
  * @returns {Function} Az összehasonlító-függvény.
  */
-panel_bar2d.prototype.getCmpFunction = function() {
+panel_line2d.prototype.getCmpFunction = function() {
     var that = this;
     return function(a, b) {
         return global.realCompare(a.dims[that.dimX].name + ":" + a.dims[that.dimY].name, b.dims[that.dimX].name + ":" + b.dims[that.dimY].name);
@@ -221,8 +257,76 @@ panel_bar2d.prototype.getCmpFunction = function() {
  * @param {Object} b Egy másik adatelem.
  * @returns {boolean} Az összehasonlítás eredménye.
  */
-panel_bar2d.prototype.simpleCmp = function(a, b) {
+panel_line2d.prototype.simpleCmp = function(a, b) {
     return a.name.localeCompare(b.name);
+};
+
+/**
+ * Adott magasságú és helyzetű vízszintes vonalat készít path-ként.
+ * 
+ * @param {type} x0 Kezdőpont x koordinátája.
+ * @param {type} x1 Végpont x koordinátája.
+ * @param {type} y A vonal y koordinátája.
+ * @returns {String} A vonalat leíró path.
+ */
+panel_line2d.prototype.horizontalLine = function(x0, x1, y) {
+    return "M" + x0 + "," + y + "L" + x1 + "," + y;
+};
+
+/**
+ * Egy töröttvonal koordinátahalmazából az egyik elem körüli töröttvonalelemet
+ * határozza meg path-ként.
+ * 
+ * @param {Array} pointArray A kiinduló töröttvonal pontjait tartalmazó tömb.
+ * @param {String} id Annak a pontnak az id-je, ami körüli részt kell meghatározni.
+ * @returns {String} A töröttvonalat leíró path.
+ */
+panel_line2d.prototype.veeLine = function(pointArray, id) {
+    var that = this;
+    var i = global.positionInArrayByProperty(pointArray, "id", id);
+    return "M" + that.interpolate("x", pointArray[i - 1], pointArray[i], pointArray[i + 1], 0, 2) + "," + that.interpolate("y", pointArray[i - 1], pointArray[i], pointArray[i + 1], 0, 2) +
+            "L" + that.interpolate("x", pointArray[i - 1], pointArray[i], pointArray[i + 1], 1, 2) + "," + that.interpolate("y", pointArray[i - 1], pointArray[i], pointArray[i + 1], 1, 2) +
+            "L" + that.interpolate("x", pointArray[i - 1], pointArray[i], pointArray[i + 1], 2, 2) + "," + that.interpolate("y", pointArray[i - 1], pointArray[i], pointArray[i + 1], 2, 2);
+};
+
+/**
+ * Egy törtlineáris függvény utolsó pontjától még továbbmegy lineárisan félszakasznyit.
+ * 
+ * @param {String} coord A pontok extrapolálandó property-je (jellemzően "x" vagy "y").
+ * @param {Object} last Az utolsó pont (jellemzően {x: , y: } típusú).
+ * @param {Object} prev Az előző pont.
+ * @returns {Number} Az extrapolált érték.
+ */
+panel_line2d.prototype.extrapolate = function(coord, last, prev) {
+    return last[coord] + (last[coord] - prev[coord]) / 2;
+};
+
+/**
+ * Egy 3 pontból álló törtlineáris "V" függvény középső felét néhány egyenlő
+ * részre osztva visszaadja az i. osztópont függvényértékét. Ha az egyik végpont
+ * "isFake" property-je true, akkor azt a pontot a "V" szárának felénél levőnek veszi.
+ * 
+ * @param {String} coord A pontok interpolálandó property-je (jellemzően "x" vagy "y").
+ * @param {Object} a Bal szélső pont (jellemzően {x: , y: , isFake: } típusú).
+ * @param {Object} b Középső pont.
+ * @param {Object} c Jobb szélső pont.
+ * @param {Integer} i Az aktuális osztópont sorszáma.
+ * @param {Integer} iMax Az osztópontok száma.
+ * @returns {Number} Az interpolált érték.
+ */
+panel_line2d.prototype.interpolate = function(coord, a, b, c, i, iMax) {
+    if (a === null || b === null || c === null || i === null || iMax === null || a === undefined || b === undefined || c === undefined || i === undefined || iMax === undefined || isNaN(a[coord]) || isNaN(b[coord]) || isNaN(c[coord]) || isNaN(i)) {
+        return 1000;
+    }
+    var bb = b[coord];
+    var aa = (a.isFake) ? 2 * a[coord] - bb : a[coord];
+    var cc = (c.isFake) ? 2 * c[coord] - bb : c[coord];
+    var x = (i / iMax) - 0.5;
+    if (x < 0) {
+        x = -x;
+        cc = aa;
+    }
+    return x * cc + (1 - x) * bb;
 };
 
 /**
@@ -233,16 +337,14 @@ panel_bar2d.prototype.simpleCmp = function(a, b) {
  * @param {Array} scale 2 elemű tömb a minimális és maximális értékkel.
  * @returns {undefined}
  */
-panel_bar2d.prototype.setYScale = function(scale) {
+panel_line2d.prototype.setYScale = function(scale) {
     var actualScaleDomain = (this.valFraction) ? this.actualInit.domainr : this.actualInit.domain;
     if ((actualScaleDomain instanceof Array) && actualScaleDomain.length === 2) {
         this.yScale.domain(actualScaleDomain);
     } else {
         this.yScale.domain(scale);
     }
-    if (!this.isStretched) {
-        this.yScale.nice(10);
-    }
+    this.yScale.nice(10);
 };
 
 //////////////////////////////////////////////////
@@ -255,12 +357,45 @@ panel_bar2d.prototype.setYScale = function(scale) {
  * @param {Object} drill A lefúrást leíró objektum: {dim: a fúrás dimenziója, direction: iránya (+1 fel, -1 le), fromId: az előzőleg kijelzett elem azonosítója, toId: az új elem azonosítója}
  * @returns {undefined}
  */
-panel_bar2d.prototype.preUpdate = function(drill) {
+panel_line2d.prototype.preUpdate = function(drill) {
     var that = this;
     var oldPreparedData = this.preparedData;
 
+    if (drill.dim === that.dimXToShow && that.dimXToShow === that.dimYToShow) { // Ha az X és Y dimenzióban ugyanaz van, és amentén fúrunk
+
+        // Tengelyfeliratok: nem kellőek törlése.
+        that.gAxisX.selectAll("text")
+                .filter(function(d) {
+                    return (d.id !== drill.toId);
+                })
+                .remove();
+
+        // Vonalak: mindent, kivéve amibe fúrunk, törlünk.
+        that.gLines.selectAll(".lineChart")
+                .filter(function(d) {
+                    return (d.idY !== drill.toId);
+                })
+                .remove();
+
+        // Szimbólumok: törlés.
+        that.gLines.selectAll(".lineSymbolHolder")
+                .on("click", null)
+                .remove();
+
+        // Ha az lefúrás, mindent, kivéve amibe fúrunk, törlünk.
+        // Jelkulcstéglalapok és feliratok: nem kellőek letörlése.
+        that.gLegend.selectAll(".legendEntry")
+                .filter(function(d) {
+                    return (d.id !== drill.toId);
+                })
+                .on("click", null)
+                .on("mouseover", null)
+                .on("mouseout", null)
+                .remove();
+    }
+
     // Ha az X dimenzió mentén történik valami.
-    if (drill.dim === that.dimXToShow) {
+    else if (drill.dim === that.dimXToShow) {
 
         // Ha az lefúrás, mindent, kivéve amibe fúrunk, letörlünk.
         if (drill.direction === -1) {
@@ -276,11 +411,14 @@ panel_bar2d.prototype.preUpdate = function(drill) {
                     .on("click", null)
                     .remove();
 
-            // Oszlopok: nem kellőek letörlése.
-            that.gBars.selectAll(".bar")
-                    .filter(function(d) {
-                        return (d.id !== drill.toId);
-                    })
+            // Vonalak: csökkentett méretűvel való pótlás.
+            that.gLines.selectAll(".lineChart")
+                    .attr("d", function(d) {
+                        return that.veeLine(d, drill.toId);
+                    });
+
+            // Szimbólumok: törlés.
+            that.gLines.selectAll(".lineSymbolHolder")
                     .on("click", null)
                     .remove();
         }
@@ -299,44 +437,19 @@ panel_bar2d.prototype.preUpdate = function(drill) {
                     .on("click", null)
                     .remove();
 
-            // Az oszlopok átlagértékének meghatározása.
-            var avgValues = [];
-            var levelY = (global.baseLevels[that.panelSide])[that.dimYToShow].length;
-            for (var j = 0, jMax = oldPreparedData.dimYArray.length; j < jMax; j++) {
-                var avgHeight = d3.mean(oldPreparedData.dataArray, function(d) {
-                    return (d.values[j] === undefined) ? undefined : d.values[j].height;
-                });
-                var avgY = d3.mean(oldPreparedData.dataArray, function(d) {
-                    return (d.values[j] === undefined) ? undefined : d.values[j].y;
-                });
-                avgValues.push({dimYId: oldPreparedData.dimYArray[j].id, dimYUniqueId: levelY + "L" + oldPreparedData.dimYArray[j].id, height: avgHeight, y: avgY, startOpacity: 1});
-            }
+            // Vonalak: az átlagértékel való pótlás.
+            that.gLines.selectAll(".lineChart")
+                    .attr("d", function(d) {
+                        var avgY = d3.mean(d, function(d2) {
+                            return (d2.id < -10) ? undefined : d2.y;
+                        });
+                        return that.horizontalLine(-that.margin.left, that.width + that.margin.right, avgY);
+                    });
 
-            // Minden oszlopelem eltörlése.
-            that.gBars.selectAll(".bar")
+            // Szimbólumok: törlés.
+            that.gLines.selectAll(".lineSymbolHolder")
                     .on("click", null)
                     .remove();
-
-            // Átlaghoz tartozó oszlopelem kirajzolása.
-            var levelX = (global.baseLevels[that.panelSide])[that.dimXToShow].length;
-            that.gBars.selectAll(".bar").data([{id: drill.fromId, uniqueId: levelX + "L" + drill.fromId}])
-                    .enter().append("svg:g")
-                    .attr("class", "bar bordered darkenable")
-                    .attr("transform", "translate(" + (that.xScale.range()[1] * (that.barPadding / 2)) + ", 0)")
-                    .selectAll("rect").data(avgValues)
-                    .enter().append("svg:rect")
-                    .attr("x", 0)
-                    .attr("width", that.xScale.range()[1] * (1 - that.barPadding))
-                    .attr("y", function(d) {
-                        return d.y;
-                    })
-                    .attr("height", function(d) {
-                        return d.height;
-                    })
-                    .attr("fill", function(d) {
-                        return global.color(d.dimYId);
-                    })
-                    .attr("opacity", 1);
         }
     }
 
@@ -356,11 +469,16 @@ panel_bar2d.prototype.preUpdate = function(drill) {
                     .on("mouseout", null)
                     .remove();
 
-            // Oszlopok: mindent, kivéve amibe fúrunk, törlünk.
-            that.gBars.selectAll(".bar rect")
+            // Vonalak: mindent, kivéve amibe fúrunk, törlünk.
+            that.gLines.selectAll(".lineChart")
                     .filter(function(d) {
-                        return (d.dimYId !== drill.toId);
+                        return (d.idY !== drill.toId);
                     })
+                    .remove();
+
+            // Szimbólumok: törlés.
+            that.gLines.selectAll(".lineSymbolHolder")
+                    .on("click", null)
                     .remove();
         }
 
@@ -374,21 +492,22 @@ panel_bar2d.prototype.preUpdate = function(drill) {
                     .on("click", null)
                     .remove();
 
-            // Kirajzolunk egy teljes téglalapot a szülő színével.
-            that.gLegend.selectAll("g").data([1])
-                    .enter().append("svg:g")
-                    .append("svg:path")
-                    .attr("d", global.rectanglePath(
-                            that.legendOffsetX, // x
-                            that.h - global.legendHeight - global.legendOffsetY, // y
-                            that.legendWidth, // width
-                            global.legendHeight, // height
-                            global.rectRounding, // Minden sarka lekerekített.
-                            global.rectRounding,
-                            global.rectRounding,
-                            global.rectRounding))
-                    .attr("class", "legend bordered darkenable")
-                    .attr("fill", global.color(drill.fromId));
+            // Vonalak: mindent, kivéve amibe fúrunk, törlünk.
+            that.gLines.selectAll(".lineChart")
+                    .filter(function(d, i) {
+                        return (i !== 0);
+                    })
+                    .remove();
+
+            that.gLines.selectAll(".lineChart");
+
+            that.gLines.selectAll(".lineChart")
+                    .attr("stroke", global.color(drill.fromId));
+
+            // Szimbólumok: törlés.
+            that.gLines.selectAll(".lineSymbolHolder")
+                    .on("click", null)
+                    .remove();
         }
     }
 };
@@ -401,7 +520,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
  * @param {Object} drill Az épp végrehajtandó fúrás.
  * @returns {Object} Az új megjelenítendő adatok.
  */
-panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill) {
+panel_line2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill) {
     var that = this;
     var levelX = (global.baseLevels[that.panelSide])[that.dimXToShow].length;
     var levelY = (global.baseLevels[that.panelSide])[that.dimYToShow].length;
@@ -422,15 +541,17 @@ panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill
         // Ha új X-dimenzióbeli elemről van szó, létrehozunk egy új üres element.
         if (d.dims[that.dimX].id !== currentXDimId) {
             currentXDimId = d.dims[that.dimX].id;
+            var currentYDimId = d.dims[that.dimY].id;
             currentXPosition++;
-            var element = {};
-            element.index = currentXPosition;
-            element.id = currentXDimId;
-            element.uniqueId = levelX + "L" + element.id;
-            element.name = d.dims[that.dimX].name.trim();
-            element.values = [];
-            element.sumValues = 0;
-            dataArray.push(element);
+            var Xelement = {};
+            Xelement.index = currentXPosition;
+            Xelement.id = currentXDimId;
+            Xelement.uniqueId = levelX + "L" + currentYDimId;
+            Xelement.name = d.dims[that.dimX].name.trim();
+            Xelement.values = [];
+            Xelement.minValues = 0;
+            Xelement.maxValues = 0;
+            dataArray.push(Xelement);
         }
 
         var dimY = d.dims[that.dimY];
@@ -452,16 +573,21 @@ panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill
         }
 
         // Az utolsó x-dimenzióhoz tartozó rekeszbe beleírjuk az y dimenzió szerinti értéket.
-        var element = dataArray[dataArray.length - 1];
+        var Xelement = dataArray[dataArray.length - 1];
         var val = that.valueToShow(d);
-        element.values.push({
+        var YElement = {
             index: index,
             value: val.value,
             originalValue: val.originalValue,
             dimYId: dimY.id,
             dimYUniqueId: levelY + "L" + dimY.id,
-            dimYName: dimY.name.trim()});
-        element.sumValues = element.sumValues + val.value;
+            dimYName: dimY.name.trim()
+        };
+        YElement.tooltip = that.getTooltip(Xelement, YElement);
+        Xelement.values.push(YElement);
+
+        Xelement.minValues = Math.min(Xelement.minValues, val.value);
+        Xelement.maxValues = Math.max(Xelement.maxValues, val.value);
     }
 
     // X irányú lefúrás esetén: ebből a régi elemből kell kinyitni mindent.
@@ -474,117 +600,160 @@ panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill
     var onlyOneBarX = that.xScale.range()[1];	// Ha csak 1 diagramelem van, az ilyen széles a paddinggal együtt.
     var onlyOneBarWidth = onlyOneBarX * (1 - that.barPadding); // Ha csak 1 diagramelem van, az ilyen széles.
 
-    var oldDataMax = that.yScale.domain()[1]; // Az Y skála régi végpontja.
     var dataMax = d3.max(dataArray, function(d) {
-        return d.sumValues;
+        return d.maxValues;
+    });
+    var dataMin = d3.min(dataArray, function(d) {
+        return d.minValues;
     });
 
     // Új skálák beállítása.
     that.xScale.domain([0, dataArray.length]);
-    that.setYScale([0, dataMax]);
-
-    // A régi és az új Y skála közötti arány.
-    var yMagRatio = ((that.isStretched) ? 1 : that.yScale.domain()[1] / oldDataMax);
-
-    // Identikus skála; ha széthúzott üzemmódban vagyunk, akkor minden egyes elemnél átalakítjuk.
-    var strechScale = d3.scaleLinear()
-            .domain([0, dataMax])
-            .range([0, dataMax]);
+    that.setYScale([dataMin, dataMax]);
 
     var elementWidth = that.xScale(1 - that.barPadding); // Az új elemek végső szélessége.
 
     // Második végigfutás: a kirajzoláshoz szükséges értékek meghatározása.
+    var lineArray = [];
+    var lines = dimYArray.length;
+
+    // Kamu 0. elem berakása, hogy a vonal a széléig legyen kihúzva.
+    for (var j = 0; j < lines; j++) {
+        var line = [];
+        line.number = dimYArray[j].index;
+        line.idY = dimYArray[j].id;
+        line.push({id: -99, isFake: true, number: j, idY: line.idY});
+        lineArray.push(line);
+    }
+
+    // A valódi elemek berakása.
     for (var i = 0, iMax = dataArray.length; i < iMax; i++) {
-        var element = dataArray[i];
-        var oldElement = (oldPreparedData !== undefined) ? global.getFromArrayByProperty(oldPreparedData.dataArray, 'id', element.id) : undefined;
-        if (that.isStretched) { // Ha 100%-ra széthúzott módban vagyunk, az oszlopok skáláját hozzáigazítjuk.
-            strechScale.domain([0, element.sumValues]);
-        }
+        var Xelement = dataArray[i];
+
+        //var oldElement = (oldPreparedData !== undefined) ? global.getFromArrayByProperty(oldPreparedData.dataArray, 'id', Xelement.id) : undefined;
 
         // Az új megjelenési koordináták beállítása.
-        element.x = that.xScale(i + that.barPadding / 2);
-        element.width = elementWidth;
+        Xelement.x = that.xScale(i + that.barPadding / 2);
+        Xelement.width = elementWidth;
 
         // A régi x koordináták beállítása: innen fog kinyílni az animáció.
         if (drill.dim === that.dimXToShow && drill.direction === -1 && openFromXElement) { // Ha x mentén lefúrás van.
-            element.oldX = oldX;
-            element.oldWidth = (openFromXElement.width / iMax);
-            oldX = oldX + element.oldWidth;
+            Xelement.oldX = oldX;
+            Xelement.oldWidth = (openFromXElement.width / iMax);
+            oldX = oldX + Xelement.oldWidth;
         } else if (drill.dim === that.dimXToShow && drill.direction === 1) { // Ha x mentén kifúrás van.
-            element.oldX = (i - openToXElementIndex + that.barPadding / 2) * onlyOneBarX;
-            element.oldWidth = onlyOneBarWidth;
+            Xelement.oldX = (i - openToXElementIndex + that.barPadding / 2) * onlyOneBarX;
+            Xelement.oldWidth = onlyOneBarWidth;
         } else { // Különben.
-            element.oldX = element.x;
-            element.oldWidth = element.width;
+            Xelement.oldX = Xelement.x;
+            Xelement.oldWidth = Xelement.width;
         }
 
-        var values = element.values;
-
-        // Az elemi téglalapok új y koordinátáinak meghatározása.
-        var accumulation = 0;
-        for (var j = 0, jMax = values.length; j < jMax; j++) {
-            var d = element.values[j];
-            d.height = that.yScale(strechScale(0)) - that.yScale(strechScale(d.value));
-            d.y = that.yScale(strechScale(d.value + accumulation));
-            d.tooltip = that.getTooltip(element, d);
-            accumulation = accumulation + d.value;
+        for (var j = 0, jMax = Xelement.values.length; j < jMax; j++) {
+            var val = Xelement.values[j];
+            var lineElement = {};
+            lineElement.number = val.index;
+            lineElement.id = Xelement.id;
+            lineElement.idY = lineArray[val.index].idY;
+            lineElement.uniqueId = val.dimYUniqueId + "S" + levelX + "L" + Xelement.id;
+            lineElement.name = val.dimYName.trim(); // TODO: ??
+            lineElement.value = val.value;
+            lineElement.x = that.xScale(i + 0.5);
+            lineElement.y = that.yScale(lineElement.value);
+            lineElement.tooltip = val.tooltip;
+            lineArray[val.index].push(lineElement);
         }
+    }
 
-        // A régi y koordináta-értékek meghatározása.
-        if (drill.dim === that.dimXToShow && drill.direction === -1 && openFromXElement) { // Ha X mentén való lefúrás történt.
-            for (var j = 0, jMax = values.length; j < jMax; j++) {
-                var d = element.values[j];
-                d.oldY = openFromXElement.values[j].y;
-                d.oldHeight = openFromXElement.values[j].height;
-                d.startOpacity = 1;
+    // Kamu utolsó elem berakása, hogy a vonal a széléig legyen kihúzva.
+    for (var j = 0; j < lines; j++) {
+        lineArray[j].push({id: -999, isFake: true, number: j, idY: line.idY});
+    }
+
+    // A két kamu végpont koordinátáinak kiszámolása.
+    for (var j = 0; j < lines; j++) {
+        var line = lineArray[j];
+        var realPoints = line.length - 2;
+        line[0].x = (realPoints > 1) ? that.extrapolate("x", line[1], line[2]) : 0;
+        line[0].y = (realPoints > 1) ? that.extrapolate("y", line[1], line[2]) : line[1].y;
+        line[realPoints + 1].x = (realPoints > 1) ? that.extrapolate("x", line[realPoints], line[realPoints - 1]) : that.width;
+        line[realPoints + 1].y = (realPoints > 1) ? that.extrapolate("y", line[realPoints], line[realPoints - 1]) : line[realPoints - 1].y;
+    }
+
+    // Régi koordináták kiszámolása
+    var openFromXIndex = (drill.dim === that.dimXToShow && drill.direction === -1 && openFromXElement) ? openFromXElement.index + 1 : undefined;
+    for (var j = 0; j < lines; j++) {
+        line = lineArray[j];
+
+        if (drill.dim === that.dimXToShow && that.dimXToShow === that.dimYToShow) { // Ha az X és Y dimenzióban ugyanaz van, és amentén fúrunk
+            for (var point = 0, pointMax = line.length; point < pointMax; point++) {
+
+                line[point].oldX = line[point].x;
+                line[point].oldY = line[point].y;
             }
-        } else if (drill.dim === that.dimXToShow && drill.direction === 1) { // Ha X mentén való felfúrás történt.
-            for (var j = 0, jMax = values.length; j < jMax; j++) {
-                var d = element.values[j];
-                d.oldY = global.orZero(that.height * (1 - yMagRatio) + yMagRatio * d.y);
-                d.oldHeight = global.orZero(yMagRatio * d.height);
-                d.startOpacity = (i === openToXElementIndex) ? 1 : 0;
+        } else if (drill.dim === that.dimXToShow) { // Ha az X mentén történt fúrás
+
+            var oldLineArray = (oldPreparedData) ? oldPreparedData.lineArray[j] : undefined;
+            var oldAvg = (oldPreparedData) ? d3.mean(oldLineArray, function(d) {
+                return (d.id < -10) ? undefined : d.y;
+            }) : that.heiht;
+            for (var point = 0, pointMax = line.length; point < pointMax; point++) {
+                if (drill.dim === that.dimXToShow && drill.direction === -1 && openFromXIndex) { // Ha bezoomolás van
+                    line[point].oldX = that.interpolate("x", oldLineArray[openFromXIndex - 1], oldLineArray[openFromXIndex], oldLineArray[openFromXIndex + 1], point, pointMax - 1) || 0;
+                    line[point].oldY = that.interpolate("y", oldLineArray[openFromXIndex - 1], oldLineArray[openFromXIndex], oldLineArray[openFromXIndex + 1], point, pointMax - 1) || 0;
+                } else if (drill.dim === that.dimXToShow && drill.direction === 1) { // Ha kizoomolás van
+                    line[point].oldX = ((point - 0.5 - openToXElementIndex) * onlyOneBarX) || 0;
+                    line[point].oldY = oldAvg || 0;
+                } else { // Szinten maradás esetén.
+                    if (oldLineArray) { // Ha van előző adat.
+                        var idx = line[point].id;
+                        var oldElement = global.getFromArrayByProperty(oldLineArray, 'id', idx) || 0;
+                        line[point].oldX = ((oldElement) ? oldElement.x : that.xScale(point - 0.5)) || 0;
+                        line[point].oldY = ((oldElement) ? oldElement.y : that.height) || 0;
+                    } else { // Ha minden szűz.
+                        line[point].oldX = ((point === 0) ? 0 : (point === pointMax - 1) ? that.width : that.xScale(point - 0.5)) || 0;
+                        line[point].oldY = that.height || 0;
+                    }
+                }
             }
-        } else if (drill.dim === that.dimYToShow && drill.direction === -1 && oldElement !== undefined) { // Ha Y mentén való lefúrás történt.
-            var openFromYElement = global.getFromArrayByProperty(oldElement.values, 'dimYId', drill.toId);
-            var oldY = openFromYElement.y + openFromYElement.height;
-            for (var j = 0, jMax = values.length; j < jMax; j++) {
-                var d = element.values[j];
-                d.oldHeight = openFromYElement.height / jMax;
-                oldY = oldY - d.oldHeight;
-                d.oldY = oldY;
-                d.startOpacity = 1;
+        } else if (drill.dim === that.dimYToShow && drill.direction === -1) { // Ha az Y mentén történt lefúrás                        
+            var oldLine = (oldPreparedData) ? global.getFromArrayByProperty(oldPreparedData.lineArray, 'idY', drill.toId) : undefined;
+            for (var point = 0, pointMax = line.length; point < pointMax; point++) {
+                line[point].oldX = (oldLine) ? oldLine[point].x : line[point].x;
+                line[point].oldY = (oldLine) ? oldLine[point].y : 100;
             }
-        } else if (drill.dim === that.dimYToShow && drill.direction === 1 && oldElement !== undefined) { // Ha Y mentén való felfúrás történt.
-            var oldValues = oldElement.values;
-            var openToYElementIndex = global.positionInArrayByProperty(values, "dimYId", drill.fromId);
-            var yHeightRatio = (oldValues[0].y - oldValues[oldValues.length - 1].y + oldValues[0].height) / values[openToYElementIndex].height;
-            for (var j = 0, jMax = values.length; j < jMax; j++) {
-                var d = element.values[j];
-                d.oldY = (that.isStretched) ? (openToYElementIndex - j) * that.height : (d.y - values[openToYElementIndex].y) * yHeightRatio + oldValues[oldValues.length - 1].y || that.height;
-                d.oldHeight = (that.isStretched) ? that.height : d.height * yHeightRatio || 0;
-                d.startOpacity = (j === openToYElementIndex) ? 1 : 0;
+        } else if (drill.dim === that.dimYToShow && drill.direction === 1) { // Ha az Y mentén történt felfúrás                        
+            for (var point = 0, pointMax = line.length; point < pointMax; point++) {
+                line[point].oldX = line[point].x;
+                line[point].oldY = (oldPreparedData.lineArray[0][point]) ? oldPreparedData.lineArray[0][point].y : 0;
             }
-        } else { // Különben.
-            for (var j = 0, jMax = values.length; j < jMax; j++) {
-                var d = element.values[j];
-                d.oldY = that.height;
-                d.oldHeight = 0;
-                d.startOpacity = 1;
+        } else { // Különben (kezdés, vagy nem kijelzett dimenzió mentén fúrás)
+            for (var point = 0, pointMax = line.length; point < pointMax; point++) {
+                var oldLineArray = (oldPreparedData) ? oldPreparedData.lineArray[j] : undefined;
+                line[point].oldX = (oldLineArray && oldLineArray[point]) ? oldLineArray[point].x : line[point].x;
+                line[point].oldY = (oldLineArray && oldLineArray[point]) ? oldLineArray[point].y : line[point].y;
             }
         }
     }
 
     // Az y dimenzió mentén a jelkulcstömb pozíciókkal való kiegészítése.
     dimYArray.sort(that.simpleCmp);
-    var openFromLegendElement = (drill.dim === that.dimYToShow && drill.direction === -1 && oldElement !== undefined) ? global.getFromArrayByProperty(oldPreparedData.dimYArray, 'id', drill.toId) : null;
+    var openFromLegendElement = (drill.dim === that.dimYToShow && drill.direction === -1) ? global.getFromArrayByProperty(oldPreparedData.dimYArray, 'id', drill.toId) : null;
     var openToLegendIndex = (drill.dim === that.dimYToShow && drill.direction === 1) ? global.positionInArrayByProperty(dimYArray, 'id', drill.fromId) : null;
     var l_width = that.legendWidth / dimYArray.length;
-    for (var i = 0, iMax = dimYArray.length; i < iMax; i++) {
+    for (var i = 0, realPoints = dimYArray.length; i < realPoints; i++) {
         var yElement = dimYArray[i];
         yElement.x = i * l_width;
         yElement.width = l_width;
-        if (drill.dim === that.dimXToShow && drill.direction === -1) { // Ha X mentén való lefúrás történt.
+        if (drill.dim === that.dimYToShow && drill.direction === -1) { // Ha Y mentén való lefúrás történt.
+            yElement.oldX = openFromLegendElement.x + i * openFromLegendElement.width / realPoints;
+            yElement.oldWidth = openFromLegendElement.width / realPoints;
+            yElement.startOpacity = 1;
+        } else if (drill.dim === that.dimYToShow && drill.direction === 1) { // Ha Y mentén való felfúrás történt.
+            yElement.oldX = (i - openToLegendIndex) * that.legendWidth;
+            yElement.oldWidth = that.legendWidth;
+            yElement.startOpacity = (i === openToLegendIndex) ? 1 : 0;
+        } else if (drill.dim === that.dimXToShow && drill.direction === -1) { // Ha X mentén való lefúrás történt.
             yElement.oldX = yElement.x;
             yElement.oldWidth = yElement.width;
             yElement.startOpacity = 0;
@@ -592,14 +761,6 @@ panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill
             yElement.oldX = yElement.x;
             yElement.oldWidth = yElement.width;
             yElement.startOpacity = 0;
-        } else if (drill.dim === that.dimYToShow && drill.direction === -1 && oldElement !== undefined) { // Ha Y mentén való lefúrás történt.
-            yElement.oldX = openFromLegendElement.x + i * openFromLegendElement.width / iMax;
-            yElement.oldWidth = openFromLegendElement.width / iMax;
-            yElement.startOpacity = 1;
-        } else if (drill.dim === that.dimYToShow && drill.direction === 1) { // Ha Y mentén való felfúrás történt.
-            yElement.oldX = (i - openToLegendIndex) * that.legendWidth;
-            yElement.oldWidth = that.legendWidth;
-            yElement.startOpacity = (i === openToLegendIndex) ? 1 : 0;
         } else { // Különben.
             yElement.oldX = yElement.x;
             yElement.oldWidth = yElement.width;
@@ -607,17 +768,17 @@ panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill
         }
     }
 
-    return {dataArray: dataArray, dimYArray: dimYArray};
+    return {dataArray: dataArray, dimYArray: dimYArray, lineArray: lineArray};
 };
 
 /**
  * Új adat megérkeztekor levezényli a panel frissítését.
  * 
  * @param {Object} data Az új adat.
- * @param {Object} drill Az épp végrehajzásra kerülő fúrás.
+ * @param {Object} drill Az épp végrehajtásra kerülő fúrás.
  * @returns {undefined}
  */
-panel_bar2d.prototype.update = function(data, drill) {
+panel_line2d.prototype.update = function(data, drill) {
     var that = this;
     that.data = data || that.data;
     drill = drill || {dim: -1, direction: 0};
@@ -645,7 +806,7 @@ panel_bar2d.prototype.update = function(data, drill) {
             that.panic(false);
             var trans = d3.transition().duration(tweenDuration);
             that.drawAxes(that.preparedData, trans);
-            that.drawBars(that.preparedData, trans);
+            that.drawLines(that.preparedData, trans, (drill.dim !== -1));
             that.drawLegend(that.preparedData, trans);
         }
     }
@@ -654,85 +815,144 @@ panel_bar2d.prototype.update = function(data, drill) {
 };
 
 /**
- * Kirajzolja és helyére animálja az oszlopdiagramokat.
+ * Kirajzolja és helyére animálja a vonaldiagramokat.
  * 
  * @param {Object} preparedData Az ábrázoláshoz előkészített adat.
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
+ * @param {Boolean} isClearRequired Le kell-e törölni az előző vonalakat?
  * @returns {undefined}
  */
-panel_bar2d.prototype.drawBars = function(preparedData, trans) {
+panel_line2d.prototype.drawLines = function(preparedData, trans, isClearRequired) {
     var that = this;
 
-    // Egy téglalap konténere, és a hozzá tartozó adat hozzácsapása.
-    var gBar = that.gBars.selectAll(".bar")
-            .data(preparedData.dataArray, function(d) {
+    // Ha kell, letöröljük a meglevő vonalakat.
+    if (isClearRequired) {
+        that.gLines.selectAll(".lineChart").remove();
+    }
+
+    // Vonalak, és az adat hozzájukcsapása.
+    var line = this.gLines.selectAll(".lineChart")
+            .data(preparedData.lineArray);
+
+    // Eltűnő elemek levevése.
+    line.exit()
+            .classed("darkenable", false)
+            .on("click", null)
+            .transition(trans)
+            .attr("opacity", 0)
+            .remove();
+
+    // Új vonalelemek kirajzolása, és a régiekkel való összeöntése.
+    line = line.enter().insert("svg:path", ".lineSymbolGroup")
+            .attr("d", that.oldLineBarGenerator)
+            .attr("stroke", function(d, i) {
+                return global.color(d.idY);
+            })
+            .merge(line);
+
+    // A maradó vonalakt jó helyre animáljuk, megjelenítjük.
+    line.transition(trans)
+            .attr("class", function(d, i) {
+                return "noEvents lineChart controlled controlled" + d.number;
+            })
+            .attr("d", that.lineBarGenerator)
+            .attr("stroke", function(d, i) {
+                return global.color(d.idY);
+            });
+
+    // Egy vonalhoz tartozó összes szimbólum tartója, és az adatok hozzátársítása.
+    var lineSymbolGroups = this.gLines.selectAll(".lineSymbolGroup")
+            .data(preparedData.lineArray);
+
+    // Eltűnő szimbólumtartók levevése.
+    // TODO: nem okoz memory leaket a click függvény miatt?
+    lineSymbolGroups.exit()
+            .classed("darkenable", false)
+            .on("click", null)
+            //.transition(trans)
+            //.attr("opacity", 0)
+            .remove();
+
+    // Belépő szimbólumtartók létrehozása, a régiekkel való összeöntése.
+    lineSymbolGroups = lineSymbolGroups.enter().append("svg:g").merge(lineSymbolGroups);
+
+    // Összes szimbólumtartó osztályának beállítása.
+    lineSymbolGroups.attr("class", function(d, i) {
+        return "lineSymbolGroup controlled controlled" + d.number;
+    });
+
+    // Egy szimbólumelem tartója; ebbe kerül a szimbólum setét háttere, és maga a szimbólum.
+    var lineSymbolHolder = lineSymbolGroups.selectAll(".lineSymbolHolder")
+            .data(function(d) {
+                return d;
+            }, function(d) {
                 return d.uniqueId;
             });
 
-    // Kilépő oszlopkonténer törlése.
-    gBar.exit()
+    // Eltűnő elemek levevése.
+    lineSymbolHolder.exit()
+            .classed("darkenable", false)
             .on("click", null)
+            .transition(trans)
+            .attr("opacity", 0)
             .remove();
 
-    // Az új oszlopok tartójának elkészítése.
-    gBar = gBar.enter().append("svg:g")
-            .attr("class", "bar bordered darkenable")
-            .attr("transform", function(d) {
-                return "translate(" + d.oldX + ", 0)";
+    // Megmaradók alakját és színét jóvá alakítjuk. A hátteret és a szimbólumot is.
+    lineSymbolHolder.select(".shadow")
+            .attr("d", function(d) {
+                return d3.symbol().type(d3.symbols[d.number % 6]).size(that.symbolSize_background)();
+            });
+    lineSymbolHolder.select(".lineSymbol:not(.shadow)")
+            .attr("d", function(d) {
+                return d3.symbol().type(d3.symbols[d.number % 6]).size(that.symbolSize)();
             })
-            .merge(gBar);
+            .transition(trans)
+            .attr("fill", function(d) {
+                return global.color(d.idY);
+            });
 
-    // Lefúrás eseménykezelőjének hozzácsapása az oszlopkonténerhez.
-    gBar.classed("listener", true)
+    // Az új szimbólumok tartócsoportjának létrehozása.
+    var lineSymbolHolder_new = lineSymbolHolder.enter().append("svg:g")
+            .attr("class", "lineSymbolHolder listener")
+            .attr("transform", function(d) {
+                return "translate(" + d.oldX + "," + d.oldY + ")";
+            })
             .on("click", function(d) {
-                that.drill(that.dimX, d);
+                if (!d.isFake) {
+                    that.drill(that.dimX, d);
+                }
             });
 
-    // Elemi oszlopelemek megrajzolása, kilépők letörlése.
-    var oldWidth = preparedData.dataArray[0].oldWidth; // A régi téglalapszélesség; ki kell szedni, hogy minden elemhez használhassuk.
-    var barRect = gBar.selectAll("rect")
-            .data(function(d) {
-                return d.values;
-            }, function(d) {
-                return d.dimYUniqueId;
+    // Az új szimbólum sötét háttere.
+    lineSymbolHolder_new.append("svg:path")
+            .attr("class", "lineSymbol shadow")
+            .attr("d", function(d) {
+                return d3.symbol().type(d3.symbols[d.number % 6]).size(that.symbolSize_background)();
             });
 
-    barRect.exit().remove();
-
-    barRect.enter().append("svg:rect")
-            .attr("x", 0)
-            .attr("width", oldWidth)
-            .attr("y", function(d2) {
-                return d2.oldY;
+    // Az új szimbólum maga.
+    lineSymbolHolder_new.append("svg:path")
+            .attr("class", "lineSymbol")
+            .attr("d", function(d) {
+                return d3.symbol().type(d3.symbols[d.number % 6]).size(that.symbolSize)();
             })
-            .attr("height", function(d2) {
-                return d2.oldHeight;
-            })
-            .attr("fill", function(d2) {
-                return global.color(d2.dimYId);
-            })
-            .attr("opacity", function(d2) {
-                return d2.startOpacity;
+            .attr("fill", function(d) {
+                return global.color(d.idY);
             });
 
-    // Megjelenési animáció: akárhol is volt, a helyére megy.
-    gBar.transition(trans)
+    // Új és maradó elemek összeöntése.
+    lineSymbolHolder = lineSymbolHolder_new.merge(lineSymbolHolder);
+
+    // Maradó szimbólumok helyre mozgatása.
+    lineSymbolHolder.transition(trans)
+            .attr("opacity", function(d) {
+                return (!d.isFake && that.isSymbolsRequired) ? 1 : 0;
+            })
             .attr("transform", function(d) {
-                return "translate(" + d.x + ", 0)";
+                return "translate(" + d.x + "," + d.y + ")";
             })
-            .selectAll("rect")
-            .attr("y", function(d2) {
-                return d2.y;
-            })
-            .attr("height", function(d2) {
-                return d2.height;
-            })
-            .attr("width", that.xScale(1 - that.barPadding))
-            .attr("opacity", 1)
-            .on("end", function() {
-                d3.select(this).attr("class", function(d2) {
-                    return "controlled controlled" + d2.index;
-                });
+            .on("end", function(d) {
+                d3.select(this).select(".lineSymbol:not(.shadow)").classed("darkenable", !d.isFake);
             });
 };
 
@@ -743,7 +963,7 @@ panel_bar2d.prototype.drawBars = function(preparedData, trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
+panel_line2d.prototype.drawLegend = function(preparedData, trans) {
     var that = this;
     var legendArray = preparedData.dimYArray;
 
@@ -761,7 +981,7 @@ panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
             .remove();
 
     // Új elemek létrehozása.
-    var legend_new = legend.enter().insert("svg:g", ".bar_group")
+    var legend_new = legend.enter().insert("svg:g", ".line_group")
             .attr("transform", function(d) {
                 return "translate(" + (d.oldX + that.legendOffsetX) + ", " + (that.h - global.legendHeight - global.legendOffsetY) + ")";
             })
@@ -808,7 +1028,7 @@ panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
             });
 
     legend = legend_new.merge(legend);
-            
+
     legend.attr("class", function(d) {
         return "legendEntry listener legendControl" + d.index;
     });
@@ -818,7 +1038,7 @@ panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
             .attr("transform", function(d) {
                 return "translate(" + (d.x + that.legendOffsetX) + ", " + (that.h - global.legendHeight - global.legendOffsetY) + ")";
             });
-            
+
     legend.select("path").transition(trans)
             .attr("d", function(d, i) {
                 return global.rectanglePath(
@@ -856,7 +1076,7 @@ panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drawAxes = function(preparedData, trans) {
+panel_line2d.prototype.drawAxes = function(preparedData, trans) {
     var that = this;
 
     var shadowSize = global.axisTextSize(that.xScale(1));	// A vízszintes tengely betűje mögötti klikk-téglalap mérete.
@@ -879,6 +1099,13 @@ panel_bar2d.prototype.drawAxes = function(preparedData, trans) {
     axisLabelX.exit()
             .transition(trans).attr("opacity", 0)
             .remove();
+
+    // Vízszintes tengely elmozgatása (negatív értékek kijelzésekor nem alul kell lennie)
+    that.gAxisX.select("line").transition(trans).attrs({
+        x1: 0,
+        y1: that.yScale(0),
+        x2: that.width,
+        y2: that.yScale(0)});
 
     // Belépő feliratok elhelyezése.
     var axisLabelXText = axisLabelX.enter()
@@ -963,7 +1190,7 @@ panel_bar2d.prototype.drawAxes = function(preparedData, trans) {
  * @param {Object} d Lefúrás esetén a lefúrás céleleme. Ha undefined, akkor felfúrásról van szó.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drill = function(dim, d) {
+panel_line2d.prototype.drill = function(dim, d) {
     global.tooltip.kill();
     var drill = {
         dim: (dim === this.dimX) ? this.dimXToShow : this.dimYToShow,
@@ -982,7 +1209,7 @@ panel_bar2d.prototype.drill = function(dim, d) {
  * @param {boolean} ratio Hányadost mutasson-e. Ha -1 akkor a másikra ugrik, ha undefined, nem vált.
  * @returns {undefined}
  */
-panel_bar2d.prototype.doChangeValue = function(panelId, value, ratio) {
+panel_line2d.prototype.doChangeValue = function(panelId, value, ratio) {
     var that = this;
     if (panelId === undefined || panelId === that.panelId) {
         if (value !== undefined) {
@@ -1006,7 +1233,7 @@ panel_bar2d.prototype.doChangeValue = function(panelId, value, ratio) {
  * @param {Integer} dimToChange A megváltoztatandó dimenzió sorszáma (0 vagy 1).
  * @returns {undefined}
  */
-panel_bar2d.prototype.doChangeDimension = function(panelId, newDimId, dimToChange) {
+panel_line2d.prototype.doChangeDimension = function(panelId, newDimId, dimToChange) {
     var that = this;
     if (panelId === that.panelId) {
         if (dimToChange === 0) {

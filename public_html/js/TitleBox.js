@@ -11,7 +11,7 @@
  * @param {Mediator} mediator A panel mediátora.
  * @returns {TitleBox}
  */
-function TitleBox(parentSVG, panelId, mediator) {
+function TitleBox(parentSVG, panelId, mediator, magLevel) {
 	var that = this;
 
 	this.panelId = panelId;		// Panel id-je.
@@ -19,6 +19,8 @@ function TitleBox(parentSVG, panelId, mediator) {
 	this.currentId;				// Épp kijelzett mutató id-je, tömb ha többet mutat.
 	this.currentRatio;			// Éppen hányadost jelez-e?
     this.currentText;           // A teljes kijelzett szöveg.
+    this.magLevel = magLevel || 1; // A panel nagyításának mértéke
+    this.titleBoxWidth = global.panelWidth * that.magLevel - 2 * global.legendOffsetX; // Fejléc szélessége
 
 	// Fejlécet tartalmazó konténer.
 	this.gContainer = parentSVG.append("svg:g")
@@ -63,7 +65,6 @@ function TitleBox(parentSVG, panelId, mediator) {
 }
 
 // Osztályáltozók.
-TitleBox.prototype.titleBoxWidth = global.panelWidth - 2 * global.legendOffsetX;
 TitleBox.prototype.titleSplitRatio = 0.6;
 
 /**

@@ -25,7 +25,6 @@ function Draglayer(side, mediator) {
 	 */
 	var dragStarted = function(d) {
 		if (d3.event.sourceEvent.which === 1 && !isDragging) {
-            console.log(d)
 			var type = (d.value === undefined) ? 0 : 1; // 0: dimenzió, 1: érték.
 			var background = d3.selectAll(this.parentNode.childNodes).filter(".backgroundCell");
 			dragCircle.text(d.description);

@@ -15,7 +15,7 @@ function panel_pie(init) {
     this.constructorName = "panel_pie";
 
     // Inicializáló objektum beolvasása, feltöltése default értékekkel.
-    this.defaultInit = {group: 0, position: undefined, dim: 0, val: 0, ratio: false};
+    this.defaultInit = {group: 0, position: undefined, dim: 0, val: 0, ratio: false, mag: 1, fromMag: 1};
     this.actualInit = global.combineObjects(that.defaultInit, init);
 
     Panel.call(that, that.actualInit, global.mediators[that.actualInit.group], false, 0, 0); // A Panel konstruktorának meghívása.
@@ -26,6 +26,22 @@ function panel_pie(init) {
     this.valFraction = that.actualInit.ratio;	// Hányadost mutasson, vagy abszolútértéket?
     this.preparedData = [];						// Az ábrázolásra kerülő, feldolgozott adat.
     this.maxEntries = global.maxEntriesIn1D;    // A panel által maximálisan megjeleníthető adatok száma.
+    
+    this.radius = 0.465 * (global.panelHeight * that.magLevel - global.panelTitleHeight - 4 * global.legendOffsetY - global.legendHeight / 2); // A torta külső átmérője.
+    this.innerRadius = that.radius / 3; // A torta belső átmérője.
+    this.textRadius = that.radius + 14; // A szövegek körének átmérője.
+    this.labelMinValue = 0.3 / that.magLevel; // Ekkora részesedés alatt semmiképp sincs kiírva a label. Százalék.
+
+    // A tortaelmeket létrehozó függvény
+    this.arc = d3.arc()
+            .startAngle(function(d) {
+                return d.startAngle;
+            })
+            .endAngle(function(d) {
+                return d.endAngle;
+            })
+            .outerRadius(that.radius)
+            .innerRadius(that.innerRadius);
 
     // Alapréteg.
     that.svg.insert("svg:g", ".title_group")
@@ -76,23 +92,7 @@ function panel_pie(init) {
 
 {
     panel_pie.prototype = global.subclassOf(Panel); // A Panel metódusainak átvétele.
-
     panel_pie.prototype.requiredDifferenceForX = 20; // A szövegek közötti minimális függőleges távolság.
-    panel_pie.prototype.radius = 0.465 * (global.panelHeight - global.panelTitleHeight - 4 * global.legendOffsetY - global.legendHeight / 2); // A torta külső átmérője.
-    panel_pie.prototype.innerRadius = panel_pie.prototype.radius / 3; // A torta belső átmérője.
-    panel_pie.prototype.textRadius = panel_pie.prototype.radius + 14; // A szövegek körének átmérője.
-    panel_pie.prototype.labelMinValue = 0.3; // Ekkora részesedés alatt semmiképp sincs kiírva a label. Százalék.
-
-    // A tortaelmeket létrehozó függvény
-    panel_pie.prototype.arc = d3.arc()
-            .startAngle(function(d) {
-                return d.startAngle;
-            })
-            .endAngle(function(d) {
-                return d.endAngle;
-            })
-            .outerRadius(panel_pie.prototype.radius)
-            .innerRadius(panel_pie.prototype.innerRadius);
 }
 
 //////////////////////////////////////////////////
@@ -151,10 +151,11 @@ panel_pie.prototype.getTooltip = function(d) {
  * @returns {Function} A tortadarab animációját leíró függvény.
  */
 panel_pie.prototype.pieTween = function(d) {
+    var that = this;
     var int = d3.interpolate({startAngle: d.oldStartAngle - 0.0001, endAngle: d.oldEndAngle + 0.0001}, {startAngle: d.startAngle - 0.0001, endAngle: d.endAngle + 0.0001});
     return function(t) {
         var b = int(t);
-        return panel_pie.prototype.arc(b);
+        return that.arc(b);
     };
 };
 
@@ -165,12 +166,13 @@ panel_pie.prototype.pieTween = function(d) {
  * @returns {Function} A szöveg animációját leíró függvény.
  */
 panel_pie.prototype.textTween = function(d) {
+    var that = this;
     var a = (d.oldStartAngle + d.oldEndAngle - Math.PI) / 2;
     var b = (d.startAngle + d.endAngle - Math.PI) / 2;
     var int = d3.interpolateNumber(a, b);
     return function(t) {
         var val = int(t);
-        return "translate(" + (Math.cos(val) * panel_pie.prototype.textRadius) + "," + (Math.sin(val) * panel_pie.prototype.textRadius) + ")";
+        return "translate(" + (Math.cos(val) * that.textRadius) + "," + (Math.sin(val) * that.textRadius) + ")";
     };
 };
 
@@ -350,7 +352,7 @@ panel_pie.prototype.update = function(data, drill) {
         that.valFraction = true;
     }
     that.valMultiplier = (isNaN(parseFloat(that.meta.indicators[that.valToShow].fraction.multiplier))) ? 1 : parseFloat(that.meta.indicators[that.valToShow].fraction.multiplier);
-    var tweenDuration = global.getAnimDuration(-1, that.panelId);
+    var tweenDuration = (drill.duration === undefined) ? global.getAnimDuration(-1, that.panelId) : drill.duration;
 
     // Ha túl sok értéket kéne megjeleníteni, pánik
     if (that.data.rows.length > that.maxEntries) {
@@ -403,7 +405,7 @@ panel_pie.prototype.drawPie = function(preparedData, trans) {
             })
             .merge(paths)
             .transition(trans)
-            .attrTween("d", that.pieTween);
+            .attrTween("d", that.pieTween.bind(that));
 };
 
 /**
@@ -491,7 +493,7 @@ panel_pie.prototype.drawLabels = function(preparedData, trans) {
 
     // Maradók helyre animálása.
     gLabelHolder.transition(trans)
-            .attrTween("transform", that.textTween)
+            .attrTween("transform", that.textTween.bind(that))
             .style("opacity", function(d) {
                 return (d.isTickRequired) ? 1 : 0;
             });

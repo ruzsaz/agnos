@@ -15,7 +15,7 @@ function panel_map(init) {
     this.constructorName = "panel_map";
 
     // Inicializáló objektum beolvasása, feltöltése default értékekkel.
-    this.defaultInit = {group: 0, position: undefined, dim: 0, val: 0, ratio: false, domain: [], domainr: [], range: undefined, poi: false};
+    this.defaultInit = {group: 0, position: undefined, dim: 0, val: 0, ratio: false, domain: [], domainr: [], range: undefined, poi: false, visiblePoi: [], mag: 1, fromMag: 1};
     this.actualInit = global.combineObjects(that.defaultInit, init);
     this.isColorsLocked = (that.actualInit.range !== undefined);
 
@@ -39,6 +39,7 @@ function panel_map(init) {
     this.maxDepth = that.meta.dimensions[that.dimToShow].levels.length - 1;	// Maximális lefúrási szint. 1: megye, 2: kistérség, 3: település
 
     this.imageCover = Math.min(that.width / that.w, that.height / that.h); // Ennyiszerese fedhető le a panelnek térképpel.
+    this.maskId = global.randomString(12);      // A maszk réteg id-je. Véletlen, nehogy kettő azonos legyen.    
 
     // A színskála.
     this.colorScale = d3.scaleLinear()
@@ -109,7 +110,7 @@ function panel_map(init) {
 
     // A zoomolásnál nem kellő elmeket kitakaró maszk.
     this.mask = that.svg.append("svg:mask")
-            .attr("id", "maskurl" + that.panelId);
+            .attr("id", "maskurl" + that.maskId);
 
     // Feliratkozás a mediátorokra.
     var med;
@@ -143,7 +144,7 @@ function panel_map(init) {
                 return d.geometry.type;
             })
             .attr("d", that.path)
-            .attr("mask", "url(#maskurl" + that.panelId + ")");
+            .attr("mask", "url(#maskurl" + that.maskId + ")");
 }
 
 //////////////////////////////////////////////////
@@ -565,7 +566,7 @@ panel_map.prototype.update = function(data, drill) {
     }
     that.valMultiplier = (isNaN(parseFloat(that.meta.indicators[that.valToShow].fraction.multiplier))) ? 1 : parseFloat(that.meta.indicators[that.valToShow].fraction.multiplier);
 
-    var tweenDuration = global.getAnimDuration(-1, that.panelId);
+    var tweenDuration = (drill.duration === undefined) ? global.getAnimDuration(-1, that.panelId) : drill.duration;
 
     that.currentLevel = (global.baseLevels[that.panelSide])[this.dimToShow].length + 1;
 
@@ -665,7 +666,6 @@ panel_map.prototype.drawMap = function(currentFeatures, drill, trans) {
 
     // Fel vagy lefúrás esetén, vagy üresből rajzoláskor felfrissítjük a vízréteg maszkját.
     if (drill.direction !== 0 || drill.dim < 0) {
-
         var mask = that.mask.selectAll("path").data(currentFeatures.data, function(d) {
             return d.uniqueId;
         });

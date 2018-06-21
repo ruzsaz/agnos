@@ -14,7 +14,7 @@ function panel_table2d(init) {
     this.constructorName = "panel_table2d";
 
     // Inicializáló objektum beolvasása, feltöltése default értékekkel.
-    this.defaultInit = {group: 0, position: undefined, dimr: 0, dimc: 1, val: 0, multiplier: 1, ratio: false};
+    this.defaultInit = {group: 0, position: undefined, dimr: 0, dimc: 1, val: 0, multiplier: 1, ratio: false, mag: 1, fromMag: 1};
     this.actualInit = global.combineObjects(that.defaultInit, init);
 
     Panel.call(that, that.actualInit, global.mediators[that.actualInit.group], false, 0, 0); // A Panel konstruktorának meghívása.
@@ -31,6 +31,12 @@ function panel_table2d(init) {
     this.preparedData = [];							// Az ábrázolásra kerülő, feldolgozott adat.
     this.maxEntries = global.maxEntriesIn2D;                // A panel által maximálisan megjeleníthető adatok száma.
     this.maxEntries1D = global.maxEntriesIn1D;              // A panel által 1 dimenzióban maximálisan megjeleníthető adatok száma.
+
+    this.tableWidth = that.w - 2 * (panel_table2d.prototype.tableLeftMargin + panel_table2d.prototype.tableElementGap) - panel_table2d.prototype.tableHeadWidth - panel_table2d.prototype.innerScrollbarWidth; // A táblázat törzsének szélessége.
+    this.tableHeight = that.h - panel_table2d.prototype.tableTopMargin - panel_table2d.prototype.tableHeadHeight - panel_table2d.prototype.tableBottomMargin - panel_table2d.prototype.innerScrollbarWidth - 2 * panel_table2d.prototype.tableElementGap; // A táblázat törzsének magassága.
+
+    this.tableSpacingVerical = that.tableHeight / ((that.magLevel === 1) ? 14 : 32);		// Egy táblázatsor magassága.
+    this.tableSpacingHorizontal = that.tableWidth / ((that.magLevel === 1) ? 7 : 16);	// Egy táblázatoszlop szélessége.
 
     // Alapréteg a sorokban való furkáláshoz.
     that.svg.insert("svg:g", ".title_group")
@@ -121,11 +127,11 @@ function panel_table2d(init) {
 
     // Vízszintes scrollbar elhelyezése.
     this.horizontalScrollbar = new SVGScrollbar(that.svg, true, that.tableWidth, horizontalScrollFunction, that.tableSpacingHorizontal);
-    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, 400 - that.tableBottomMargin - that.innerScrollbarWidth + that.tableElementGap);
+    that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, that.h - that.tableBottomMargin - that.innerScrollbarWidth + that.tableElementGap);
 
     // Függőleges scrollbar elhelyezése.
     this.verticalScrollbar = new SVGScrollbar(that.svg, false, that.tableHeight, verticalScrollFunction, that.tableSpacingVerical * 2, tableHolder);
-    that.verticalScrollbar.setPosition(600 - that.tableLeftMargin - that.innerScrollbarWidth + that.tableElementGap, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
+    that.verticalScrollbar.setPosition(that.w - that.tableLeftMargin - that.innerScrollbarWidth + that.tableElementGap, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
 
 
     var med;
@@ -163,12 +169,6 @@ function panel_table2d(init) {
     panel_table2d.prototype.tableTopMargin = 70;	// Felső margó mérete.
     panel_table2d.prototype.tableBottomMargin = 15;	// Alsó margó mérete.
     panel_table2d.prototype.innerScrollbarWidth = 10;// A belső scrollbar vastagsága, pixel.
-
-    panel_table2d.prototype.tableWidth = 600 - 2 * (panel_table2d.prototype.tableLeftMargin + panel_table2d.prototype.tableElementGap) - panel_table2d.prototype.tableHeadWidth - panel_table2d.prototype.innerScrollbarWidth; // A táblázat törzsének szélessége.
-    panel_table2d.prototype.tableHeight = 400 - panel_table2d.prototype.tableTopMargin - panel_table2d.prototype.tableHeadHeight - panel_table2d.prototype.tableBottomMargin - panel_table2d.prototype.innerScrollbarWidth - 2 * panel_table2d.prototype.tableElementGap; // A táblázat törzsének magassága.
-
-    panel_table2d.prototype.tableSpacingVerical = panel_table2d.prototype.tableHeight / 15;		// Egy táblázatsor magassága.
-    panel_table2d.prototype.tableSpacingHorizontal = panel_table2d.prototype.tableWidth / 7;	// Egy táblázatoszlop szélessége.
 }
 
 //////////////////////////////////////////////////
@@ -508,7 +508,7 @@ panel_table2d.prototype.update = function(data, drill) {
         that.valFraction = true;
     }
 
-    var tweenDuration = global.getAnimDuration(-1, that.panelId);
+    var tweenDuration = (drill.duration === undefined) ? global.getAnimDuration(-1, that.panelId) : drill.duration;
     var trans = d3.transition().duration(tweenDuration);
 
     if (that.data.rows.length > that.maxEntries) {

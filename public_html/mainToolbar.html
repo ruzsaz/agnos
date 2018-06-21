@@ -89,7 +89,19 @@
                 <use xlink:href="#icon_panel_2d_bar_streched" />
                 </svg>
               </span>
-            </li>	
+            </li>
+            <li>
+              <span class="tloc" tooltip="<h4>2 dimenziós vonaldiagram</h4><ul><li>dimenziók: <em>2</em><li>mutatók: <em>1</em></ul>" onclick="global.mainToolbar_createNewPanel('line2panel');">
+                <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <use xlink:href="#icon_panel_2d_line" />
+                </svg>
+              </span>
+              <span class="tloc" tooltip="<h4>2 dimenziós vonaldiagram jelölővel</h4><ul><li>dimenziók: <em>2</em><li>mutatók: <em>1</em></ul>" onclick="global.mainToolbar_createNewPanel('markedline2panel');">
+                <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <use xlink:href="#icon_panel_2d_line_marker" />
+                </svg>
+              </span>
+            </li>
             <li>
               <span class="tloc" tooltip="<h4>Vízszintes oszlopdiagram</h4><ul><li>dimenziók: <em>1</em><li>mutatók: <em>n</em></ul>" onclick="global.mainToolbar_createNewPanel('horizontalbarpanel');">
                 <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
@@ -119,8 +131,8 @@
         </li>
 
         <li class="inactive onlyforreport panelKiller">
-              <span class="tloc" tooltip='<h4>Panel törlése</h4>' onclick="if (this.parentNode.className.indexOf('inactive') === -1)
-                    global.mainToolbar_killCursor(event);">
+          <span class="tloc" tooltip='<h4>Panel törlése</h4>' onclick="if (this.parentNode.className.indexOf('inactive') === -1)
+                        global.mainToolbar_killCursor(event);">
             <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
             <use xlink:href="#icon_kill" />
             </svg>
@@ -152,8 +164,8 @@
         </li>
 
         <li class="inactive onlyforreport" id="mainCloseButton">
-              <span class="tloc" tooltip='<h4>Jelentés bezárása</h4>' onclick="if (this.parentNode.className.indexOf('inactive') === -1)
-                    global.mainToolbar_closeSide();">
+          <span class="tloc" tooltip='<h4>Jelentés bezárása</h4>' onclick="if (this.parentNode.className.indexOf('inactive') === -1)
+                        global.mainToolbar_closeSide();">
             <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
             <use xlink:href="#icon_close" />
             </svg>
@@ -167,7 +179,7 @@
             </svg>						
           </span>
         </li>
-       
+
         <li class="languageSwitch" style="display: none;">
           <span class="tloc" tooltip="<h4>Nyelv választás</h4>">
             <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
@@ -184,10 +196,10 @@
             <li>
               <span class="tloc" tooltip="<h4>Orosz</h4>" onclick="global.mainToolbar_setLanguage('ru');">Pусский</span>
             </li>
-            
+
           </ul>
         </li>               
-        
+
       </ul>
     </nav>
     <div class="noEvents" id="toolbarShadow">

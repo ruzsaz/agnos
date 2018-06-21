@@ -126,6 +126,10 @@ Container.prototype.switchPanels = function() {
 Container.prototype.magnify = function(direction) {
     global.panelNumberOnScreen = Math.min(global.maxPanelCount, Math.max(1, global.panelNumberOnScreen + direction));
     global.mainToolbar_refreshState();
+    if (global.panelNumberOnScreen === 1) {
+        global.mediators[0].publish("magnifyPanel", undefined);
+        global.mediators[0].publish("magnifyPanel", undefined);
+    }
     this.onResize(global.panelNumberOnScreen);
 };
 
@@ -251,6 +255,11 @@ Container.prototype.getScaleRatio = function(side, sizePercentage, panelsPerRow,
     var panelRealHeight = global.panelHeight + 2 * panelMargin; // Egy panel ténylegesen ennyi pixelt folgalna el nagyítás nélkül.
 
     panelNumber = panelNumber || d3.selectAll("#container" + side + " .panel:not(.dying)").nodes().length - 1; // A pillanatnyilag meglévő normál panelek száma. A magasság megállapításához kell.
+    var isMagnified = !d3.selectAll("#container" + side + " .panel.single.magnified:not(.dying)").empty(); // Van nagyított panel?
+    if (isMagnified) { // Ha van nagyított, az 4-nek számít.
+        panelNumber = panelNumber + 3;
+        panelNumber = Math.max(panelNumber, global.panelNumberOnScreen * 2); // Ha van nagyított, akkor legalább 2 sort el kell foglalni.
+    }
     var unscaledPageWidth = panelsPerRow * panelRealWidth;
     var unscaledPageHeight = parseFloat(d3.select("#headPanelP" + side).style("height")) + 2 * panelMargin + panelRealHeight * parseInt(panelNumber / panelsPerRow + 0.99);
 
@@ -405,7 +414,8 @@ Container.prototype.newReportReady = function(side, reportMeta) {
     if (that.counter <= 0) {
         global.mainToolbar_refreshState();                                      // A toolbar kiszürkültségi állapotának felfrissítése.
         global.setLanguage(String.locale);                                      // Nyelvi beállítások érvényesítése az új paneleken is.
-    }
+        $(window).trigger('resize');
+    }    
 };
 
 /**
@@ -482,6 +492,7 @@ Container.prototype.killSide = function(side) {
         global.mediators[side].remove("newreport");
         global.mediators[side].remove("killListeners");
         global.mediators[side].remove("killPanel");
+        global.mediators[side].remove("magnifyPanel");
         global.mediators[side].remove("resize");
         global.mediators[side].remove("magnify");
         global.mediators[side].remove("register");
@@ -559,6 +570,12 @@ Container.prototype.addPanel = function(side, panelType) {
                 case 'top10Linepanel' :
                     new panel_barline({group: side, position: firstFreeId, valbars: [], vallines: [0], dim: guessedDim, symbols: true, top10: true});
                     break;
+                case 'line2panel':
+                    new panel_line2d({group: side, position: firstFreeId, dimx: guessedDim, dimy: this.dataDirector[side].guessDimension(guessedDim), symbols: false});
+                    break;                    
+                case 'markedline2panel':
+                    new panel_line2d({group: side, position: firstFreeId, dimx: guessedDim, dimy: this.dataDirector[side].guessDimension(guessedDim), symbols: true});
+                    break;                                        
             }
         }
         global.mainToolbar_refreshState();

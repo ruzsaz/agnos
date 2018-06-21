@@ -15,7 +15,7 @@ function panel_barline(init) {
     this.constructorName = "panel_barline";
 
     // Inicializáló objektum beolvasása, feltöltése default értékekkel.
-    this.defaultInit = {group: 0, position: undefined, dim: 0, valbars: [0], vallines: [], valavglines: [], multiplier: 1, ratio: false, streched: false, symbols: false, domain: [], domainr: [], top10: false};
+    this.defaultInit = {group: 0, position: undefined, dim: 0, valbars: [0], vallines: [], valavglines: [], multiplier: 1, ratio: false, streched: false, symbols: false, domain: [], domainr: [], top10: false, mag: 1, fromMag: 1};
     this.actualInit = global.combineObjects(that.defaultInit, init);
 
     // Ha széthúzottat kérnek, akkor vonalakat nem rajzolunk és kész.
@@ -41,6 +41,7 @@ function panel_barline(init) {
     this.processedData;									// A megjelenítendő feldolgozott adat.
     this.maxEntries = (this.actualInit.top10) ? 999999999 : global.maxEntriesIn1D;    // A panel által maximálisan megjeleníthető adatok száma.    
     this.shadowTimeout;									// A háttértéglalapokat létrehozó időzítés.
+    this.maskId = global.randomString(12);              // A maszk réteg id-je. Véletlen, nehogy kettő azonos legyen.
 
     // Az x tengely szövegszínének meghatározása.
     this.xAxisColor = global.readableColor(global.colorValue[0]);
@@ -69,7 +70,7 @@ function panel_barline(init) {
 
     // Széthúzott módban a függőleges tengely %-okat kell hogy mutasson.
     if (that.isStretched) {
-        that.yAxis.scale(this.yScaleStreched).tickFormat(d3.format("%"));
+        that.yAxis.scale(this.yScaleStreched).tickFormat(d3.format(".0%"));
     }
 
     // Alsó dobómező.
@@ -118,11 +119,11 @@ function panel_barline(init) {
             .attr("width", that.w)
             .attr("height", that.h);
 
-    // Top10 jelölés
+    // Top10 jelölés    
     if (this.actualInit.top10) {
         background.append("svg:g")
                 .attr("class", "top_10_holder")
-                .attr("transform", "matrix(0.4,0,0,0.4,460,64)")
+                .attr("transform", "matrix(" + 0.4 * that.magLevel + ",0,0," + 0.4 * that.magLevel + "," + 460 * that.magLevel + "," + 64 * 1 + ")")
                 .html('<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon_top10"></use>');
     }
 
@@ -135,19 +136,19 @@ function panel_barline(init) {
     this.gBars = that.svg.insert("svg:g", ".title_group")
             .attr("class", "bar_group")
             .attr("transform", "translate(" + that.margin.left + ", " + that.margin.top + ")")
-            .attr("mask", "url(#maskurl" + that.panelId + ")");
+            .attr("mask", "url(#maskurl" + that.maskId + ")");
 
     // Vonaldiagramok rétege.
     this.gLines = that.svg.insert("svg:g", ".title_group")
             .attr("class", "line_group")
             .attr("transform", "translate(" + that.margin.left + ", " + that.margin.top + ")")
-            .attr("mask", "url(#maskurl" + that.panelId + ")");
+            .attr("mask", "url(#maskurl" + that.maskId + ")");
 
     // Átlagvonal rétege.
     this.gAvgLines = that.svg.insert("svg:g", ".title_group")
             .attr("class", "avg_group")
             .attr("transform", "translate(" + that.margin.left + ", " + that.margin.top + ")")
-            .attr("mask", "url(#maskurl" + that.panelId + ")");
+            .attr("mask", "url(#maskurl" + that.maskId + ")");
 
     // Vízszintes tengely rétege.
     this.gAxisX = that.svg.insert("svg:g", ".title_group")
@@ -168,14 +169,15 @@ function panel_barline(init) {
 
     // A kilógó oszlopok végét elhalványító.
     this.mask = that.svg.append("svg:mask")
-            .attr("id", "maskurl" + that.panelId);
+            .attr("id", "maskurl" + that.maskId);
+
     that.mask
             .append("svg:rect")
             .attr("x", 0)
             .attr("width", "100%")
-            .attr("y", "-20%")
-            .attr("height", "102%")
-            .attr("fill", "url(#overflow)");
+            .attr("y", -that.margin.top)
+            .attr("height", that.h)
+            .attr("fill", (that.magLevel === 1) ? "url(#overflow)" : "url(#overflow2)");
 
     // Feliratkozás az értékváltás mediátorra.
     var med;
@@ -684,9 +686,9 @@ panel_barline.prototype.prepareData = function(oldPreparedData, newDataRows, dri
         element.lineValues = that.lineValuesToShow(dataRow);
         element.avgValues = avgValues;
         element.sumBarValues = (that.valBarNumber > 0) ? element.barValues[that.valBarNumber - 1].value + element.barValues[that.valBarNumber - 1].accumulation : 0;
-        
+
         var mx = 0;
-        
+
         var lineValsArray = global.getArrayFromObjectArrayByProperty(element.lineValues, 'value');
         var currentMaxValue = Math.max((element.sumBarValues || 0), (d3.max(lineValsArray) || 0));
         var currentMinValue = Math.min((element.sumBarValues || 0), (d3.min(lineValsArray) || 0));
@@ -880,6 +882,10 @@ panel_barline.prototype.prepareData = function(oldPreparedData, newDataRows, dri
  */
 panel_barline.prototype.update = function(data, drill, duration) {
     var that = this;
+
+    if (drill && drill.duration !== undefined) {
+        duration = drill.duration;
+    }
     that.data = data || that.data;
     drill = drill || {dim: -1, direction: 0};
 
@@ -1299,7 +1305,7 @@ panel_barline.prototype.drawLegend = function() {
                     return "listener droptarget droptarget1 legend legendControl" + d.id;
                 })
                 .attr("transform", function(d, i) {
-                    return "translate(" + (i * l_width + global.legendOffsetX * 1.5) + ", " + (that.h - l_height - global.legendOffsetY) + ")";
+                    return "translate(" + (i * l_width + that.legendOffsetX * 1.5) + ", " + (that.h - l_height - global.legendOffsetY) + ")";
                 })
                 .on("mouseover", function(d) {
                     if (global.dragDropManager.draggedType === null) {
@@ -1326,7 +1332,7 @@ panel_barline.prototype.drawLegend = function() {
                 })
                 .attr("rx", global.rectRounding)
                 .attr("ry", global.rectRounding)
-                .attr("width", l_width - global.legendOffsetX)
+                .attr("width", l_width - that.legendOffsetX)
                 .attr("height", l_height)
                 .attr("fill", function(d) {
                     return global.colorValue(d.id);
@@ -1351,7 +1357,7 @@ panel_barline.prototype.drawLegend = function() {
                 })
                 .attr("rx", global.rectRounding)
                 .attr("ry", global.rectRounding)
-                .attr("width", l_width - global.legendOffsetX)
+                .attr("width", l_width - that.legendOffsetX)
                 .attr("height", l_height)
                 .attr("fill", "none")
                 .attr("stroke", function(d) {
@@ -1407,7 +1413,7 @@ panel_barline.prototype.drawLegend = function() {
                 });
 
         // Jelkulcs-szövegek formázása, hogy beférjenek.
-        global.cleverCompress(legendText, l_width - 1.8 * global.legendOffsetX, 1, undefined, false, true, l_width - global.legendOffsetX);
+        global.cleverCompress(legendText, l_width - 1.8 * that.legendOffsetX, 1, undefined, false, true, l_width - that.legendOffsetX);
 
         // A jelkulcselemek hozzácsapása a maszkhoz. (A jelkulcsnak a téglalapok előtt kell lennie a kódban, mert csak akkor tudja irányítani, de akkor bekúszna alája.)
         var legendEntryMask = that.mask.selectAll("g.lineLegend")
@@ -1416,7 +1422,7 @@ panel_barline.prototype.drawLegend = function() {
         // Oszlop- vagy vonaldiagramhoz tartozó jelkulcs tartójának a maszkhoz adása.
         var gLegendMask = legendEntryMask.append("svg:g")
                 .attr("transform", function(d, i) {
-                    return "translate(" + (i * l_width + global.legendOffsetX * 1.5 - that.margin.left) + ", " + (that.h - l_height - global.legendOffsetY - that.margin.top) + ")";
+                    return "translate(" + (i * l_width + that.legendOffsetX * 1.5 - that.margin.left) + ", " + (that.h - l_height - global.legendOffsetY - that.margin.top) + ")";
                 });
 
         // A jelkulcs-téglalap maszkra rajzolása.
@@ -1426,7 +1432,7 @@ panel_barline.prototype.drawLegend = function() {
                 })
                 .attr("rx", global.rectRounding)
                 .attr("ry", global.rectRounding)
-                .attr("width", l_width - global.legendOffsetX)
+                .attr("width", l_width - that.legendOffsetX)
                 .attr("height", l_height)
                 .attr("fill", "black")
                 .attr("stroke", "black")
@@ -1851,9 +1857,9 @@ panel_barline.prototype.changeConfiguration = function(isLegendRequired, leftOff
 
         this.margin = {
             top: global.panelTitleHeight + 3 * global.legendOffsetY + topOffset,
-            right: global.legendOffsetX + rightOffset,
+            right: this.legendOffsetX + rightOffset,
             bottom: bottomOffset + ((isLegendRequired) ? global.legendHeight + 2 * global.legendOffsetY : global.legendOffsetY + global.legendHeight / 2),
-            left: global.legendOffsetX + leftOffset
+            left: this.legendOffsetX + leftOffset
         };
 
         this.width = this.w - this.margin.left - this.margin.right;

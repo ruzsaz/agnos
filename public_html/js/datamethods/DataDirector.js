@@ -15,6 +15,7 @@ function DataDirector(side, mediator) {
     this.side = side;
     this.mediator = mediator;
     this.panelRoster = [];
+    this.drillLock = false; // Ha true, nem lehet fúrni. 
 
     // Feliratkozás a regisztráló, és a fúró mediátorra.
     that.mediator.subscribe("register", function(context, panelId, dimsToShow, preUpdateFunction, updateFunction, getConfigFunction) {
@@ -63,8 +64,8 @@ DataDirector.prototype.register = function(context, panelId, dimsToShow, preUpda
             getConfigFunction: getConfigFunction,
             data: undefined
         };
-        
-    // Ha törölni kell, akkor kiszedjük a tömbből.
+
+        // Ha törölni kell, akkor kiszedjük a tömbből.
     } else {
         if (oldPosition >= 0) {
             this.panelRoster.splice(oldPosition, 1);
@@ -129,11 +130,12 @@ DataDirector.prototype.getNumberOfPanels = function() {
  * @returns {undefined}
  */
 DataDirector.prototype.drill = function(drill) {
+    var that = this;
     var isSuccessful = false;
     var dim = drill.dim;
-    var baseDim = (global.baseLevels[this.side])[dim];
+    var baseDim = (global.baseLevels[that.side])[dim];
     if (drill.direction === -1) {
-        if (drill.toId !== undefined && baseDim.length < global.facts[this.side].reportMeta.dimensions[dim].levels.length - 1) {
+        if (drill.toId !== undefined && baseDim.length < global.facts[that.side].reportMeta.dimensions[dim].levels.length - 1) {
             isSuccessful = true;
             drill.fromId = (baseDim.length === 0) ? null : (baseDim[baseDim.length - 1]).id;
             baseDim.push({id: drill.toId, name: drill.toName});
@@ -149,8 +151,8 @@ DataDirector.prototype.drill = function(drill) {
         isSuccessful = true;
     }
     if (isSuccessful) {
-        this.requestNewData(drill);
-        this.initiatePreUpdates(drill);
+        that.requestNewData(drill);
+        that.initiatePreUpdates(drill);
     }
 };
 
@@ -220,7 +222,9 @@ DataDirector.prototype.processNewData = function(drill, newDataJson) {
     for (var i = 0, iMax = this.panelRoster.length; i < iMax; i++) {
         var pos = global.positionInArrayByProperty(newData, "name", this.panelRoster[i].dimsToShow.toString().replace(/,/g, ":"));
         var data = newData[pos].response;
-        this.panelRoster[i].updateFunction.call(this.panelRoster[i].context, data, this.getPanelDrill(i, drill));
+        if (drill.onlyFor === undefined || drill.onlyFor === this.panelRoster[i].panelId) {
+            this.panelRoster[i].updateFunction.call(this.panelRoster[i].context, data, this.getPanelDrill(i, drill));
+        }
     }
     global.getConfig2();
 };
@@ -238,7 +242,8 @@ DataDirector.prototype.getPanelDrill = function(i, drill) {
         dim: drill.dim,
         direction: (this.panelRoster[i].dimsToShow[drill.dim] === 1) ? drill.direction : 0,
         fromId: drill.fromId,
-        toId: drill.toId
+        toId: drill.toId,
+        duration: drill.duration
     };
     return panelDrill;
 };
@@ -260,10 +265,10 @@ DataDirector.prototype.getConfigs = function(callback) {
     for (var i = 0, iMax = panels.length; i < iMax; i++) {
         var panelId = "#" + d3.select(panels[i]).attr('id');
         var p = global.getFromArrayByProperty(this.panelRoster, "panelId", panelId);
-        if (typeof p.getConfigFunction === 'function') {
+        if (p && typeof p.getConfigFunction === 'function') {
             configs = configs + separator + p.getConfigFunction.call(p.context);
             separator = ";";
-        }        
+        }
     }
 
     // Ha callbackolni kell, íme.

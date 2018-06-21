@@ -244,8 +244,7 @@ svg {
 	width: @panelWidth;
 	height: @panelHeight;
 	margin: @panelMargin;
-	position: relative;
-	background: @panelBackgroundColor;
+	position: relative;	
 }
 
 .baseDiv:before, .baseDiv:after {
@@ -324,6 +323,7 @@ svg {
 	overflow: hidden;
 	position: relative;
 	height: auto;
+    background: @panelBackgroundColor;
 }
 
 .label{
@@ -1228,6 +1228,28 @@ text {
 
 #mainToolbar nav li.newpanel, #mainToolbar nav li.languageSwitch {
 	z-index: 101;
+}
+
+/* Nagyító-fül. */
+.magnifyPanelButton:not(:hover) > g {
+	stroke: @mainToolbarActiveColor;
+}
+
+/* Nagyító-fül, ha fölötte van az egér */
+.magnifyPanelButton:hover > g {
+	stroke: @mainToolbarHoverColor;
+}
+
+.magnifyPanelButton * {
+    stroke-width: 2;
+    stroke-linecap : round;
+    fill: red;
+    fill-opacity: 0;
+	transition: stroke @animDurationText linear;
+    -webkit-transition: stroke @animDurationText linear;
+    -moz-transition: stroke @animDurationText linear;
+    -ms-transition: stroke @animDurationText linear;
+    -o-transition: stroke @animDurationText linear;
 }
 
 .svgScrollbarG {

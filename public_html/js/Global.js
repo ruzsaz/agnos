@@ -1,4 +1,4 @@
-/* global d3, LZString */
+/* global d3, LZString, parseFloat */
 
 'use strict'; // TODO: nyelv
 
@@ -376,7 +376,7 @@ var global = function() {
 
                 // A képernyőn egy sorba kiférő panelek száma.
                 startObject.n = global.panelNumberOnScreen;
-
+                
                 // Tényleges URL-be írás. Ha nem kell, kikommentelendő.
                 if (global.saveToBookmarkRequired) {
                     location.hash = LZString.compressToEncodedURIComponent(JSON.stringify(startObject));
@@ -513,7 +513,6 @@ var global = function() {
             data: data,
             timeout: 5000,
             beforeSend: function(xhr) {
-                console.log('küldöm', global.secretUsername + ':' + global.secretToken)
                 xhr.setRequestHeader('Authorization', 'Basic ' + btoa(global.secretUsername + ':' + global.secretToken));
             },
             success: function(result, status) { // Sikeres letöltés esetén.
@@ -576,7 +575,7 @@ var global = function() {
                                             get(url, data, callback, isDeleteDialogRequired);
                                         });
                             }
-                            );
+                    );
                 } else { // Más hiba esetén...                    
                     if (errorThrown === "") {
                         errorThrown = "Server unreachable";
@@ -763,6 +762,21 @@ var global = function() {
     };
 
     /**
+     *  Adott hosszúságú véletlen stringet generál.
+     *  
+     * @param {Integer} length A kívánt hosszúság. Ha undefined, 16 lesz.
+     * @returns {String} A véletlen string.
+     */
+    var randomString = function(length) {
+        length = length || 16;
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < length; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+    };
+
+    /**
      * Megkeresi egy tömb elemének indexét a nyelvkód alapján.
      * Ha adott nyelvkódú nincs, akkor a
      * "" nyelvkódut adja vissza. Ha az sincs, akkor 0-t.
@@ -913,11 +927,11 @@ var global = function() {
             "-ms-transform": "scale(" + scaleRatio + ")",
             "-o-transform": "scale(" + scaleRatio + ")",
             "transform": "scale(" + scaleRatio + ")",
-            "-webkit-transform-origin": origX + " " + origY,
-            "-moz-transform-origin": origX + " " + origY,
-            "-ms-transform-origin": origX + " " + origY,
-            "-o-transform-origin": origX + " " + origY,
-            "transform-origin": origX + " " + origY};
+            "-webkit-transform-origin": origX + "px " + origY + "px",
+            "-moz-transform-origin": origX + "px " + origY + "px",
+            "-ms-transform-origin": origX + "px " + origY + "px",
+            "-o-transform-origin": origX + "px " + origY + "px",
+            "transform-origin": origX + "px " + origY + "px"};
     };
 
     /**
@@ -1013,11 +1027,13 @@ var global = function() {
             ['top10:', 'U:'],
             ['range:', 'V:'],
             ['poi:', 'W:'],
+            ['mag:', 'X:'],
+            ['fromMag:', 'Y:'],
+            ['visiblePoi', 'Z:'],
             ['false', 'Ff'],
             ['true', 'Tt'],
             ['undefined', 'Uu']
         ];
-
         initString = initString.replace(/ /g, "");
         var from = (isBack) ? 1 : 0;
         var to = (isBack) ? 0 : 1;
@@ -1187,7 +1203,9 @@ var global = function() {
                 + "_" + todayString
                 + "_P";
         d3.selectAll(".activeSide div.panel > svg").each(function(d, i) {
-            saveSvgAsPng(this, filename + (i + 1), 2, panelWidth, panelHeight, 0, 0);
+            var width = d3.select(this).attr("width");
+            var height = d3.select(this).attr("height");
+            saveSvgAsPng(this, filename + (i + 1), 2, width, height, 0, 0);
         });
     };
 
@@ -1463,7 +1481,7 @@ var global = function() {
         secretToken: 'zzz', // Autentikáció után kapott token.
         secretUsername: undefined, // Sikeres autentikáció user-neve.
         maxEntriesIn1D: 150,
-        maxEntriesIn2D: 1000,
+        maxEntriesIn2D: 5000,        
         // Globálisan elérendő függvények.
         tagForLocalization: tagForLocalization, // Nyelvváltoztatás előtt a szövegeket az 'origText' attrib-ba írja.
         convertFileFriendly: convertFileFriendly, // Átalakítja egy sztring filenévben nem szívesen látott karaktereit.
@@ -1509,13 +1527,14 @@ var global = function() {
         cleverCompress: cleverCompress, // Betömörít kiírt feliratokat a megadott helyre.
         rectanglePath: rectanglePath, // Egy SVG téglalapot kirajzoló path-t generál, opcionálisan lekerekített sarkokkal.
         colorValue: colorValue, // Megadja egy érték kijelzésének színét.
-        color: color // Megadja egy dimenzióelem kijelzésének színét.
+        color: color, // Megadja egy dimenzióelem kijelzésének színét.
+        randomString: randomString // Adott hosszúságú véletlen stringet generál.
     };
 
 }();
 
 global.secretToken = global.getCookie("token");
-console.log('token' , global.secretToken)
+console.log('token', global.secretToken)
 global.secretUsername = global.getCookie("user");
 
-console.log('token' , global.secretToken, 'user', global.secretUsername);
+console.log('token', global.secretToken, 'user', global.secretUsername);

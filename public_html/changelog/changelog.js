@@ -13,8 +13,11 @@ var changelog = [
             {"entity": "Agnos, AgnosServer", "date": "2018-01-10", "change": "A kétnyelvű xml-ek refaktorálása."},
             {"entity": "AgnosETR", "date": "2018-01-15", "change": "Termékmenedzserek dinamikus kinyerése."},
             {"entity": "Agnos", "date": "2018-01-18", "change": "Apróbb javítások."},
+            {"entity": "AgnosServer", "date": "2018-04-20", "change": "Áttérés Wildfly alkalmazáskonténerre a biztonságosabb autentikáció érdekében."},
+            {"entity": "Agnos", "date": "2018-05-02", "change": "Új panel: 2 dimenziós vonaldiagram."},
+            {"entity": "Agnos", "date": "2018-05-24", "change": "Egy kiválasztott panel duplájára nagyítható."},
         ],
-        "updated": "2017-01-02"
+        "updated": "2018-05-24"
     },
     {
         "language": "en",
@@ -27,7 +30,11 @@ var changelog = [
             {"entity": "Agnos, AgnosServer", "date": "2018-01-10", "change": "Refactoring of internationalization of the xml files."},
             {"entity": "AgnosETR", "date": "2018-01-15", "change": "Dynamic extraction of sales managers."},
             {"entity": "Agnos", "date": "2018-01-18", "change": "Minor bugfixes."},
+            {"entity": "AgnosServer", "date": "2018-04-20", "change": "Migration to Wildfly application server to increase security."},
+            {"entity": "Agnos", "date": "2018-05-02", "change": "New panel: linechart for 2 dimenzions."},
+            {"entity": "Agnos", "date": "2018-05-24", "change": "A selected panel can be magnified to 2x."},
+
         ],
-        "updated": "2018-01-02"
+        "updated": "2018-05-24"
     }
 ];

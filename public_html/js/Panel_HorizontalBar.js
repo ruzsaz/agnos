@@ -14,7 +14,7 @@ function panel_horizontalbar(init) {
 
     this.constructorName = "panel_horizontalbar";
 
-    this.defaultInit = {group: 0, position: undefined, dim: 0, valpos: [0], valneg: [], ratio: false, centered: false, domain: [], domainr: []};
+    this.defaultInit = {group: 0, position: undefined, dim: 0, valpos: [0], valneg: [], ratio: false, centered: false, domain: [], domainr: [], mag: 1, fromMag: 1};
     this.actualInit = global.combineObjects(that.defaultInit, init);
 
     this.valPosToShow = that.actualInit.valpos;			// Ezeket kell pozitív irányban ábrázolni.
@@ -500,7 +500,7 @@ panel_horizontalbar.prototype.update = function(data, drill) {
             that.preparedData = that.prepareData(that.preparedData, that.data.rows, drill);
 
             // Tengelyek, oszlopelemek, vonalelemek, átlagelemek felfrissítése.
-            var tweenDuration = global.getAnimDuration(-1, that.panelId);
+            var tweenDuration = (drill.duration === undefined) ? global.getAnimDuration(-1, that.panelId) : drill.duration;
             var trans = d3.transition().duration(tweenDuration);
             that.drawAxes(that.preparedData, trans);
             that.drawBars(that.preparedData, trans);
@@ -661,10 +661,10 @@ panel_horizontalbar.prototype.drawLegend = function() {
                 .attr("rx", global.rectRounding)
                 .attr("ry", global.rectRounding)
                 .attr("x", function(d, i) {
-                    return (i * l_width + global.legendOffsetX * 1.5);
+                    return (i * l_width + that.legendOffsetX * 1.5);
                 })
                 .attr("y", that.h - l_height - global.legendOffsetY)
-                .attr("width", l_width - global.legendOffsetX)
+                .attr("width", l_width - that.legendOffsetX)
                 .attr("height", l_height)
                 .attr("fill", function(d) {
                     return global.colorValue(d.id);
@@ -675,7 +675,7 @@ panel_horizontalbar.prototype.drawLegend = function() {
                 .attr("class", "legend noEvents")
                 .attr("text-anchor", "middle")
                 .attr("x", function(d, i) {
-                    return (i * l_width + l_width / 2 + global.legendOffsetX);
+                    return (i * l_width + l_width / 2 + that.legendOffsetX);
                 })
                 .attr("y", that.h - l_height / 2 - global.legendOffsetY)
                 .attr("dy", ".35em")
@@ -687,7 +687,7 @@ panel_horizontalbar.prototype.drawLegend = function() {
                 });
 
         // Jelkulcs-szövegek formázása, hogy beférjenek.
-        global.cleverCompress(legendText, l_width - 1.8 * global.legendOffsetX, 1, undefined);
+        global.cleverCompress(legendText, l_width - 1.8 * that.legendOffsetX, 1, undefined);
     }
 };
 
@@ -982,7 +982,7 @@ panel_horizontalbar.prototype.doChangeValue = function(panelId, value, ratio, ta
             }
 
             that.buildValueVectors(); // Segéd értékmutató mennyiségek feltöltése.
-            that.changeConfiguration(!that.singleValMode, global.legendOffsetX, global.legendOffsetX, 0, global.fontSizeSmall + 2); // Konfiguráció beállítása.
+            that.changeConfiguration(!that.singleValMode, that.legendOffsetX, that.legendOffsetX, 0, global.fontSizeSmall + 2); // Konfiguráció beállítása.
 
             // Ha megváltozott a kijelzett értékek száma, törlünk, hogy újrarajzolódjanak.
             if (oldNumOfValues !== that.legendArray.length) {
@@ -1034,9 +1034,9 @@ panel_horizontalbar.prototype.changeConfiguration = function(isLegendRequired, l
 
         this.margin = {
             top: global.panelTitleHeight + 3 * global.legendOffsetY + topOffset,
-            right: global.legendOffsetX + rightOffset,
+            right: this.legendOffsetX + rightOffset,
             bottom: bottomOffset + ((isLegendRequired) ? global.legendHeight + 2 * global.legendOffsetY : global.legendOffsetY + global.legendHeight / 2),
-            left: global.legendOffsetX + leftOffset
+            left: this.legendOffsetX + leftOffset
         };
 
         this.width = this.w - this.margin.left - this.margin.right;

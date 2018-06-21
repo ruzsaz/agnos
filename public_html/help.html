@@ -27,7 +27,7 @@
               <li><span class="loc" data-link="helpBarPanel" onclick="global.mainToolbar_help(this);">Oszlopdiagram</span></li>
               <li><span class="loc" data-link="helpLinePanel" onclick="global.mainToolbar_help(this);">Vonaldiagram</span></li>
               <li><span class="loc" data-link="helpMapPanel" onclick="global.mainToolbar_help(this);">Térkép</span></li>
-              <li><span class="loc" data-link="helpBar2Panel" onclick="global.mainToolbar_help(this);">2D oszlop</span></li>
+              <li><span class="loc" data-link="helpBar2Panel" onclick="global.mainToolbar_help(this);">2D oszlop, vonal</span></li>
               <li><span class="loc" data-link="helpHorizontalBarPanel" onclick="global.mainToolbar_help(this);">Vízszintes oszlop</span></li>	
               <li><span class="loc" data-link="help_Panel_Table" onclick="global.mainToolbar_help(this);">Táblázat</span></li>	
             </ul>
@@ -42,10 +42,10 @@
     </div>
 
     <div id="helpScrollPane">
-      
+
       <!-- Magyar nyelvű változat -->
       <div class="helpContent localized language_hu language_default" lang="hu">
-  
+
         <div class="helpStart">
           <h3 class="noReport">Nincs jelentés betöltve</h3>          
           <div class="helpReport0"></div>
@@ -129,7 +129,7 @@
               </svg>
               <em>Nyelv választó.</em>
             </li>
-                        
+
             <li>
               <svg class="switchButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_switch" />
@@ -267,6 +267,18 @@
             együttes megjelenítésére. Ekkor a panel egy nagy ?-et tartalmaz csak, de egy új mutató fejlécre való
             ejtésével visszaállítható a normális működés.
           </p>
+
+          <p>
+            A panelek <em>sorrendje</em> a panelek megragadásával, (húzd és ejtsd) majd a kívánt helyre húzásával
+            módosítható.
+          </p>          
+
+          <p>
+            A panel jobb alsó sarkában látható vonalkázott hárömszöggel egy kiválasztott panel <em>felnagyítható.</em>
+            A nagyított panel nem csak a méretében lesz nagyobb, hanem részletgazdagabban mutatja a rajta
+            ábrázolt diagramot.            
+          </p>          
+
 
         </div>
 
@@ -816,13 +828,13 @@
 
 
       </div>
-      
-      
-      
-        
+
+
+
+
       <!-- Angol nyelvű változat -->
       <div class="helpContent localized language_en language" lang="en">
-  
+
         <div class="helpStart">
           <h3 class="noReport">No report loaded</h3>          
           <div class="helpReport0"></div>
@@ -906,7 +918,7 @@
               </svg>
               <em>Nyelv választó.</em>
             </li>
-                        
+
             <li>
               <svg class="switchButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_switch" />
@@ -1044,6 +1056,17 @@
             együttes megjelenítésére. Ekkor a panel egy nagy ?-et tartalmaz csak, de egy új mutató fejlécre való
             ejtésével visszaállítható a normális működés.
           </p>
+
+          <p>
+            A panelek <em>sorrendje</em> a panelek megragadásával, (húzd és ejtsd) majd a kívánt helyre húzásával
+            módosítható.
+          </p>          
+
+          <p>
+            A panel jobb alsó sarkában látható vonalkázott hárömszöggel egy kiválasztott panel <em>felnagyítható.</em>
+            A nagyított panel nem csak a méretében lesz nagyobb, hanem részletgazdagabban mutatja a rajta
+            ábrázolt diagramot.            
+          </p>          
 
         </div>
 
@@ -1369,7 +1392,7 @@
         </div>
 
         <div class="helpBar2Panel">
-          <h3>2 dimenziós oszlopdiagram</h3>
+          <h3>2 dimenziós oszlop- és vonaldiagram</h3>
           <h4>Dimenziók száma: 2, megjelenített mutatók száma: 1.</h4>
 
           <p>
@@ -1381,9 +1404,9 @@
           </p>
 
           <p class="example">
-            <img src="image.png">
-            A példán egy mutató területi megoszlását különböző oszlopok, nemek szerinti megoszlását
-            egy oszlopon belüli két szín szemlélteti. A mutató adott (hely,&nbsp;nem) páron felvett értéke
+            <img src="example1.png" alt="example" style="width: 25%">
+            A példán egy mutató évenkénti megoszlását különböző oszlopok, területi megoszlását oszlopokon belüli színek
+            szemléltetik. A mutató adott (év,&nbsp;hely) páron felvett értéke
             az oszlopelem magasságával arányos.
           </p>				
 
@@ -1433,6 +1456,36 @@
               </svg>
             </div> gombjaival vehetünk fel.					
           </div>
+
+          <br />
+
+          <p>
+            A 2 dimenziós vonaldiagram logikáját és kezelését tekintve ugyanolyan, mint a 2 dimenziós oszlopdiagram,
+            ám az értékek nem halmozati oszlopként, hanem különálló vonaldiagramként kerülnek ábrázolásra.
+          </p>
+
+          <p class="example">
+            <img src="example2.png" alt="example" style="width: 25%">
+            A példán egy mutató évenkénti megoszlását ábrázoltuk, területenként különböző színű vonaldiagramként.
+            A mutató adott (év,&nbsp;hely) páron felvett értéke a helyhez tartozó vonaldiagram adott év feletti értéke.
+          </p>				
+
+          <div class="p">
+            Az éppen böngészett jelentésbe normális, illetve jelölővel ellátott 2 dimenziós vonaldiagram-panelt
+            a fejlécen található <em>Új panel</em> menü
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_2d_line" />
+              </svg>
+            </div>
+            <div class="inlineSvgHolder">
+              <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+              <use xlink:href="#icon_panel_2d_line_marker" />
+              </svg>
+            </div> gombjaival vehetünk fel.					
+          </div>
+
+
 
         </div>
 
@@ -1589,9 +1642,9 @@
 
         </div>
       </div>
-      
-      
-      
+
+
+
     </div>
 
   </body>

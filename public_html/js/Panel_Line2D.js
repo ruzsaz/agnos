@@ -725,7 +725,7 @@ panel_line2d.prototype.prepareData = function(oldPreparedData, newDataRows, dril
         } else if (drill.dim === that.dimYToShow && drill.direction === 1) { // Ha az Y mentén történt felfúrás                        
             for (var point = 0, pointMax = line.length; point < pointMax; point++) {
                 line[point].oldX = line[point].x;
-                line[point].oldY = (oldPreparedData.lineArray[0][point]) ? oldPreparedData.lineArray[0][point].y : 0;
+                line[point].oldY = (oldPreparedData && oldPreparedData.lineArray[0][point]) ? oldPreparedData.lineArray[0][point].y : 0;
             }
         } else { // Különben (kezdés, vagy nem kijelzett dimenzió mentén fúrás)
             for (var point = 0, pointMax = line.length; point < pointMax; point++) {

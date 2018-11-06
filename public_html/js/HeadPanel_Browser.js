@@ -37,19 +37,19 @@ function HeadPanel_Browser(init, superMeta, startScale, duration) {
             .attr("class", "heading");
 
     heading.append("html:div")
-            .attr("class", "cell")
-            .text("Rövid Név");
+            .attr("class", "cell loc")
+            .text("Rövid név");
 
     heading.append("html:div")
-            .attr("class", "cell")
+            .attr("class", "cell loc")
             .text("Leírás");
 
     heading.append("html:div")
-            .attr("class", "cell")
+            .attr("class", "cell loc")
             .text("Forrás");
 
     heading.append("html:div")
-            .attr("class", "cell")
+            .attr("class", "cell loc")
             .text("Frissítve");
 
 

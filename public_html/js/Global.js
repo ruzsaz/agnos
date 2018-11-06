@@ -419,16 +419,16 @@ var global = function() {
                 $(':focus').blur();
                 if (jqXHR.status === 401) { // Ha a szerver 'nem vagy autentikálva' választ ad, újra megpróbáljuk.
                     setDialog(
-                            "Hibás felhasználónév, vagy jelszó.",
-                            "<div class='errorStaticText'>Felhasználónév:</div><div><input id='loginName' type='text' name='username'></div>" +
-                            "<div class='errorStaticText'>Jelszó:</div><div><input id='loginPassword' type='password' name='password'></div>",
-                            "Belépés",
+                            "Wrong username or password.",
+                            "<div class='errorStaticText'>Username:</div><div><input id='loginName' type='text' name='username'></div>" +
+                            "<div class='errorStaticText'>Password:</div><div><input id='loginPassword' type='password' name='password'></div>",
+                            "Login",
                             function() {
                                 login($('#loginName').val(),
                                         $('#loginPassword').val(),
                                         callback);
                             },
-                            "Kilépés",
+                            "Quit",
                             function() {
                                 location.reload();
                             },
@@ -442,13 +442,13 @@ var global = function() {
                     );
                 } else if (jqXHR.status === 403) { // Ha az autentikáció jó, de nincs olvasási jog az adathoz
                     setDialog(
-                            "Hozzáférés megtagadva",
-                            "<div class='errorStaticText'>Nincs hozzáférési jogod a rendszerhez. A hibaüzenet:</div>" +
+                            "Access denied",
+                            "<div class='errorStaticText'>You have no access to this report. Error code:</div>" +
                             "<div class='errorVariableText'><em>" + "Error " + jqXHR.status + ": " + errorThrown + "</em></div>" +
-                            "<div class='errorStaticText'>Hozzáférési jogot az üzemeltetéstől kérhetsz.</div>",
+                            "<div class='errorStaticText'>Ask permission from the system administrator.</div>",
                             undefined,
                             undefined,
-                            "Kilépés",
+                            "Quit",
                             function() {
                                 location.reload();
                             },
@@ -462,15 +462,15 @@ var global = function() {
                     );
                 } else { // Más hiba esetén...                    
                     setDialog(
-                            "Hálózati hiba",
-                            "<div class='errorStaticText'>A kapcsolat az adatbázis felé megszakadt. A hibaüzenet:</div>" +
+                            "Network error",
+                            "<div class='errorStaticText'>Connection to the database is lost. Error code:</div>" +
                             "<div class='errorVariableText'><em>" + "Error " + jqXHR.status + ": " + errorThrown + "</em></div>" +
-                            "<div class='errorStaticText'>Próbálj meg újra belépni!</div>",
-                            "Újra",
+                            "<div class='errorStaticText'>Try to log in again!</div>",
+                            "Again",
                             function() {
                                 login(username, password, callback);
                             },
-                            "Kilépés",
+                            "Logout",
                             function() {
                                 location.reload();
                             },
@@ -529,10 +529,10 @@ var global = function() {
                 progressDiv.style("z-index", -1);
                 if (jqXHR.status === 401) { // Ha a szerver 'nem vagy autentikálva' választ ad, autentikáljuk.
                     setDialog(
-                            "TITKOS! Jelentkezz be!",
-                            "<div class='errorStaticText'>Felhasználónév:</div><div><input id='loginName' type='text' name='username'></div>" +
-                            "<div class='errorStaticText'>Jelszó:</div><div><input id='loginPassword' type='password' name='password'></div>",
-                            "Belépés",
+                            "Restricted. Log in first!",
+                            "<div class='errorStaticText'>Username:</div><div><input id='loginName' type='text' name='username'></div>" +
+                            "<div class='errorStaticText'>Password:</div><div><input id='loginPassword' type='password' name='password'></div>",
+                            "Login",
                             function() {
                                 login($('#loginName').val(),
                                         $('#loginPassword').val(),
@@ -540,7 +540,7 @@ var global = function() {
                                             get(url, data, callback, isDeleteDialogRequired);
                                         });
                             },
-                            "Kilépés",
+                            "Quit",
                             function() {
                                 location.reload();
                             },
@@ -556,13 +556,13 @@ var global = function() {
                     );
                 } else if (jqXHR.status === 403) { // Ha az autentikáció jó, de nincs olvasási jog az adathoz
                     setDialog(
-                            "Hozzáférés megtagadva",
-                            "<div class='errorStaticText'>A kért adatokhoz nincs hozzáférési jogod. A hibaüzenet:</div>" +
+                            "Access denied",
+                            "<div class='errorStaticText'>You have no access to this report. Error code:</div>" +
                             "<div class='errorVariableText'><em>" + "Error " + jqXHR.status + ": " + errorThrown + "</em></div>" +
-                            "<div class='errorStaticText'>Hozzáférési jogot az üzemeltetéstől kérhetsz.</div>",
+                            "<div class='errorStaticText'>Ask permission from the system administrator.</div>",
                             undefined,
                             undefined,
-                            "Kilépés",
+                            "Logout",
                             function() {
                                 location.reload();
                             },
@@ -581,15 +581,15 @@ var global = function() {
                         errorThrown = "Server unreachable";
                     }
                     setDialog(
-                            "Hálózati hiba",
-                            "<div class='errorStaticText'>A kapcsolat az adatbázis felé megszakadt. A hibaüzenet:</div>" +
+                            "Network error",
+                            "<div class='errorStaticText'>Connection to the database is lost. Error code:</div>" +
                             "<div class='errorVariableText'><em>" + "Error " + jqXHR.status + ": " + errorThrown + "</em></div>" +
-                            "<div class='errorStaticText'>Próbáld meg az adatokat újra letölteni!</div>",
-                            "Újra",
+                            "<div class='errorStaticText'>Try to reload...</div>",
+                            "Try again",
                             function() {
                                 get(url, data, callback);
                             },
-                            "Kilépés",
+                            "Logout",
                             function() {
                                 location.reload();
                             },

@@ -143,7 +143,7 @@
               <use xlink:href="#icon_close" />
               </svg>
               <em>Jelentés bezárása.</em> Az épp aktív jelentést bezárja, és visszatér a jelentés-választó
-              menübe. A gomb inaktív, ha még nincs megnyitott jelentés, vagy ha több jelentés is van a képernyőn.
+              menübe. A gomb inaktív, ha még nincs megnyitott jelentés.
             </li>
           </ul>
 
@@ -846,7 +846,7 @@
           <h3>Header</h3>
 
           <p>
-            EN Az alkalmazás a fejlécen található gombokkal vezérelhető. Balról jobbra haladva az alábbi gombokat láthatjuk:
+            The application can be controlled using the buttons on the header. From left to right you can see the following buttons:
           </p>
 
 
@@ -855,14 +855,14 @@
               <svg class="plusButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_plus" />
               </svg>
-              <em>Nagyítás.</em> Inaktív, ha már nincs hova nagyítani.
+              <em>Zoom in.</em> Inactive at the maximal zoom level.
             </li>
 
             <li>
               <svg class="minusButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_minus" />
               </svg>
-              <em>Kicsinytés.</em> Inaktív, ha már nincs hova kicsinyíteni.
+              <em>Zoom out.</em> Inactive at the minimal zoom level.
             </li>
 
             <li>
@@ -870,76 +870,77 @@
               <path d="M35,12 L35,9 a3,3 0 0 0 -3,-3 L8,6 a3,3 0 0 0 -3,3 L5,23 a3,3 0 0 0 3,3 L22,26"/>
               <use xlink:href="#icon_newpanel" />	
               </svg>
-              <em>Új panel hozzáadása.</em> A lenyíló menüből választhatunk a rendelkezésre álló panelek közül.
-              A gomb inaktív, ha még nincs megnyitott jelentés, ha több jelentés is van a képernyőn, vagy ha
-              már elértük a maximális panelszámot (6).
+              <em>Add new panel.</em> Select from the available panels from the drop-down menu.
+              The button is inactive if there is no open report, if there are multiple reports on the screen or if
+              you have already reached the maximal panel number (6).
             </li>
 
             <li>
               <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
               <use xlink:href="#icon_kill" />
               </svg>
-              <em>Panel törlése.</em> A kurzor átváltozik célkeresztté, amellyel a kiválasztott panel törölhető.
-              A gomb inaktív, ha még nincs megnyitott jelentés, ha több jelentés is van a képernyőn, vagy ha
-              már töröltük az összes panelt.
+              <em>Delete panel.</em> Delete the selected panel with the crosshair pointer.
+              The button is inactive if there is no open report, if there are multiple reports on the screen or if
+              all panels have been deleted.
             </li>
 
             <li>
               <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
               <use xlink:href="#icon_save" />
               </svg>
-              <em>Adatok mentése.</em> A pillanatnyi lefúrási szinthez tartozó adatokat menthetjük el, miután
-              a megjelenő ablakban beállítottuk, hogy mely dimenziók szerinti bontásban szeretnénk
-              az adatokat részletezni. Ha a böngésző nem képes közvetlenül fájlba írni, akkor egy szövegmezőben
-              jelenik meg az elmentendő adat. Ezt COPY+PASTE segítségével metsük el egy .csv kiterjesztésű fájlba.
-              A kapott .csv fájl tetszőleges táblázatkezelővel (Excel, Openoffice) megnyitható.
-              A gomb inaktív, ha még nincs megnyitott jelentés, vagy ha több jelentés is van a képernyőn.
+              <em>Saving the data to CSV.</em> Data for the current drilling level can be saved to a
+              .csv file. Select the requested dimensions in the window that appears.
+              If your browser is not able to write directly to a file, a text box
+              appears with the requested data. Use COPY + PASTE to save it to a .csv file.
+              (A .csv file can be opened with any spreadsheet like Excel or Openoffice.)
+              The button is inactive if there is no open report or multiple reports on the screen.
             </li>
 
             <li>
               <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
               <use xlink:href="#icon_save_png" />
               </svg>
-              <em>Panelek mentése képként.</em> Az összes panelt elmenti 1200x800 pixeles .png-ként.
-              Bizonyos böngészők (Internet Explorer) erre sajnos nem képesek.
-              A gomb inaktív, ha még nincs megnyitott jelentés, vagy ha több jelentés is van a képernyőn.
+              <em>Save Panels as images.</em> All panels are saved as 1200x800 pixel images.
+              Certain browsers (i.e. Internet Explorer) are unable to do so.
+              The button is inactive if there is no open report or multiple reports on the screen.
             </li>            
 
             <li>
               <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
               <use xlink:href="#icon_help" />
               </svg>
-              <em>Használati segédlet.</em>
+              <em>This help.</em>
             </li>
 
             <li>
               <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
               <use xlink:href="#icon_flag" />
               </svg>
-              <em>Nyelv választó.</em>
+              <em>Language selector.</em>
             </li>
 
             <li>
               <svg class="switchButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_switch" />
               </svg>						
-              <em>Váltás 1 vagy 2 oldalas kijelzés között.</em> A két oldalas kijelzéssel egyszerre két, egymástól
-              független jelentés böngészhető.
+              <em>Switch between 1 or 2-sided display.</em> You can browse two independent
+              reports with the two-sided display.              
             </li>
 
             <li>
               <svg class="closeButtonHelp" version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_close" />
               </svg>
-              <em>Jelentés bezárása.</em> Az épp aktív jelentést bezárja, és visszatér a jelentés-választó
-              menübe. A gomb inaktív, ha még nincs megnyitott jelentés, vagy ha több jelentés is van a képernyőn.
+              <em>Close report.</em> It closes the active report and returns the report selector
+              menu. The button is inactive if there is no open report.
+
             </li>
           </ul>
 
         </div>
 
         <div class="helpData">
-          <h3>Adatábrázolás</h3>
+          <h3>Data representation</h3>
 
           <p>
             Egy jelentés néhány <em>dimenzió</em> szerint bontott <em>mutatókat</em> tartalmaz.
@@ -969,7 +970,7 @@
         </div>
 
         <div class="helpDrilling">
-          <h3>Irányítás</h3>
+          <h3>Using the program</h3>
 
           <p>
             A mutatók értékeit <em>panelek</em> segítségével vizsgálhatjuk.
@@ -1008,7 +1009,7 @@
         </div>
 
         <div class="helpPanels">
-          <h3>Panelek kezelése</h3>
+          <h3>Panels</h3>
           <p>
             Egy jelentés oldalán két fajta panel látható. A legfelső panel a <em>fejpanel</em>, amelyen
             a jelentés dimenziói és mutatói láthatóak. A többi panel mindegyike 1 vagy több mutató
@@ -1071,7 +1072,7 @@
         </div>
 
         <div class="helpHeadPanel">
-          <h3>Fejpanel</h3>
+          <h3>Head panel</h3>
           <h4>Dimenziók száma: összes, megjelenített mutatók száma: összes.</h4>
 
           <p>
@@ -1104,7 +1105,7 @@
         </div>
 
         <div class="helpPieChartPanel">
-          <h3>Kördiagram</h3>
+          <h3>Pie chart</h3>
           <h4>Dimenziók száma: 1, megjelenített mutatók száma: 1.</h4>
 
           <p>
@@ -1153,7 +1154,7 @@
         </div>
 
         <div class="helpBarPanel">
-          <h3>Oszlopdiagram</h3>
+          <h3>Bar chart</h3>
           <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
 
           <p>
@@ -1243,7 +1244,7 @@
         </div>				
 
         <div class="helpLinePanel">
-          <h3>Vonaldiagram</h3>
+          <h3>Line chart</h3>
           <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
 
           <p>
@@ -1328,7 +1329,7 @@
         </div>
 
         <div class="helpMapPanel">
-          <h3>Térkép</h3>
+          <h3>Map chart</h3>
           <h4>Dimenziók száma: 1 területi dimenzió, megjelenített mutatók száma: 1.</h4>
 
           <p>
@@ -1392,7 +1393,7 @@
         </div>
 
         <div class="helpBar2Panel">
-          <h3>2 dimenziós oszlop- és vonaldiagram</h3>
+          <h3>2D bar &amp; line chart</h3>
           <h4>Dimenziók száma: 2, megjelenített mutatók száma: 1.</h4>
 
           <p>
@@ -1490,7 +1491,7 @@
         </div>
 
         <div class="helpHorizontalBarPanel">
-          <h3>Vízszintes oszlopdiagram</h3>
+          <h3>Horizontal bar chart</h3>
           <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
 
           <p>
@@ -1566,7 +1567,7 @@
         </div>
 
         <div class="help_Panel_Table">
-          <h3>1 vagy 2 dimenziós táblázat</h3>
+          <h3>1 or 2 dimensions table</h3>
           <h4>Dimenziók száma: 1 vagy 2, megjelenített mutatók száma: összes vagy 1.</h4>
 
           <p>

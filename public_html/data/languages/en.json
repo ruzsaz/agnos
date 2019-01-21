@@ -42,7 +42,7 @@
     "A jelentésről": "The report",
     "Adatábrázolás": "Data representation",
     "Panelek kezelése": "Panels",
-    "Fejpanel": "Head panel",
+    "Fejpanel": "Top panel",
     "Kördiagram": "Pie chart",
     "Oszlopdiagram": "Bar chart",
     "Vonaldiagram": "Line chart",
@@ -63,13 +63,13 @@
     "<h4>Színezett térkép</h4><ul><li>dimenziók: <em>1</em><li>mutatók: <em>1</em></ul>": "<h4>Colored map</h4><ul><li>dimension: <em>1</em><li>indicator: <em>1</em></ul>",
     "<h4>Színezett térkép POI-val</h4><ul><li>dimenziók: <em>1</em><li>mutatók: <em>1</em></ul>": "<h4>Colored map with POIs</h4><ul><li>dimension: <em>1</em><li>indicator: <em>1</em></ul>",
     "<h4>2 dimenziós oszlopdiagram</h4><ul><li>dimenziók: <em>2</em><li>mutatók: <em>1</em></ul>": "<h4>2D bar chart</h4><ul><li>dimensions: <em>2</em><li>indicator: <em>1</em></ul>",
-    "<h4>Széthúzott 2 dimenziós oszlopdiagram</h4><ul><li>dimenziók: <em>2</em><li>mutatók: <em>1</em></ul>": "2D bar chart, streched</h4><ul><li>dimensions: <em>2</em><li>indicator: <em>1</em></ul>",
+    "<h4>Széthúzott 2 dimenziós oszlopdiagram</h4><ul><li>dimenziók: <em>2</em><li>mutatók: <em>1</em></ul>": "2D bar chart, stretched</h4><ul><li>dimensions: <em>2</em><li>indicator: <em>1</em></ul>",
     "<h4>2 dimenziós vonaldiagram</h4><ul><li>dimenziók: <em>2</em><li>mutatók: <em>1</em></ul>": "<h4>2D line chart</h4><ul><li>dimensions: <em>2</em><li>indicator: <em>1</em></ul>",
     "<h4>2 dimenziós vonaldiagram jelölővel</h4><ul><li>dimenziók: <em>2</em><li>mutatók: <em>1</em></ul>": "<h4>2D line chart with markers</h4><ul><li>dimensions: <em>2</em><li>indicator: <em>1</em></ul>",
     "<h4>Vízszintes oszlopdiagram</h4><ul><li>dimenziók: <em>1</em><li>mutatók: <em>n</em></ul>": "<h4>Horizontal bar chart</h4><ul><li>dimension: <em>1</em><li>indicators: <em>n</em></ul>",
     "<h4>Centrált vízszintes oszlopdiagram</h4><ul><li>dimenziók: <em>1</em><li>mutatók: <em>n</em></ul>": "<h4>Horizontal bar chart, centered</h4><ul><li>dimension: <em>1</em><li>indicators: <em>n</em></ul>",
-    "<h4>1 dimenziós táblázat</h4><ul><li>dimenziók: <em>1</em><li>mutatók: <em>összes</em></ul>": "<h4>1 dimension table</h4><ul><li>dimension: <em>1</em><li>indicators: <em>all</em></ul>",
-    "<h4>2 dimenziós táblázat</h4><ul><li>dimenziók: <em>2</em><li>mutatók: <em>1</em></ul>": "<h4>2 dimensions table</h4><ul><li>dimensions: <em>2</em><li>indicator: <em>1</em></ul>",
+    "<h4>1 dimenziós táblázat</h4><ul><li>dimenziók: <em>1</em><li>mutatók: <em>összes</em></ul>": "<h4>1D table</h4><ul><li>dimension: <em>1</em><li>indicators: <em>all</em></ul>",
+    "<h4>2 dimenziós táblázat</h4><ul><li>dimenziók: <em>2</em><li>mutatók: <em>1</em></ul>": "<h4>2D table</h4><ul><li>dimensions: <em>2</em><li>indicator: <em>1</em></ul>",
     "<h4>Panel törlése</h4>": "Delete panel",
     "<h4>Adatok mentése</h4>": "Save to .csv",
     "<h4>Panelek mentése képként</h4>": "Save panels as images",
@@ -79,6 +79,6 @@
     "Rövid név": "Report name",
     "Leírás": "Description",
     "Forrás": "Data source",
-    "Frissitve": "Updated"
+    "Frissítve": "Updated"
     
 }

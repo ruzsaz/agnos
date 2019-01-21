@@ -195,7 +195,7 @@
           <p>
             Egy panelen egy dimenzióelemre kattintás az adott elemre való <em>lefúrást</em>
             eredményez. Ez után az összes panel által mutatott érték már csak az adott dimenzióelemre
-            vonatkozik. Egy dimenzó mentén való <em>felfúrást</em> a dimenziót bontó panel hátterére való kattintással
+            vonatkozik. Egy dimenzió mentén való <em>felfúrást</em> a dimenziót bontó panel hátterére való kattintással
             kezdeményezhetünk.	
           </p>
           <p class="example">
@@ -616,9 +616,9 @@
           </p>
 
           <p class="example">
-            <img src="image.png">
-            A példán egy mutató területi megoszlását különböző oszlopok, nemek szerinti megoszlását
-            egy oszlopon belüli két szín szemlélteti. A mutató adott (hely,&nbsp;nem) páron felvett értéke
+            <img src="example1.png" alt="example" style="width: 25%">
+            A példán egy mutató évenkénti megoszlását különböző oszlopok, területi megoszlását oszlopokon belüli színek
+            szemléltetik. A mutató adott (év,&nbsp;hely) páron felvett értéke
             az oszlopelem magasságával arányos.
           </p>				
 
@@ -814,7 +814,9 @@
         <div class="helpAbout">
           <h3>A programról</h3>          
           <div>
-            <em>Majd...</em>
+            Az <em>Agnos</em> egy könnyen használható adatvizualizációs eszköz, melyet
+            Parisek Zsolt (parisek@gmail.com) és Ruzsa Zoltán (ruzsaz@gmail.com) készített.
+            Ha érdeklődsz iránta, írj a fenti címek egyikére!
           </div>
 
           <h3><br />Legutóbbi változások</h3>
@@ -823,9 +825,6 @@
           </div>        
 
         </div>
-
-
-
 
       </div>
 
@@ -870,7 +869,7 @@
               <path d="M35,12 L35,9 a3,3 0 0 0 -3,-3 L8,6 a3,3 0 0 0 -3,3 L5,23 a3,3 0 0 0 3,3 L22,26"/>
               <use xlink:href="#icon_newpanel" />	
               </svg>
-              <em>Add new panel.</em> Select from the available panels from the drop-down menu.
+              <em>Add new panel.</em> Select from the available panels on the drop-down menu.
               The button is inactive if there is no open report, if there are multiple reports on the screen or if
               you have already reached the maximal panel number (6).
             </li>
@@ -893,7 +892,7 @@
               If your browser is not able to write directly to a file, a text box
               appears with the requested data. Use COPY + PASTE to save it to a .csv file.
               (A .csv file can be opened with any spreadsheet like Excel or Openoffice.)
-              The button is inactive if there is no open report or multiple reports on the screen.
+              The button is inactive if there is no open report or there are multiple reports on the screen.
             </li>
 
             <li>
@@ -902,7 +901,7 @@
               </svg>
               <em>Save Panels as images.</em> All panels are saved as 1200x800 pixel images.
               Certain browsers (i.e. Internet Explorer) are unable to do so.
-              The button is inactive if there is no open report or multiple reports on the screen.
+              The button is inactive if there is no open report or there are multiple reports on the screen.
             </li>            
 
             <li>
@@ -943,27 +942,25 @@
           <h3>Data representation</h3>
 
           <p>
-            Egy jelentés néhány <em>dimenzió</em> szerint bontott <em>mutatókat</em> tartalmaz.
-            Minden mutatót kétféleképp ábrázolhatunk, vizsgálhatjuk magának a mutatott mennyiségnek az <em>értékét</em>,
-            illetve valamely más értékhez viszonyított <em>arányosított értékét</em>.
+            A report contains some <em>indicators</em> broken down by <em>dimensions</em>.
+            Each indicator can be represented in two ways, we can examine the <em>value of the displayed indicator</em>
+            or <em>proportional to another value</em>.
           </p>
           <div class="example">
-            Egy hipotetikus, <em>Demográfiai adatok</em> című jelentésben:
+            For example in a report about basic <em>demographic data</em>:
 
             <br /><br />
-            Dimenziók:
-
+            Dimensions:
             <ul>
-              <li>Vonatkozási év</li>
-              <li>Nem</li>
-              <li>Terület</li>
+              <li>Year</li>
+              <li>Sex</li>
+              <li>Area</li>
             </ul>
             <br>
-            Mutatók:
+            Indicators:
             <ul>
-              <li>Élveszületések (fő, illetve fő/1000 lakos)</li>
-              <li>Halálozások (fő, illetve fő/1000 lakos)</li>
-              <li>65 éven felüliek (fő, illetve fő/1000 lakos)</li>
+              <li>Live births (value: people, proportional value: number per 1,000 people)</li>
+              <li>Deaths (value: people, proportional value: number per 1,000 people)</li>              
             </ul>
           </div>
 
@@ -972,38 +969,33 @@
         <div class="helpDrilling">
           <h3>Using the program</h3>
 
-          <p>
-            A mutatók értékeit <em>panelek</em> segítségével vizsgálhatjuk.
-            Minden panel egy vagy több értéket mutat, egy vagy több dimenzió szerinti felbontásban.
+          <p>            
+            The values of the indicators can be examined by means of <em>panels</em>.
+            Each panel displays one or more values broken down by one or more dimensions.
           </p>
 
           <p class="example">
-            Egy térképpanel valamely mutató területi dimenzió szerinti felbontását mutatja,
-            egy oszlopdiagram akár több értéket, tetszőleges dimenzió szerint felbontva ábrázol.
+            A map chart can show an indicator broken down by a territorial dimension,
+            a bar chart illustrates one or more indicators, broken by an arbitrary dimension.
           </p>
 
           <p>
-            Egy panelen egy dimenzióelemre kattintás az adott elemre való <em>lefúrást</em>
-            eredményez. Ez után az összes panel által mutatott érték már csak az adott dimenzióelemre
-            vonatkozik. Egy dimenzó mentén való <em>felfúrást</em> a dimenziót bontó panel hátterére való kattintással
-            kezdeményezhetünk.	
+            In a panel, click on a dimension element to initiate <em>drilling down</em> to
+            that. After this, the value shown by all panels applies only to the given dimension element.
+            You can initiate a <em>drilling up</em> along a dimension by clicking on the background of
+            the panel.
           </p>
           <p class="example">
-            Ha egy térképpanelen Heves megyére kattintunk, akkor minden
-            panel a Heves megyei adatokat mutatja, a térképpanel pedig Heves megyét bontja tovább
-            kistérségekre. Ez után, ha egy nem dimenziót ábrázoló oszlopdiagram panelen a
-            Férfi oszlopra kattintunk, akkor minden panelen már csak a Heves megyei férfiakra vonatkozó
-            adat lesz látható.
+            If you click on a map chart on a county, each panel shows data on that county,
+            and the map chart will further break down the county into subregions.
+            Then, if you click on the men's column in a bar chart panel, then you will see
+            only data for men in that county on each panel.
           </p>
           <p>
-            A 2 dimenziós oszlopdiagram és a 2 dimenziós táblázat több dimenziót ábrázol.
-            Ekkor, a megfelelő dimenzióelemre katintással bármely dimenzióban kezdeményezhető
-            lefúrás, illetve a dimenzió mellé kattintva felfúrás is.
-          </p>
-
-          <p>
-            Ha egy panel által megjelenített értékre állítjuk az egeret, akkor a kb. 1 másodperc múlva
-            felbukkanó buborékban a kijelzett mennyiség pontos értékét is láthatjuk.
+            The 2-dimensional bar chart and the 2-dimensional line chart can show an indicator
+            broken down by two dimensions.
+            On that panels you can drill down in any dimension by clicking on the given dimension element,            
+            and drill up in the given dimension with a click on the background near the dimension.
           </p>
 
         </div>
@@ -1011,103 +1003,90 @@
         <div class="helpPanels">
           <h3>Panels</h3>
           <p>
-            Egy jelentés oldalán két fajta panel látható. A legfelső panel a <em>fejpanel</em>, amelyen
-            a jelentés dimenziói és mutatói láthatóak. A többi panel mindegyike 1 vagy több mutató
-            értékét mutatja, 1 vagy több dimenzió szerint alábontva. Ezen paneleken az ábrázolt mutatók
-            és az alábontott dimenziók állíthatóak, módosíthatóak.
+            There are two types of panels on a report page.
+            The <em>top panel</em> is the header that shows the dimensions and indicators of the report.
+            Each of the other panels shows one or more indicators broken down by one or more dimensions.
+            In these panels, the indicators and dimensions can be adjusted and modified.
           </p>	
 
           <p>
-            A <em>mutatók módosítására</em> három lehetőségünk van.
+            There are three options for <em>changing the indicators</em>.            
           </p>
 
           <ul> 
-            <li>A fejpanelen egy mutatóra kattintva az összes olyan panel, amely csak 1 mutatót ábrázol, erre a mutatóra vált.</li>
-            <li>Ha egy panel csak egy mutatót ábrázol, akkor a panel színes fejlécén a mutató nevére kattintva a panel 
-              a következő mutató kijelzésére vált.</li>
-            <li>A fejpanelről egy mutatót <em>húzd-és-ejtsd</em> módon a panelre dobhatunk. Ha a panel fejlécére dobjuk,
-              akkor a panel csak ezt az egy mutatót fogja ábrázolni, de a vonal- vagy oszlopdiagramos paneleken
-              több mutató együttes kijelzését és elérhetjük, ha nem a fejlécre, hanem a diagram megfelelő részére ejtjük
-              a mutatót.</li>
+            <li>By clicking on an indicator on the top panel, all panels that only show 1 indicator will
+              switch to the selected one.</li>
+            <li>If a panel shows only one indicator, clicking on the panel header will switch to the next
+              indicator.</li>
+            <li>You can <em>drag-and-drop</em> a pointer from the top panel to a selected other panel.
+              If you drop it on the panel header, the panel will only show this indicator, but in the
+              line or bar chart panels, you can display multiple indicators if you drop it the chart itself.</li>
           </ul>
 
           <p>
-            Egy panel <em>érték / arányosított érték</em> kijelzés közötti váltását kétféleképp tehetjük meg.
+            There are two ways to switch between <em>value and proportional value</em> display on a panel.
           </p>
           <ul> 
-            <li>Ha a fejpanelen egy mutatóra kattintunk (ekkor az összes panel ezt fogja mutatni), akkor, ha az
-              <em>arányosított érték</em> oszlopban történik a kattintás, akkor az összes panel az arányosított
-              érték kijelzésére vált.</li>
-            <li>Egy panel fejlécén a mértékegységre kattintva annak az egy panelnek az adatábrázolását
-              változtathatjuk érték / arányosított érték kijelzés között.</li>
+            <li>If you click on an indicator on the head panel to show this on all panels,
+              you can click on the <em>proportional value column</em> to set all panels to the proportional
+              value display.</li>
+            <li>Clicking on the unit in the header of a panel can be used to alter the data
+              representation of the panel between value and proportional value display.</li>
           </ul>
-          Ha egy mutatónak az értéke vagy arányosított értéke <em>nem értelmezett</em>, akkor egyik panel kijelzése
-          se állítható rá.
+          If the value or the proportional value of an indicator is <em>not interpreted</em> then you
+          cannot switch to that one.
 
           <p>
-            Egy panel <em>dimenziójának módosítását</em> a dimenzió fejpanelről történő <em>áthúzásával</em> valósíthatjuk
-            meg. Bizonyos panelek több dimenziót is alábontanak, ezek külön-külön a panel megfelelő helyére ejtéssel
-            módosíthatóak. Térképpanelre pedig csak területi dimenziót dobhatunk.
+            You can <em>modify the dimension</em> on a panel by dragging a dimension from the top panel.
+            Certain panels show more than one dimension, which can be individually modified by dropping
+            the dimension to the desired place. One can only drop a territorial dimension to a map chart.
           </p>
 
           <p class="example">
-            Vonal- vagy oszlopdiagramot tartalmazó panelen egyszerre több mutatót is megjeleníthetünk.
-            Ha azonban bizonyos megjelenítendő mutatóknak az értéke, más mutatóknak
-            pedig az arányosított értéke <em>nem értelmezett</em>, akkor a panel nem képes a kért mutatók
-            együttes megjelenítésére. Ekkor a panel egy nagy ?-et tartalmaz csak, de egy új mutató fejlécre való
-            ejtésével visszaállítható a normális működés.
+            You can display multiple indicators at the same time on a line or bar chart.
+            However, if the value or the proportional value of certain indicators is not interpreted,
+            then the panel can not display the requested data together. In this case the panel shows a
+            large question mark, but by dropping a new indicator to the header normal operation can be
+            restored.
           </p>
 
           <p>
-            A panelek <em>sorrendje</em> a panelek megragadásával, (húzd és ejtsd) majd a kívánt helyre húzásával
-            módosítható.
+            You can change the <em>order</em> of the panels by dragging them to the desired location.
           </p>          
 
           <p>
-            A panel jobb alsó sarkában látható vonalkázott hárömszöggel egy kiválasztott panel <em>felnagyítható.</em>
-            A nagyított panel nem csak a méretében lesz nagyobb, hanem részletgazdagabban mutatja a rajta
-            ábrázolt diagramot.            
+            You can <em>double the size</em> of a panel by clicking at the lower right corner of it.
+            The magnified panel will not only be bigger in size, but will also show more details.
           </p>          
 
         </div>
 
         <div class="helpHeadPanel">
-          <h3>Head panel</h3>
-          <h4>Dimenziók száma: összes, megjelenített mutatók száma: összes.</h4>
+          <h3>Top panel</h3>
+          <h4>Number of dimensions: all, number of indicators: all.</h4>
 
           <p>
-            A jelentés tetején található panel a <em>fejpanel</em>. Nem törölhető, nem is lehet újat létrehozni
-            belőle. Célja kettős:
-          </p>
+            The panel at the top of the report is the <em>top panel</em>. Cannot be deleted.
+            It has dual purpose:</p>
           <ul>
-            <li>mutatja a dimenziók pillanatnyi lefúrási szintjét, illetve a mutatók adott szinten felvett értékét,</li>
-            <li>alapul szolgál a többi panel kijelzett dimenzióinak és értékeinek megváltoztatásához.</li>
+            <li>shows the current drilling level of the dimensions and the value of the indicators at that level,</li>
+            <li>serves as a basis for changing the displayed dimensions and indicators of other panels
+              as described in the <em>Panels</em> help entry.</li>
           </ul>
 
-          <p>
-            Más panel dimenziójának megváltoztatásához a fejpanel megfelelő dimenzióját kell egérrel megragadni, majd
-            a célpanel megfelelő részére ejteni.
-          </p>
-
-          <p>
-            Egy mutatóra kattintva az összes panel az adott mutató ábrázolására vált. Ha a mutatóra az <em>arányosított érték</em>
-            oszlopban kattintunk, akkor a panelek az arányosított értéket fogják mutatni, különben a mutató normál értékét.
-            Ha csak egy panel mutatóját akarjuk megváltoztatni, vagy egy panelhez újabb mutatót hozzáadni, azt a fejpanel
-            megfelelő mutatójának megragadásával, és a panel fejlécére, vagy megfelelő helyére ejtésével tehetjük.
-          </p>
-
           <p class="example">
-            Ha egy jelentés sok dimenziót vagy mutatót tartalmaz, előfordulhat, hogy a fejpanelbe nem fér bele az összes egyszerre.
-            Ekkor a dimenziók vagy mutatók táblázata mellett megjelenő görgetősávval tallózhatunk közöttük. Ha egy dimenzió
-            vagy mutató neve olyan hosszú, hogy nem fér el a rendelkezésre álló helyen (...-ra végződik), akkor az egérrel
-            rámutatva a kb. 1 másodperc múlva megjelenő buborékban megjelenik a pontos név.
+            If a report contains many dimensions or indicators, it may not fit all in the header at once.
+            In that case use the scrollbars to browse through them.
+            If the name of a dimension or indicator is too long (ends with ...), hovering the mouse over them
+            will show the exact name in a tool tip.
           </p>					
         </div>
 
         <div class="helpPieChartPanel">
           <h3>Pie chart</h3>
-          <h4>Dimenziók száma: 1, megjelenített mutatók száma: 1.</h4>
+          <h4>Number of dimensions: 1, number of indicators: 1.</h4>
 
+          <!--
           <p>
             A kördiagrammal tetszőleges mutatót, tetszőleges dimenzió szerint bontva ábrázolhatunk.
             A kördiagram cikkelyei az adott dimenzió elemeit jelképezik, méretük a mutató értékével arányos.
@@ -1140,36 +1119,37 @@
             található mértékegységre kattintással, vagy a fejpanelen a megfelelő mutató <em>arányosított érték</em>
             oszlopába katintással válthatunk (ekkor az összes panel vált).
           </p>
-
+          -->
           <div class="p">
-            Az éppen böngészett jelentésbe új kördiagram-panelt a fejlécen található <em>Új panel</em> menü
+            You can add a new pie chart to the report you are browsing using the            
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_pie" />
               </svg>
             </div>
-            gombjával vehetünk fel.
+            button in the <em>New Panel</em> menu.
           </div>
 
         </div>
 
         <div class="helpBarPanel">
           <h3>Bar chart</h3>
-          <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
+          <h4>Number of dimensions: 1, number of indicators: arbritrary.</h4>
 
           <p>
-            Oszlopdiagrammal 1 vagy több mutatót tetszőleges dimenzió szerinti bontásban ábrázolhatunk.
-            Az oszlopdiagram lehet <em>hagyományos</em> vagy <em>széthúzott</em>, amelyben minden oszlop azonos
-            magasságúra van széthúzva. A hagyományos oszlopdiagramhoz <em>vonaldiagramokat</em>
-            is hozzáadhatunk.
+            On a bar chart 1 or more indicators can be shown by an arbitrary dimension.
+            The chart can be either <em>conventional</em> or <em>stretched</em>, in which each column is stretched to
+            the same height. You can even add <em>line diagram elements</em> to a conventional bar graph.
           </p>
 
+          <!--
           <p class="example">
             Az egérmutatót egy oszlop fölé húzva megjelenik az oszlop által szemléltetett dimenzióelem
             neve, és a mutatók értékei. Ha az oszlopok olyan sűrűek, hogy a dimenzióelemek
             nevei nem férnének ki rá, a név így mindenképp megnézhető.
           </p>					
-
+        
+          
           <p>
             Egy dimenzióelemre való lefúrást a dimenzióelemhez tartozó oszlopra kattintással
             kezdeményezhetünk, felfúrást a panel hátterére kattintva.
@@ -1179,22 +1159,25 @@
             Az oszlopdiagram által bontott dimenziót a fejpanelen található dimenziók
             egyikének panelre dobásával változtathatjuk meg.
           </p>
+          -->
 
           <p>
+            <!--
             Ha a diagram csak egy mutatót ábrázol, akkor ennek lecserélését
             a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
             a kiválasztott mutatónak fejpanelről az oszlopdiagram fejlécére húzásával, vagy a diagram fejlécén a mutatóra
             kattintással végezhetjük.<br>
-            Több mutatót együttes ábrázolását csak a mutatónak a fejpanelről való áthúzásával kezdeményezhetjük. Ha az új mutatót a panel alsó felére
-            dobjuk, az oszlopdiagramként, ha a felsőre, akkor vonaldiagramként kerül az ábrára. Ha a mutatót
-            a panel fejlécére dobjuk, akkor csak ezt az egyetlen mutatót fogjuk látni.
-            Több mutató oszlopdiagramon való együttes ábrázolásakor a mutatók egymás fölé kerülnek,
-            azaz <em>halmozott oszlopdiagramként</em> jelennek meg. Ugyanaz a muatató több példányban
-            (pl. oszlopdiagramként és vonaldiagramként) egyszerre nem jeleníthető meg.<br>
-            Az <em>érték / arányosított érték</em> kijelzés között a fejlécen
-            található mértékegységre kattintással válthatunk.
+            -->
+
+            More than one indicator can only be shown by dragging and dropping an indicator from the top panel.
+            If you drop the indicator to the lower half of the panel it is shown as a bar graph,
+            if you drop it to the upper half it will be a line diagram.
+            If you drag and drop an indicator to the header of the panel, you will only see this single indicator.
+            When you add multiple indicators as bars to the chart, the values are superimposed, so they are displayed as
+            a <em>stacked bar graph</em>.
           </p>
 
+          <!--
           <p class="example">
             Ha az egyik megjelenítendő mutatóknak az értéke, más mutatónak pedig az arányosított értéke
             <em>nem értelmezett</em>, akkor a panel nem képes a kért mutatók együttes megjelenítésére.
@@ -1204,16 +1187,15 @@
             nagyságrendű (pl. millió forint és doboz gyógyszer), akkor az egyik mutató - mivel értéke
             nagyságrendekkel kisebb mint a másik - úgy tűnhet, mintha ott se lenne.
           </p>
-
+          -->
           <p>
-            Több mutató ábrázolásakor a panel alsó részén megjelenik a <em>jelkulcs</em>.
-            Egy jelkulcselemre katintással megjeleníthetjük/eltüntethetjük az adott mennyiség
-            átlagos értékét, <em>átlagvonalként</em> ábrázolva.
+            When showing more than one indicator, a legend on the bottom of the panel is displayed.
+            You can click on a legend entry to show/hide the average value of a given indicator
+            as an <em>average line</em>.
           </p>
 
           <div class="p">
-            Az éppen böngészett jelentésbe normális, illetve széthúzott oszlopdiagram-panelt
-            a fejlécen található <em>Új panel</em> menü
+            You can add a new bar chart to the report you are browsing using the
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_bar" />
@@ -1224,35 +1206,38 @@
               <use xlink:href="#icon_panel_bar_streched" />
               </svg>	
             </div>	
-            gombjaival vehetünk fel.					
+            buttons in the <em>New Panel</em> menu.
           </div>
 
+          <!--
           <p class="example">
             Széthúzott oszlopdiagramnak csak akkor van értelme, ha egyszerre több mutatót ábrázol.
             Széthúzott oszlopdiagramra nem tehetünk vonaldiagramként további mutatókat.
           </p>
+          -->
 
           <div class="p">
-            Olyan oszlopdiagrammot is használhatunk, amely mindig csak a 10 legnagyobb értéket mutatja. Ilyet az éppen böngészett jelentéshez az <em>Új panel</em> menü
+            You can create a bar chart that shows only the top 10 values with the            
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_top10_bar" />
               </svg>
             </div>
-            gombjával adhatunk hozzá.					
+            button in the <em>New Panel</em> menu.
           </div>                   
         </div>				
 
         <div class="helpLinePanel">
           <h3>Line chart</h3>
-          <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
+          <h4>Number of dimensions: 1, number of indicators: arbritrary.</h4>
 
           <p>
-            Vonaldiagrammal 1 vagy több mutatót tetszőleges dimenzió szerinti bontásban ábrázolhatunk.
-            A vonaldiagrammal egy értéket ábrázolhatunk hagyományosan törtvonallal, de tehetünk rá
-            <em>jelölőket</em> is. A vonaldiagramhoz <em>oszlopdiagramokat</em> is hozzáadhatunk.
+            On a line chart 1 or more indicator can be shown by an arbitrary dimension.
+            The line chart can be drawn as conventional broken line, but you can also use <em>markers</em> to
+            mark the actual data points. <em>Bar graphs</em> can also be added to the line diagram.
           </p>
 
+          <!--
           <p class="example">
             Az egérmutatót egy <em>jelölő</em>, vagy a vonal és egy dimenzióelem képzeletbeli metszéspontja
             fölé húzva megjelenik az oszlop által szemléltetett dimenzióelem
@@ -1294,16 +1279,22 @@
             nagyságrendű (pl. millió forint és doboz gyógyszer), akkor az egyik mutató - mivel értéke
             nagyságrendekkel kisebb mint a másik - úgy tűnhet, mintha ott se lenne.
           </p>
+          -->
+          <p>
+            You can control the line chart (chose a new dimension, add indicators, use the legend)
+            like it is explained in the <em>bar chart</em> entry.
+          </p>
 
+          <!--
           <p>
             Több mutató ábrázolásakor a panel alsó részén megjelenik a <em>jelkulcs</em>.
             Egy jelkulcselemre katintással megjeleníthetjük/eltüntethetjük az adott mennyiség
             átlagos értékét, <em>átlagvonalként</em> ábrázolva.
           </p>
+          -->
 
           <div class="p">
-            Az éppen böngészett jelentésbe normális, illetve jelölővel ellátott vonaldiagram-panelt
-            a fejlécen található <em>Új panel</em> menü
+            You can add a new line chart (without or with markers) to the report you are browsing using the
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_line" />
@@ -1314,34 +1305,34 @@
               <use xlink:href="#icon_panel_line_marker" />
               </svg>
             </div>	
-            gombbjaival vehetünk fel.					
+            buttons in the <em>New Panel</em> menu.
           </div>
 
           <div class="p">
-            Olyan vonaldiagrammot is használhatunk, amely mindig csak a 10 legnagyobb értéket mutatja. Ilyet az éppen böngészett jelentéshez az <em>Új panel</em> menü
+            To add a line chart that shows only the top 10 values use the 
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_top10_line" />
               </svg>
             </div>
-            gombjával adhatunk hozzá.					
+            button.					
           </div>              
         </div>
 
         <div class="helpMapPanel">
           <h3>Map chart</h3>
-          <h4>Dimenziók száma: 1 területi dimenzió, megjelenített mutatók száma: 1.</h4>
+          <h4>Number of dimensions: 1 territorial dimension, number of indicators: 1</h4>
 
           <p>
-            A térképpel egy tetszőleges mutatót területi dimenzió szerint bontva ábrázolhatunk.
-            A térképen a pillanatnyi lefúrási szintnek megfelelő terület látható, az ábrázolt mutató
-            értéke szerinti színárnyalattal színezve (területi kartogram).
-            A különböző színértékekhez tartozó érték a térkép alatti <em>jelkulcsról</em>
-            olvasható le. Az egeret egy terület fölé mozgatva a felbukkanó buborékban leolvasható a
-            mutató pontos értéke is.<br>
-            Ha a jelentés <em>POI-kat (érdekes helyszínek)</em> tartalmaz, ezek is megjeleníthetőek.
+            An arbitrary indicator can be displayed by a territorial dimension with the <em>map chart</em>.
+            The area corresponding to the current drilling level on the map is colored to show
+            the value of the displayed indicator. The value for the different color values can be read
+            from the <em>legend</em> below the map.
+            If the report contains <em>POIs (point of interests)</em>, you can switch them on and off
+            by clicking on the legend.            
           </p>
 
+          <!--
           <p>
             Egy területre való lefúrást a területre való kattintással 
             kezdeményezhetünk, felfúrást a panel hátterére kattintva.
@@ -1351,12 +1342,13 @@
             A térkép által ábrázolt dimenziót egy másik területi dimenzióra a fejpanelen található dimenziók
             egyikének panelre dobásával változtathatjuk meg.
           </p>
+          -->
 
           <p class="example">
-            Ha térképpanelre nem területi dimenzió dobunk - mivel annak megjelenítése a térképen nem lehetséges -
-            nem történik semmi változás.
-          </p>
+            If you drop a non territorial dimension to the map chart - as its display on the map is not possible - 
+            nothing happens.</p>
 
+          <!--
           <p>
             Más mutató ábrázolását a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
             a kiválasztott mutatónak a térképpanel fejlécére húzásával, vagy a térképpanel fejlécén a mutatóra
@@ -1370,9 +1362,10 @@
             Ha a jelentés <em>érdekes pontokat (POI-kat)</em> tartalmaz, a panel jobb alsó
             sarkában megjelenő <em>POI-jelkulccson</em> ki/be kapcsolható ezek megjelenése.<br>
           </p>
+          -->
 
           <div class="p">
-            Az éppen böngészett jelentésbe térképpanelt, illetve POI-val ellátott térképpanelt a fejlécen található <em>Új panel</em> menü
+            You can add a new map chart (without or with POIs) to the report you are browsing using the
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="50px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 32">
               <use xlink:href="#icon_panel_map" />
@@ -1383,34 +1376,36 @@
               <use xlink:href="#icon_panel_map_marker" />
               </svg>
             </div>
-            gombjával vehetünk fel.
+            buttons in the <em>New Panel</em> menu.
           </div>	
 
           <p class="example">
-            Ha a jelentésnek egyáltalán nincs területi dimenziója, akkor a az <em>Új menü</em> térképpanel
-            gombja inaktív.
+            If the report does not have a territorial dimension at all,
+            then the map button on the New panel menu is inactive.
           </p>
         </div>
 
         <div class="helpBar2Panel">
-          <h3>2D bar &amp; line chart</h3>
-          <h4>Dimenziók száma: 2, megjelenített mutatók száma: 1.</h4>
+          <h3>2-dimensional bar &amp; line chart</h3>
+          <h4>Number of dimensions: 2, number of indicators: 1</h4>
 
           <p>
-            A 2 dimenziós oszlopdiagram az egyik dimenzió értékeit különböző oszlopokkal, a másik
-            dimenzió értékeit az oszlopokon belüli megosztással szemlélteti. E második dimenzió értékei
-            a <em>jelkulcsról</em> olvashatóak le.<br>
-            A diagram lehet <em>hagyományos</em> vagy <em>széthúzott</em>, amelyben minden oszlop azonos
-            magasságúra van széthúzva.
+            The 2-dimensional bar chart shows the values of one dimension with different columns,
+            the values of the other dimension as different sections of the columns.
+            The values of this second dimension can be read from the <em>legend</em>.<br>
+            The chart can be either <em>conventional</em> or <em>stretched</em>, in which each column is stretched to
+            the same height.
           </p>
 
           <p class="example">
-            <img src="example1.png" alt="example" style="width: 25%">
-            A példán egy mutató évenkénti megoszlását különböző oszlopok, területi megoszlását oszlopokon belüli színek
-            szemléltetik. A mutató adott (év,&nbsp;hely) páron felvett értéke
-            az oszlopelem magasságával arányos.
+            <img src="example1.png" alt="example" style="width: 25%">            
+            In the example you can see an indicator's annual distribution as different columns,
+            the territorial distribution as sections within the columns.
+            The value of the indicator in a given (year,&nbsp;position) pair is proportional
+            to the height of the column element.
           </p>				
 
+          <!--
           <p class="example">
             Az egérmutatót egy oszlop fölé húzva megjelenik az oszlop által szemléltetett dimenzióelem
             neve, és a mutatók értékei. Ha az oszlopok olyan sűrűek, hogy a dimenzióelemek
@@ -1419,21 +1414,23 @@
             Ha a jelkulcs olyan sűrű, hogy a dimenzióelemek nevei nem láthatóak, akkor így nézhetjük meg
             őket.
           </p>		
-
+          -->
+          
           <p>
-            Az oszlopokon ábrázolt dimenzió egy elemére való lefúrást az oszlopra való kattintással
-            kezdeményezhetünk, felfúrást a panel hátterének a vízszintes tengely fölötti részére kattintva.<br>
-            A jelkulcson ábrázolt dimenzióban való lefúrást a jelkulcs egyik elemére
-            kattintással, felfúrást a panel hátterének vízszintes tengely alatti részére kattintással végezhetünk.
+            A drill-down in the column-dimension can be started by clicking on the column, a drill-up by
+            clicking on the panel's background over the horizontal axis.
+            Drilling in the other dimension is done by clicking on one of the elements of the legend,
+            or on the panel's background underneath the horizontal axis.
           </p>
 
           <p>
-            A diagram által bontott dimenziót a fejpanelen található dimenziók
-            egyikének panelre dobásával változtathatjuk meg. Ha a dimenziót a vízszintes tengely fölötti részre
-            ejtjük, akkor az oszlopokkal ábrázolt dimenzió változik meg, ha a vízszintes tengely alá ejtünk,
-            akkor a jelkulcsé.
+            You can change a dimension of the 2-dimensional chart by dropping an of the dimensions from
+            the top panel to the panel. If the dimension is dropped above the horizontal axis
+            the dimension represented by the columns will change, if it is dropped below the horizontal axis
+            the legend's dimension will change.
           </p>
 
+          <!--
           <p>
             Más mutató ábrázolását a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
             a kiválasztott mutatónak a diagram fejlécére húzásával, vagy a diagram fejlécén a mutatóra
@@ -1442,10 +1439,10 @@
             található mértékegységre kattintással, vagy a fejpanelen a megfelelő mutató <em>arányosított érték</em>
             oszlopába katintással válthatunk (ekkor az összes panel vált).
           </p>
+          -->
 
           <div class="p">
-            Az éppen böngészett jelentésbe normális, illetve széthúzott 2 dimenziós oszlopdiagram-panelt
-            a fejlécen található <em>Új panel</em> menü
+            You can add a new 2-dimensional bar chart (normal or stretched) to the report you are browsing using the            
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_2d_bar" />
@@ -1455,25 +1452,24 @@
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_2d_bar_streched" />
               </svg>
-            </div> gombjaival vehetünk fel.					
+            </div>
+            buttons in the <em>New Panel</em> menu.
           </div>
 
           <br />
 
           <p>
-            A 2 dimenziós vonaldiagram logikáját és kezelését tekintve ugyanolyan, mint a 2 dimenziós oszlopdiagram,
-            ám az értékek nem halmozati oszlopként, hanem különálló vonaldiagramként kerülnek ábrázolásra.
+            The 2-dimensional line chart is similar to the 2-dimensional bar chart, but the values
+            broken by the legend's dimension are not shown as stacked columns but as separate lines.
           </p>
 
           <p class="example">
             <img src="example2.png" alt="example" style="width: 25%">
-            A példán egy mutató évenkénti megoszlását ábrázoltuk, területenként különböző színű vonaldiagramként.
-            A mutató adott (év,&nbsp;hely) páron felvett értéke a helyhez tartozó vonaldiagram adott év feletti értéke.
+            This example shows the same data as the previous, but on a 2-dimensional line chart.
           </p>				
 
           <div class="p">
-            Az éppen böngészett jelentésbe normális, illetve jelölővel ellátott 2 dimenziós vonaldiagram-panelt
-            a fejlécen található <em>Új panel</em> menü
+            You can add a new 2-dimensional line chart (without or with markers) to the report you are browsing using the
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_2d_line" />
@@ -1483,26 +1479,24 @@
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_2d_line_marker" />
               </svg>
-            </div> gombjaival vehetünk fel.					
+            </div>
+            buttons in the <em>New Panel</em> menu.
           </div>
-
-
 
         </div>
 
         <div class="helpHorizontalBarPanel">
           <h3>Horizontal bar chart</h3>
-          <h4>Dimenziók száma: 1, megjelenített mutatók száma: tetszőleges.</h4>
+          <h4>Number of dimensions: 1, number of indicators: arbritrary.</h4>
 
           <p>
-            Vízszintes olszopdiagrammal - hasonlóan az oszlopdiagramhoz - 1 vagy több mutatót ábrázolhatunk, tetszőleges
-            dimenzió szerinti bontásban.
-            Azonban, ellentétben az oszlopdiagrammal, itt lehetőség van bizonyos mutatókat pozitív, bizonyosakat negatív
-            irányban ábrázolni.
-            A vízszintes oszlopdiagram lehet <em>hagyományos</em> vagy <em>centrált</em>, amelyben a diagram pozitív
-            és negatív része azonos szélességű.
+            The horizontal bar chart is similar to the vertical bar chart, however, in contrast,
+            you can show certain indicators as positive, some as negative ones.
+            A horizontal bar graph can be either <em>conventional</em> or <em>centered</em>,
+            with the positive and negative parts of the diagram being of the same width.
           </p>
 
+          <!--
           <p class="example">
             Az egérmutatót egy oszlop fölé húzva megjelenik az oszlop által szemléltetett dimenzióelem
             neve, és a mutatók értékei. Ha az oszlopok olyan sűrűek, hogy a dimenzióelemek
@@ -1519,23 +1513,16 @@
             egyikének panelre dobásával változtathatjuk meg.
           </p>
 
+          -->
           <p>
-            Ha a diagram csak egy mutatót ábrázol, akkor ennek lecserélését
-            a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
-            a kiválasztott mutatónak fejpanelről az oszlopdiagram fejlécére húzásával, vagy a diagram fejlécén a mutatóra
-            kattintással végezhetjük.<br>
-            Több mutatót együttes ábrázolását csak a mutatónak a fejpanelről való áthúzásával kezdeményezhetjük.
-            Ha az új mutatót a függőleges tengelytől balra, akkor negatív, ha jobbra, akkor pozitív irányban
-            kerül ábrázolásra.
-            Ha a mutatót
-            a panel fejlécére dobjuk, akkor csak ezt az egyetlen mutatót fogjuk látni.
-            Több mutató oszlopdiagramon való együttes ábrázolásakor a mutatók egymás mellé kerülnek,
-            azaz <em>halmozott oszlopdiagramként</em> jelennek meg. Ugyanaz a muatató több példányban
-            (pl. pozitív és negatív irányban) egyszerre nem jeleníthető meg.<br>
-            Az <em>érték / arányosított érték</em> kijelzés között a fejlécen
-            található mértékegységre kattintással válthatunk.
+            Dropping an indicator from the top panel to the left of the vertical axis shows
+            the values in the negative, dropping it to the right of the vertical axis
+            shows it in the positive direction.
+            An indicator can not be displayed multiple times (e.g. in positive and negative
+            directions) at the same time.
           </p>
 
+          <!--
           <p class="example">
             Ha az egyik megjelenítendő mutatóknak az értéke, más mutatónak pedig az arányosított értéke
             <em>nem értelmezett</em>, akkor a panel nem képes a kért mutatók együttes megjelenítésére.
@@ -1545,14 +1532,14 @@
             nagyságrendű (pl. millió forint és doboz gyógyszer), akkor az egyik mutató - mivel értéke
             nagyságrendekkel kisebb mint a másik - úgy tűnhet, mintha ott se lenne.
           </p>
+          -->
 
           <p>
-            Több mutató ábrázolásakor a panel alsó részén megjelenik a <em>jelkulcs</em>.
-          </p>
+            When showing more than one indicator, a <em>legend</em> on the bottom of the panel appears.
+          </p>          
 
           <div class="p">
-            Az éppen böngészett jelentésbe új hagyományos, illetve centrált vízszintes oszlopdiagram-panelt
-            a fejlécen található <em>Új panel</em> menü
+            You can add a new horizontal bar chart (normal or centered) to the report you are browsing using the
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_horizontalbar" />
@@ -1562,41 +1549,42 @@
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_horizontalbar_centered" />
               </svg>								
-            </div> gombjaival vehetünk fel.					
+            </div>
+            buttons in the <em>New Panel</em> menu.		
           </div>
         </div>
 
         <div class="help_Panel_Table">
-          <h3>1 or 2 dimensions table</h3>
-          <h4>Dimenziók száma: 1 vagy 2, megjelenített mutatók száma: összes vagy 1.</h4>
+          <h3>1 or 2 dimensional table</h3>
+          <h4>Number of dimensions: 1 or 2, number of indicators: all or 1.</h4>
 
           <p>
-            Az 1 dimenziós táblázattal egyszerre az összes mutatót vizsgálhatjuk tetszőleges
-            dimenzió szerinti bontásban. Ekkor a táblázat sorai a felbontott dimenzió elemeit
-            tartalmazzák, az oszlopok pedig a mutatókat.<br>
-            2 dimenziós táblázattal csak egy mutatót vizsgálhatunk, de két dimenzió szerint
-            bontva. A két dimenzió egyike a sorokban, a másik az oszlopokban szerepel.
+            You can see all indicators at once with the 1-dimensional table
+            broken by an arbitrary dimension. In this panel the rows of the table
+            contain the elements of the opened dimension, and the columns show the indicators.<br>
+            A 2-dimensional table can only show one indicator, but broken down into two dimensions.
+            One of the two dimensions is in the rows, the other is in the columns.
           </p>
 
+          <!--
           <p class="example">
             Az egérmutatóval a táblázatok sor- vagy oszlop-fejlécére, illetve valamely
             cellára mutatva a megjelenik a dimenzióelem vagy mutató neve, illetve a mutató értéke.
           </p>
-
+          -->
+          
           <p>
-            Egy dimenzióelemre való lefúrást a dimenzióelemhez tartozó sor- vagy oszlop-fejlécre
-            kattintással kezdeményezhetünk, felfúrást a panel hátterére kattintva. A 2 dimenziós
-            táblázatban a sorokat alkotó dimenzióban való felfúrást a panel hátterének sor-fejléceket
-            tartalmazó bal oldali részére, az oszlop-dimenzióban felfúrást a maradék részére kattintás
-            indít.
+            A drill-down can be started by clicking on the row or column header for the
+            dimension element, a drill-up by clicking un the panel background near it.
           </p>
 
           <p>
-            A táblázat által bontott dimenziót a fejpanelen található dimenziók
-            egyikének panelre dobásával változtathatjuk meg. A 2 dimenziós táblázatban a felfúráshoz
-            hasonlóan a megfelelő részre dobás cseréli le a sorok, illetve oszlopok dimenzióját.
+            You can change the dimension of a table
+            by dragging and dropping a dimension from the top panel. In the 2-dimensional table,
+            you can replace one dimension or another by dropping the dimension into the right place.
           </p>
 
+          <!--
           <p>
             Az 1 dimenziós táblázat automatikusan tartalmazza az összes mutatót.
             A 2 dimenziós esetben más mutató ábrázolását a fejpanelen található mutatóra kattintással (ekkor az összes panel erre a mutatóra vált),
@@ -1610,11 +1598,11 @@
           <p class="example">
             Ha a táblázatban az oszlopok vagy sorok nem férnének ki a panelre, alul, illetve a jobb oldalon
             gördítősávok jelennek meg.
-          </p>					
+          </p>
+          -->
 
           <div class="p">
-            Az éppen böngészett jelentésbe 1 vagy 2 dimenziós táblázatot
-            a fejlécen található <em>Új panel</em> menü
+            You can add a new 1- or 2-dimensional table to the report you are browsing using the
             <div class="inlineSvgHolder">
               <svg version="1.1" x="0px" y="0px" width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
               <use xlink:href="#icon_panel_table_1d" />
@@ -1625,15 +1613,18 @@
               <use xlink:href="#icon_panel_table_2d" />
               </svg>	
             </div>
-            gombjaival vehetünk fel.	
+            buttons in the <em>New Panel</em> menu.
           </div>
 
         </div>
 
         <div class="helpAbout">
           <h3>About</h3>          
-          <div>
-            <em>Later...</em>
+          <div>              
+            <em>Agnos</em> is an easy to use data visualization tool written by
+            Zsolt Parisek (parisek@gmail.com) and Zoltán Ruzsa (ruzsaz@gmail.com).
+            Please feel free to contact them if you require any further information.
+            
           </div>
 
           <h3><br />Changelog</h3>

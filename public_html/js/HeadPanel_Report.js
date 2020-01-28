@@ -113,7 +113,7 @@ function HeadPanel_Report(init, reportMeta, startScale) {
 
     var newDimRow = dimRow.enter().append("html:div")
             .attr("class", "row alterColored")
-            .attr("parity", function(d, i) {
+            .attr("parity", function (d, i) {
                 return i % 2;
             });
 
@@ -163,7 +163,7 @@ function HeadPanel_Report(init, reportMeta, startScale) {
     {
         tempRowCell = newValRow.append("html:div")
                 .attr("class", "cell hoverable listener dragable")
-                .on("click", function(d) {
+                .on("click", function (d) {
                     that.mediator.publish("changeValue", undefined, d.id, false);
                 });
 
@@ -181,7 +181,7 @@ function HeadPanel_Report(init, reportMeta, startScale) {
     {
         tempRowCell = newValRow.append("html:div")
                 .attr("class", "cell hoverable listener dragable")
-                .on("click", function(d) {
+                .on("click", function (d) {
                     that.mediator.publish("changeValue", undefined, d.id, false);
                 });
 
@@ -199,7 +199,7 @@ function HeadPanel_Report(init, reportMeta, startScale) {
     {
         tempRowCell = newValRow.append("html:div")
                 .attr("class", "cell hoverable listener dragable")
-                .on("click", function(d) {
+                .on("click", function (d) {
                     that.mediator.publish("changeValue", undefined, d.id, true);
                 });
 
@@ -217,9 +217,6 @@ function HeadPanel_Report(init, reportMeta, startScale) {
     {
         newValRow.append("html:div")
                 .attr("class", "cell backgroundCell")
-                .style("background", function(d, i) {
-                    return global.colorValue(i);
-                });
     }
 
     that.initPanel(trans);
@@ -250,14 +247,14 @@ function HeadPanel_Report(init, reportMeta, startScale) {
  * @param {Integer} i Az adat sorszáma.
  * @returns {String} A megjelenítendő felirat.
  */
-HeadPanel_Report.prototype.valToShow = function(data, valueMeta, i) {
+HeadPanel_Report.prototype.valToShow = function (data, valueMeta, i) {
     var val = "";
     if (data !== undefined && data.rows[0] !== undefined && data.rows[0].vals[i] !== undefined) {
         val = (valueMeta.hide) ? _("nem értelmezett") : global.cleverRound3(data.rows[0].vals[i].sz) + " " + ((data.rows[0].vals[i].sz === 1) ? valueMeta.unit : valueMeta.unitPlural);
     } else {
         val = "??? " + valueMeta.unitPlurar;
     }
-    return val;    
+    return val;
 };
 
 /**
@@ -268,7 +265,7 @@ HeadPanel_Report.prototype.valToShow = function(data, valueMeta, i) {
  * @param {Integer} i Az adat sorszáma.
  * @returns {String} A megjelenítendő felirat.
  */
-HeadPanel_Report.prototype.ratioToShow = function(data, ratioMeta, i) {
+HeadPanel_Report.prototype.ratioToShow = function (data, ratioMeta, i) {
     var val = "";
     if (data !== undefined && data.rows[0] !== undefined && data.rows[0].vals[i] !== undefined) {
         val = (ratioMeta.hide) ? _("nem értelmezett") : (data.rows[0].vals[i].n === 0) ? _("0 a nevező") : global.cleverRound3(ratioMeta.multiplier * data.rows[0].vals[i].sz / data.rows[0].vals[i].n) + " " + ((ratioMeta.multiplier * data.rows[0].vals[i].sz / data.rows[0].vals[i].n === 1) ? ratioMeta.unit : ratioMeta.unitPlural);
@@ -284,19 +281,19 @@ HeadPanel_Report.prototype.ratioToShow = function(data, ratioMeta, i) {
 
 /**
  * Feltölti a panelt a supermetában megkapott dinamikus tartalommal.
- * Nyelvváltás esetén elég ezt lefuttatni.
+ * Nyelvváltás vagy színváltás esetén elég ezt lefuttatni.
  * 
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog. Ha undefined, csinál magának.
  * @returns {undefined}
  */
-HeadPanel_Report.prototype.initPanel = function(trans) {
+HeadPanel_Report.prototype.initPanel = function (trans) {
     var that = this;
     that.localMeta = global.facts[that.panelSide].getLocalMeta();
     trans = trans || d3.transition().duration(global.selfDuration);
-    
+
     // A fejléc-szöveg frissítése
     that.divTableBase.select(".mainTitle text")
-            .style("opacity", function(d) {
+            .style("opacity", function (d) {
                 return (that.localMeta.description === d3.select(this).text()) ? 1 : 0;
             })
             .text(that.localMeta.description)
@@ -305,23 +302,23 @@ HeadPanel_Report.prototype.initPanel = function(trans) {
 
     // Dimenziókat tartalmazó sorokhoz az adatok társítása.
     var dimRow = that.dimTable.selectAll(".row").data(that.localMeta.dimensions);
-        
+
     // Updateljük a dobóréteghez tartozó feliratot.
     dimRow.select(".dragable");
-        
+
     // Első dimenzió cella: a dimenzió neve.
     dimRow.select(".tableText0:not(.spacer)")
-            .style("opacity", function(d) {
+            .style("opacity", function (d) {
                 return (d.caption === d3.select(this).text()) ? 1 : 0;
-            })                    
-            .text(function(d) {
+            })
+            .text(function (d) {
                 return d.caption;
             })
             .transition(trans)
             .style("opacity", 1);
 
     dimRow.select(".tableText0.spacer")
-            .text(function(d) {
+            .text(function (d) {
                 return d.caption;
             });
 
@@ -335,31 +332,38 @@ HeadPanel_Report.prototype.initPanel = function(trans) {
 
     // Első cella: a mutató neve.
     valRow.select(".tableText0:not(.spacer)")
-            .style("opacity", function(d) {
+            .style("opacity", function (d) {
                 return (d.caption === d3.select(this).text()) ? 1 : 0;
             })
-            .text(function(d) {
+            .text(function (d) {
                 return d.caption;
             })
             .transition(trans)
             .style("opacity", 1);
 
     valRow.select(".tableText0.spacer")
-            .text(function(d) {
+            .text(function (d) {
                 return d.caption;
             });
 
     // Második cella: a mutató abszolút értéke, helykitöltés.
     valRow.select(".tableText1.spacer")
-            .text(function(d) {
+            .text(function (d) {
                 return (d.value.hide) ? _("nem értelmezett") : _("99.9Mrd ") + _(d.value.unitPlural);
             });
 
     // Harmadik cella: a mutató arányosított értéke.
     valRow.select(".tableText2.spacer")
-            .text(function(d) {
+            .text(function (d) {
                 return (d.fraction.hide) ? _("nem értelmezett") : _("99.9Mrd ") + _(d.fraction.unitPlural);
             });
+
+    // Háttérszín.
+    valRow.select(".backgroundCell")
+            .style("background", function (d, i) {
+                return global.colorValue(i);
+            });
+
 };
 
 /**
@@ -368,7 +372,7 @@ HeadPanel_Report.prototype.initPanel = function(trans) {
  * @param {Object} drill A lefúrást leíró objektum: {dim: a fúrás dimenziója, direction: iránya (+1 fel, -1 le), fromId: az előzőleg kijelzett elem azonosítója, toId: az új elem azonosítója}
  * @returns {undefined}
  */
-HeadPanel_Report.prototype.preUpdate = function(drill) {
+HeadPanel_Report.prototype.preUpdate = function (drill) {
 
     // A lefúrás dimenziójának eltörlése.
     this.dimTable.selectAll(".row:nth-child(" + (drill.dim + 2) + ")").select(".tableText1")
@@ -387,7 +391,7 @@ HeadPanel_Report.prototype.preUpdate = function(drill) {
  * @param {Object} data Az új adatsort tartalmazó objektum.
  * @returns {Object} A megjelenítendő adatok.
  */
-HeadPanel_Report.prototype.prepareData = function(data) {
+HeadPanel_Report.prototype.prepareData = function (data) {
     var that = this;
     var dimData = [];
     var valData = [];
@@ -402,7 +406,7 @@ HeadPanel_Report.prototype.prepareData = function(data) {
 
     // Tooltip hozzáadása a dimenzió tábla soraihoz.
     that.dimTable.selectAll(".row").data(dimData)
-            .attr("tooltip", function(d, i) {
+            .attr("tooltip", function (d, i) {
                 return "<html><h4>" + that.localMeta.dimensions[i].description + ": <em>" + d.text + "</em></h4></html>";
             });
 
@@ -417,7 +421,7 @@ HeadPanel_Report.prototype.prepareData = function(data) {
 
     // Tooltip hozzáadása az érték tábla soraihoz.
     that.valTable.selectAll(".row").data(valData)
-            .attr("tooltip", function(d, i) {
+            .attr("tooltip", function (d, i) {
                 return "<html><h4>" + that.localMeta.indicators[i].description + "</h4></html>";
             });
 
@@ -430,7 +434,7 @@ HeadPanel_Report.prototype.prepareData = function(data) {
  * @param {Object} data Az új adat.
  * @returns {undefined}
  */
-HeadPanel_Report.prototype.update = function(data) {
+HeadPanel_Report.prototype.update = function (data) {
     var that = this;
     var preparedData = that.prepareData(data);
     var trans = d3.transition().duration(global.selfDuration);
@@ -439,19 +443,19 @@ HeadPanel_Report.prototype.update = function(data) {
     var dimRow = that.dimTable.selectAll(".row").data(preparedData.dimData);
 
     dimRow.select(".tableText1:not(.spacer)")
-            .style("opacity", function(d) {
+            .style("opacity", function (d) {
                 return (d.text === d3.select(this).text()) ? 1 : 0;
             })
-            .text(function(d) {
+            .text(function (d) {
                 return d.text;
             }).transition(trans)
             .style("opacity", 1);
 
     dimRow.select(".tableText1.spacer")
-            .style("opacity", function(d) {
+            .style("opacity", function (d) {
                 return (d.text === d3.select(this).text()) ? 1 : 0;
             })
-            .text(function(d) {
+            .text(function (d) {
                 return d.text;
             });
 
@@ -460,25 +464,25 @@ HeadPanel_Report.prototype.update = function(data) {
             .data(preparedData.valData);
 
     valRow.select(".tableText1:not(.spacer)")
-            .style("opacity", function(d) {
+            .style("opacity", function (d) {
                 return (d.value === d3.select(this).text()) ? 1 : 0;
             })
-            .text(function(d) {
+            .text(function (d) {
                 return d.value;
             }).transition(trans)
             .style("opacity", 1);
 
     valRow.select(".tableText2:not(.spacer)")
-            .style("opacity", function(d) {
+            .style("opacity", function (d) {
                 return (d.ratio === d3.select(this).text()) ? 1 : 0;
             })
-            .text(function(d) {
+            .text(function (d) {
                 return d.ratio;
             }).transition(trans)
             .style("opacity", 1);
 
 };
 
-HeadPanel_Report.prototype.refresh = function() {
+HeadPanel_Report.prototype.refresh = function () {
 
 };

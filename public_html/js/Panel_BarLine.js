@@ -1,4 +1,4 @@
-/* global Panel, d3 */
+/* global Panel, d3, global */
 
 'use strict';
 
@@ -1451,6 +1451,9 @@ panel_barline.prototype.drawLegend = function() {
  */
 panel_barline.prototype.drawAxes = function(preparedData, trans) {
     var that = this;
+    
+    that.xAxisColor = global.readableColor(global.colorValue(0));
+    console.log(global.colorValue(0), global.readableColor(global.colorValue(0)), that.xAxisColor)
 
     var shadowSize = global.axisTextSize(that.xScale(1));	// A vízszintes tengely betűje mögötti klikk-téglalap mérete.
     var axisTextSize = (shadowSize < 6) ? 0 : shadowSize;	// A vízszintes tengely betűmérete.
@@ -1494,8 +1497,7 @@ panel_barline.prototype.drawAxes = function(preparedData, trans) {
             .attr("x", -that.height + 0.26 * axisTextSize)
             .attr("y", function(d) {
                 return d.oldX + d.oldWidth / 2 + 0.35 * axisTextSize;
-            })
-            .attr("fill", that.xAxisColor)
+            })            
             .attr("text-anchor", "beginning")
             .text(function(d) {
                 return d.name;
@@ -1505,8 +1507,10 @@ panel_barline.prototype.drawAxes = function(preparedData, trans) {
     axisLabelX = axisLabelXNew.merge(axisLabelX);
 
     // Maradó feliratok helyre animálása.
-    axisLabelX.transition(trans)
-            .attr("font-size", axisTextSize)
+    axisLabelX
+            .attr("fill", that.xAxisColor)
+            .transition(trans)
+            .attr("font-size", axisTextSize)            
             .attr("x", -that.height + 0.26 * axisTextSize)
             .attr("y", function(d) {
                 return d.x + d.width / 2 + 0.35 * axisTextSize;

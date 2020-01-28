@@ -1,4 +1,4 @@
-/* global Panel, d3 */
+/* global Panel, d3, global */
 
 'use strict';
 
@@ -43,13 +43,13 @@ function panel_table1d(init) {
     // Alapréteg.
     that.svg.insert("svg:g", ".title_group")
             .attr("class", "background listener droptarget droptarget0")
-            .on('mouseover', function() {
+            .on('mouseover', function () {
                 that.hoverOn(this);
             })
-            .on('mouseout', function() {
+            .on('mouseout', function () {
                 that.hoverOff();
             })
-            .on("click", function() {
+            .on("click", function () {
                 that.drill();
             })
             .append("svg:rect")
@@ -91,7 +91,7 @@ function panel_table1d(init) {
      * @param {Number} top A scrollbar kezdőpontja pixelben.
      * @returns {undefined}
      */
-    var verticalScrollFunction = function(top) {
+    var verticalScrollFunction = function (top) {
         var currentExtent = that.gTable.attr("viewBox").split(" ");
         that.gRowHeads.attr("viewBox", "0 " + top + " " + that.tableHeadWidth + " " + that.tableHeight);
         that.gTable.attr("viewBox", currentExtent[0] + " " + top + " " + that.tableWidth + " " + that.tableHeight);
@@ -103,15 +103,15 @@ function panel_table1d(init) {
      * @param {Number} left A scrollbar kezdőpontja pixelben.
      * @returns {undefined}
      */
-    var horizontalScrollFunction = function(left) {
+    var horizontalScrollFunction = function (left) {
         var currentExtent = that.gTable.attr("viewBox").split(" ");
         that.gColumnHeads.attr("viewBox", left + " 0 " + that.tableWidth + " " + that.tableHeadHeight);
         that.gTable.attr("viewBox", left + " " + currentExtent[1] + " " + that.tableWidth + " " + that.tableHeight);
     };
-    
+
     // Nyelv-beállítás meghívása. Ez kialakítja az oszlopfejléceket, és a titleBoxot. Frissíti az oszlopadatokat.
     that.langSwitch(global.getAnimDuration(-1, that.panelId), true);
-    
+
     // Vízszintes scrollbar elhelyezése.
     this.horizontalScrollbar = new SVGScrollbar(that.svg, true, that.tableWidth, horizontalScrollFunction, that.tableSpacingHorizontal);
     that.horizontalScrollbar.setPosition(that.tableHeadWidth + that.tableLeftMargin + that.tableElementGap, that.h - that.tableBottomMargin - that.innerScrollbarWidth + that.tableElementGap);
@@ -122,7 +122,7 @@ function panel_table1d(init) {
     that.verticalScrollbar.setPosition(that.w - that.tableLeftMargin - that.innerScrollbarWidth + that.tableElementGap, that.tableHeadHeight + that.tableTopMargin + that.tableElementGap);
 
     // Feliratkozás a dimenzióváltó mediátorra.
-    var med = that.mediator.subscribe("changeDimension", function(panelId, newDimId, dimToChange) {
+    var med = that.mediator.subscribe("changeDimension", function (panelId, newDimId, dimToChange) {
         that.doChangeDimension(panelId, newDimId, dimToChange);
     });
     that.mediatorIds.push({"channel": "changeDimension", "id": med.id});
@@ -160,7 +160,7 @@ function panel_table1d(init) {
  * @param {Object} d Nyers adatsor.
  * @returns {Array} Az értékek tömbje.
  */
-panel_table1d.prototype.valuesToShow = function(d) {
+panel_table1d.prototype.valuesToShow = function (d) {
     var that = this;
     var vals = [];
     if (d !== undefined && d.vals !== undefined) {
@@ -219,7 +219,7 @@ panel_table1d.prototype.valuesToShow = function(d) {
  * @param {Object} drill A lefúrást leíró objektum: {dim: a fúrás dimenziója, direction: iránya (+1 fel, -1 le), fromId: az előzőleg kijelzett elem azonosítója, toId: az új elem azonosítója}
  * @returns {undefined}
  */
-panel_table1d.prototype.preUpdate = function(drill) {
+panel_table1d.prototype.preUpdate = function (drill) {
     var that = this;
 
     // Ha az X dimenzió mentén történik valami.
@@ -230,14 +230,14 @@ panel_table1d.prototype.preUpdate = function(drill) {
 
             // Sorfejek: nem kellőek törlése.
             that.gRowHeads.selectAll(".svgRowHead")
-                    .filter(function(d) {
+                    .filter(function (d) {
                         return (d.id !== drill.toId);
                     })
                     .remove();
 
             // Táblázatsorok: nem kellőek törlése.
             that.gTable.selectAll(".svgTableRow")
-                    .filter(function(d) {
+                    .filter(function (d) {
                         return (d.id !== drill.toId);
                     })
                     .remove();
@@ -263,7 +263,7 @@ panel_table1d.prototype.preUpdate = function(drill) {
  * @param {Object} drill Az épp végrehajtandó fúrás.
  * @returns {Array} Az új megjelenítendő adatok.
  */
-panel_table1d.prototype.prepareData = function(oldPreparedData, newDataRows, drill) {
+panel_table1d.prototype.prepareData = function (oldPreparedData, newDataRows, drill) {
     var that = this;
     var level = (global.baseLevels[that.panelSide])[that.dimToShow].length;
 
@@ -318,7 +318,7 @@ panel_table1d.prototype.prepareData = function(oldPreparedData, newDataRows, dri
  * @param {Object} drill Az épp végrehajzásra kerülő fúrás.
  * @returns {undefined}
  */
-panel_table1d.prototype.update = function(data, drill) {
+panel_table1d.prototype.update = function (data, drill) {
     var that = this;
     that.data = data || that.data;
     drill = drill || {dim: -1, direction: 0};
@@ -352,12 +352,31 @@ panel_table1d.prototype.update = function(data, drill) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_table1d.prototype.drawCells = function(preparedData, trans) {
+panel_table1d.prototype.drawCells = function (preparedData, trans) {
     var that = this;
+
+    // A színek kitalálása
+    that.columnColorIndex = [];
+    for (var i = 0, iMax = that.meta.indicators.length; i < iMax; i++) {
+        var ind = that.meta.indicators[i];
+        that.columnHeadVector.push({
+            hide: ((ind.value.hide) ? 1 : 0) + ((ind.fraction.hide) ? 2 : 0),
+            tooltip: that.createTooltip(
+                    [{name: that.localMeta.indicators[i].description}], [])
+        });
+        if (that.columnHeadVector[i].hide !== 3) {
+            if (that.columnHeadVector[i].hide % 2 === 0) {
+                that.columnColorIndex.push(d3.rgb(global.colorValue(i)).brighter(that.darkenBrightenFactor));
+            }
+            if (that.columnHeadVector[i].hide >> 1 === 0) {
+                that.columnColorIndex.push(d3.rgb(global.colorValue(i)).darker(that.darkenBrightenFactor));
+            }
+        }
+    }
 
     // A sorok adathoz társítása. Kulcs: a táblázatsor dimenziója.
     var row = that.gTable.selectAll(".svgTableRow")
-            .data(preparedData, function(d) {
+            .data(preparedData, function (d) {
                 return d.name;
             });
 
@@ -367,24 +386,24 @@ panel_table1d.prototype.drawCells = function(preparedData, trans) {
     // A belépő sorok tartója, egyesítés a maradókkal.
     row = row.enter().append("svg:g")
             .attr("class", "svgTableRow")
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(0," + (d.oldRowIndex * that.tableSpacingVerical) + ")";
             })
-            .attr("opacity", function(d) {
+            .attr("opacity", function (d) {
                 return d.startOpacity;
             })
             .merge(row);
 
     // A sor helyremozgási animációja.
     row.transition(trans)
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(0, " + d.index * that.tableSpacingVerical + ")";
             })
             .attr("opacity", 1);
 
     // Cellákhoz való adattársítás.
     var cell = row.selectAll(".svgTableCell")
-            .data(function(d) {
+            .data(function (d) {
                 return d.values;
             });
 
@@ -394,7 +413,7 @@ panel_table1d.prototype.drawCells = function(preparedData, trans) {
     // Új cella tartójának elkészítése.
     var newCell = cell.enter().append("svg:g")
             .attr("class", "svgTableCell showValue")
-            .attr("transform", function(d, i) {
+            .attr("transform", function (d, i) {
                 return "translate(" + (i * that.tableSpacingHorizontal) + ",0)";
             });
 
@@ -415,16 +434,16 @@ panel_table1d.prototype.drawCells = function(preparedData, trans) {
 
     // Cellák váltakozó háttérszínének beállítása.
     cell.select("rect")
-            .attr("fill", function(d, i, j) {
+            .attr("fill", function (d, i, j) {
                 return (j % 2 === 0) ? that.columnColorIndex[i].brighter(that.darkenBrightenFactor) : that.columnColorIndex[i].darker(that.darkenBrightenFactor);
             });
 
     // A cellák szövegének beállítása, és megjelnési animációja.
     cell.select("text")
-            .attr("opacity", function(d) {
+            .attr("opacity", function (d) {
                 return (global.cleverRound5(d.value) === d3.select(this).text()) ? 1 : 0;
             })
-            .text(function(d) {
+            .text(function (d) {
                 return global.cleverRound5(d.value);
             })
             .transition(trans)
@@ -437,7 +456,7 @@ panel_table1d.prototype.drawCells = function(preparedData, trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_table1d.prototype.drawColumnHeaders = function(trans) {
+panel_table1d.prototype.drawColumnHeaders = function (trans) {
     var that = this;
 
     // Feliratok az oszlopok elején.
@@ -447,7 +466,7 @@ panel_table1d.prototype.drawColumnHeaders = function(trans) {
     // Belépő oszlopfejkonténerek elhelyezése.
     var newGColumnHead = gColumnHead.enter().append("svg:g")
             .attr("class", "svgColumnHead showValue")
-            .attr("transform", function(d, i) {
+            .attr("transform", function (d, i) {
                 return "translate(" + (that.valuePositionVector[i] * that.tableSpacingHorizontal) + ",0)";
             })
             .attr("opacity", 0);
@@ -455,11 +474,11 @@ panel_table1d.prototype.drawColumnHeaders = function(trans) {
     // Az indikátor fejléce.
     newGColumnHead.append("svg:rect")
             .attr("class", "backgroundRect")
-            .attr("width", function(d) {
+            .attr("width", function (d) {
                 return (d.hide !== 3) ? (((d.hide === 0) ? 2 : 1) * that.tableSpacingHorizontal) : 0;
             })
             .attr("height", that.tableHeadHeight / 2)
-            .style("fill", function(d, i) {
+            .style("fill", function (d, i) {
                 return global.colorValue(i);
             });
 
@@ -467,28 +486,28 @@ panel_table1d.prototype.drawColumnHeaders = function(trans) {
     newGColumnHead.append("svg:text")
             .attr("opacity", 1)
             .attr("class", "svgColumnHeadLabel svgTableHeadLabel")
-            .attr("x", function(d) {
+            .attr("x", function (d) {
                 return (d.hide === 0) ? that.tableSpacingHorizontal : that.tableSpacingHorizontal / 2;
             })
             .attr("y", that.tableHeadHeight / 4)
             .attr("dy", "0.35em")
             .attr("dx", "0em")
-            .classed("double", function(d) {
+            .classed("double", function (d) {
                 return (d.hide === 0);
             })
-            .text(function(d, i) {
+            .text(function (d, i) {
                 return (d.hide !== 3) ? that.localMeta.indicators[i].caption : "";
             });
 
     // Az indikátor érték-fejléce.
     newGColumnHead.append("svg:rect")
             .attr("class", "backgroundRect")
-            .attr("width", function(d, i) {
+            .attr("width", function (d, i) {
                 return (d.hide % 2 === 0) ? that.tableSpacingHorizontal : 0;
             })
             .attr("height", that.tableHeadHeight / 2)
             .attr("y", that.tableHeadHeight / 2)
-            .style("fill", function(d, i) {
+            .style("fill", function (d, i) {
                 return d3.rgb(global.colorValue(i)).brighter(that.darkenBrightenFactor);
             });
 
@@ -500,22 +519,22 @@ panel_table1d.prototype.drawColumnHeaders = function(trans) {
             .attr("y", 3 * that.tableHeadHeight / 4)
             .attr("dy", "0.35em")
             .attr("dx", "0em")
-            .text(function(d, i) {
+            .text(function (d, i) {
                 return (d.hide % 2 === 0) ? that.localMeta.indicators[i].value.unitPlural : "";
             });
 
     // Az indikátor hányados-fejléce.
     newGColumnHead.append("svg:rect")
             .attr("class", "backgroundRect")
-            .attr("width", function(d) {
+            .attr("width", function (d) {
                 return (d.hide >> 1 === 0) ? that.tableSpacingHorizontal : 0;
             })
             .attr("height", that.tableHeadHeight / 2)
             .attr("y", that.tableHeadHeight / 2)
-            .attr("x", function(d, i) {
+            .attr("x", function (d, i) {
                 return (d.hide % 2 === 0) ? that.tableSpacingHorizontal : 0;
             })
-            .style("fill", function(d, i) {
+            .style("fill", function (d, i) {
                 return d3.rgb(global.colorValue(i)).darker(that.darkenBrightenFactor);
             });
 
@@ -523,13 +542,13 @@ panel_table1d.prototype.drawColumnHeaders = function(trans) {
     newGColumnHead.append("svg:text")
             .attr("opacity", 1)
             .attr("class", "svgColumnHeadLabel svgTableHeadLabel")
-            .attr("x", function(d) {
+            .attr("x", function (d) {
                 return ((d.hide % 2 === 0) ? 3 : 1) * that.tableSpacingHorizontal / 2;
             })
             .attr("y", 3 * that.tableHeadHeight / 4)
             .attr("dy", "0.35em")
             .attr("dx", "0em")
-            .text(function(d, i) {
+            .text(function (d, i) {
                 return (d.hide >> 1 === 0) ? that.localMeta.indicators[i].fraction.unitPlural : "";
             });
 
@@ -552,12 +571,12 @@ panel_table1d.prototype.drawColumnHeaders = function(trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_table1d.prototype.drawRowHeaders = function(preparedData, trans) {
+panel_table1d.prototype.drawRowHeaders = function (preparedData, trans) {
     var that = this;
 
     // Feliratok a sorok elején.
     var gRowHead = that.gRowHeads.selectAll(".svgRowHead")
-            .data(preparedData, function(d) {
+            .data(preparedData, function (d) {
                 return d.uniqueId + d.name;
             });
 
@@ -569,13 +588,13 @@ panel_table1d.prototype.drawRowHeaders = function(preparedData, trans) {
     // Belépő sorfejkonténerek elhelyezése.
     var newGRowHead = gRowHead.enter().append("svg:g")
             .attr("class", "svgRowHead listener alterColored")
-            .on("click", function(d) {
+            .on("click", function (d) {
                 that.drill(d);
             })
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(0," + (d.oldRowIndex * that.tableSpacingVerical) + ")";
             })
-            .attr("opacity", function(d) {
+            .attr("opacity", function (d) {
                 return d.startOpacity;
             });
 
@@ -597,7 +616,7 @@ panel_table1d.prototype.drawRowHeaders = function(preparedData, trans) {
     // Maradók és új elemek összeöntése.
     gRowHead = newGRowHead.merge(gRowHead);
 
-    gRowHead.select("text").text(function(d) {
+    gRowHead.select("text").text(function (d) {
         return d.name;
     });
 
@@ -606,13 +625,13 @@ panel_table1d.prototype.drawRowHeaders = function(preparedData, trans) {
     gRowHead.select("text");
 
     // Helyremozgási, színezési animáció.
-    gRowHead.attr("parity", function(d) {
+    gRowHead.attr("parity", function (d) {
         return d.index % 2;
     })
             .classed("darkenable", false)
             .transition(trans)
             .attr("opacity", 1)
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(0, " + d.index * that.tableSpacingVerical + ")";
             })
             .on("end", Panel.prototype.classedDarkenable);
@@ -631,7 +650,7 @@ panel_table1d.prototype.drawRowHeaders = function(preparedData, trans) {
  * @param {Object} d Lefúrás esetén a lefúrás céleleme. Ha undefined, akkor felfúrásról van szó.
  * @returns {undefined}
  */
-panel_table1d.prototype.drill = function(d) {
+panel_table1d.prototype.drill = function (d) {
     global.tooltip.kill();
     var drill = {
         dim: this.dimToShow,
@@ -649,7 +668,7 @@ panel_table1d.prototype.drill = function(d) {
  * @param {Integer} newDimId A helyére bejövő dimenzió ID-ja.
  * @returns {undefined}
  */
-panel_table1d.prototype.doChangeDimension = function(panelId, newDimId) {
+panel_table1d.prototype.doChangeDimension = function (panelId, newDimId) {
     var that = this;
     if (panelId === that.panelId) {
         that.dimToShow = newDimId;
@@ -667,7 +686,7 @@ panel_table1d.prototype.doChangeDimension = function(panelId, newDimId) {
  * @param {Boolean} isInitial Ez az első megjelenés?
  * @returns {undefined}
  */
-panel_table1d.prototype.langSwitch = function(duration, isInitial) {
+panel_table1d.prototype.langSwitch = function (duration, isInitial) {
     var that = this;
     var idA = [];									// Megjelenítendő értékek id-vektora a tooltiphez.
     var valueNamesVector = [];						// A megjelenítendő értékek neveinek tömbje.
@@ -697,8 +716,8 @@ panel_table1d.prototype.langSwitch = function(duration, isInitial) {
             }
         }
     }
-    
-    var trans =  d3.transition().duration((isInitial) ? duration : 0);
+
+    var trans = d3.transition().duration((isInitial) ? duration : 0);
     that.gColumnHeads.selectAll(".svgColumnHead").remove();
     that.drawColumnHeaders(trans);
     that.titleBox.update(idA, valueNamesVector, [], [], true, global.selfDuration);

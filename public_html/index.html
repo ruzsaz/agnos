@@ -7,8 +7,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
     <!-- A css és a less lefuttatása. A less a loaderbe nem rakható, mert amikor lefut, a css-nek már meg kell lennie. -->
-    <link rel="stylesheet/less" type="text/css" href="containerBlack.less?ver=3.0"/>
+    
+    <!--
+    <link rel="stylesheet" type="text/css" href="css/containerBlack.css?ver=3.0"/>
+    -->
+    <link id="cssLink" rel="stylesheet" type="text/css" href="css/containerWhite.css?ver=3.1"/>
+    
+    
+    <!--
+    <link rel="stylesheet/less" type="text/css" href="containerBlack.less?ver=3.0"/>    
     <script type="text/javascript" src="js/libs/less/less-1.7.0.min.js"></script>
+    -->
 
     <link rel="localization" hreflang="en" href="data/languages/en.json" type="application/vnd.oftn.l10n+json"/>
     <link rel="localization" hreflang="hu" href="data/languages/hu.json" type="application/vnd.oftn.l10n+json"/>
@@ -124,7 +133,7 @@
       var numberOfLoadedResources = 0;	// A már betöltött külső js-ek száma.
       var numberOfResources = 32;			// Az összes betöltendő külső js-ek száma.
       var finalThreads = 3;				// Ennyi betöltési szálnak kell lefutnia az elinduláshoz.
-      var version = "3.0";
+      var version = "3.1";
       var min = "";           // "" vagy "min." attól függően, hogy a minify-s verziók kellenek-e?     
 
       /**
@@ -399,7 +408,7 @@
       <defs>
       <filter id="dropshadow" height="150%">
         <feGaussianBlur in="SourceAlpha" stdDeviation="3"/> 
-        <feOffset dx="3" dy="3" result="offsetblur"/>
+        <feOffset dx="2" dy="2" result="offsetblur"/>
         <feComponentTransfer>
           <feFuncA type="linear" slope="0.75"/>
         </feComponentTransfer>
@@ -539,6 +548,15 @@
       <line x1="10" y1="16" x2="30" y2="16"/>
       <path d="M12 11 Q 20 13 28 11"/>
       <path d="M12 21.5 Q 20 19 28 21.5"/>      
+      </g>
+
+      <g id="icon_palette">
+      <path d="M 18.68,6.138 C 23.52,6.299 28.85,10.59 29.34,15.06 29.82,19.52 25.47,24.16 21.85,25.6 18.24,27.03 15.38,25.26 14.92,23.53 14.46,21.8 16.41,20.11 15.19,18.52 13.98,16.92 9.586,15.42 9.556,12.68 9.525,9.946 13.85,5.977 18.68,6.138 Z"/>
+      <ellipse cx="15.84" cy="11.47" ry="1" rx="1"/>
+      <ellipse cx="21.73" cy="11.38" ry="1" rx="1"/>
+      <ellipse cx="24.27" cy="16.7" ry="1" rx="1"/>
+      <ellipse cx="20.48" cy="21.21" ry="1" rx="1"/>
+      
       </g>
 
       <g id="icon_close">

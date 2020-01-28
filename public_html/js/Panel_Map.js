@@ -1,4 +1,4 @@
-/* global Panel, d3, topojson, mapOfHungary, pois */
+/* global Panel, d3, topojson, mapOfHungary, pois, global */
 
 'use strict';
 
@@ -71,13 +71,13 @@ function panel_map(init) {
     // Alapréteg.
     that.svg.insert("svg:g", ".title_group")
             .attr("class", "background listener droptarget droptarget0")
-            .on('click', function() {
+            .on('click', function () {
                 that.drill();
             })
-            .on('mouseover', function() {
+            .on('mouseover', function () {
                 that.hoverOn(this);
             })
-            .on('mouseout', function() {
+            .on('mouseout', function () {
                 that.hoverOff();
             })
             .append("svg:rect")
@@ -114,13 +114,13 @@ function panel_map(init) {
 
     // Feliratkozás a mediátorokra.
     var med;
-    med = that.mediator.subscribe("changeValue", function(id, val, ratio) {
+    med = that.mediator.subscribe("changeValue", function (id, val, ratio) {
         that.doChangeValue(id, val, ratio);
     });
     that.mediatorIds.push({"channel": "changeValue", "id": med.id});
 
     // Feliratkozás a dimenzióváltó mediátorra.
-    med = that.mediator.subscribe("changeDimension", function(panelId, newDimId, dimToChange) {
+    med = that.mediator.subscribe("changeDimension", function (panelId, newDimId, dimToChange) {
         that.doChangeDimension(panelId, newDimId);
     });
     that.mediatorIds.push({"channel": "changeDimension", "id": med.id});
@@ -140,7 +140,7 @@ function panel_map(init) {
     // Vízréteg kirajzolása.
     that.gWater.selectAll("path").data(topojson.feature(that.topology, that.topology.objects.viz).features)
             .enter().append("svg:path")
-            .attr("class", function(d) {
+            .attr("class", function (d) {
                 return d.geometry.type;
             })
             .attr("d", that.path)
@@ -177,7 +177,7 @@ function panel_map(init) {
  * @param {Object} d Nyers adatsor.
  * @returns {Number} Az értékek.
  */
-panel_map.prototype.valueToShow = function(d) {
+panel_map.prototype.valueToShow = function (d) {
     var that = this;
     if (d !== undefined && d.vals !== undefined) {
         var val = (that.valFraction) ? that.valMultiplier * d.vals[that.valToShow].sz / d.vals[that.valToShow].n : d.vals[that.valToShow].sz;
@@ -187,7 +187,7 @@ panel_map.prototype.valueToShow = function(d) {
         }
         if (isNaN(parseFloat(origVal))) {
             origVal = "???";
-        }        
+        }
         return {value: val, originalValue: origVal};
     } else {
         return null;
@@ -200,7 +200,7 @@ panel_map.prototype.valueToShow = function(d) {
  * @param {Object} d Az elem.
  * @returns {String} A megjelenítendő tooltip.
  */
-panel_map.prototype.getTooltip = function(d) {
+panel_map.prototype.getTooltip = function (d) {
     var that = this;
     var unitProperty = (d.value === 1) ? "unit" : "unitPlural";
     return that.createTooltip(
@@ -222,7 +222,7 @@ panel_map.prototype.getTooltip = function(d) {
  * @param {Number} val A reprezentálandó érték.
  * @returns {String} Az őt repreentáló szín.
  */
-panel_map.prototype.colorLinear = function(val) {
+panel_map.prototype.colorLinear = function (val) {
     return (!isNaN(val)) ? this.colorScale(val) : global.colorNA;
 };
 
@@ -234,7 +234,7 @@ panel_map.prototype.colorLinear = function(val) {
  * @param {Number} dMax A maximális megjelenítendő érték.
  * @returns {undefined}
  */
-panel_map.prototype.setColorRange = function(dMin, dMed, dMax) {
+panel_map.prototype.setColorRange = function (dMin, dMed, dMax) {
     var that = this;
     var actualScaleDomain = (that.valFraction) ? that.actualInit.domainr : that.actualInit.domain;
     if (!(actualScaleDomain instanceof Array) || actualScaleDomain.length < 2) {
@@ -256,7 +256,7 @@ panel_map.prototype.setColorRange = function(dMin, dMed, dMax) {
  * @param {Integer} level A zoomszint.
  * @returns {Json} Hozzá tartozó térképi elemkupac.
  */
-panel_map.prototype.topoLevel = function(level) {
+panel_map.prototype.topoLevel = function (level) {
     switch (level) {
         case 1:
             return (this.maxDepth >= 1) ? this.topology.objects.level1 : this.topology.objects.level0;
@@ -282,17 +282,17 @@ panel_map.prototype.topoLevel = function(level) {
  * @param {Array} dataRows A térképi elemeket leíró adattömb.
  * @returns {panel_map.prototype.getParent.parentObj} A szülő térképi elem.
  */
-panel_map.prototype.getParent = function(dataRows) {
+panel_map.prototype.getParent = function (dataRows) {
     var parentObj;
     if (dataRows.length > 0) {
         // Vesszük az adatkupac első elemét. Ha az épp N/A, akkor a másodikat. TODO: Itt most gányolás van!!! Ki kéne javítani.
         var shapeId = (dataRows[0].dims[0].knownId !== "N/A") ? dataRows[0].dims[0].knownId : (dataRows.length > 1) ? dataRows[1].dims[0].knownId : undefined;
         for (var level = 0; level <= 3; level++) {
-            var thisObj = topojson.feature(this.topology, this.topoLevel(level)).features.filter(function(d) {
+            var thisObj = topojson.feature(this.topology, this.topoLevel(level)).features.filter(function (d) {
                 return shapeId === d.properties.shapeid;
             });
             if (thisObj.length > 0) {
-                parentObj = topojson.feature(this.topology, this.topoLevel(level - 1)).features.filter(function(d) {
+                parentObj = topojson.feature(this.topology, this.topoLevel(level - 1)).features.filter(function (d) {
                     return thisObj[0].properties.parent === d.properties.shapeid;
                 });
                 break;
@@ -308,9 +308,9 @@ panel_map.prototype.getParent = function(dataRows) {
  * @param {String} shapeId A keresett elem knownId-ja.
  * @returns {Feature} A térképi elem.
  */
-panel_map.prototype.getSelf = function(shapeId) {
+panel_map.prototype.getSelf = function (shapeId) {
     for (var level = 0; level <= 3; level++) {
-        var thisObj = topojson.feature(this.topology, this.topoLevel(level)).features.filter(function(d) {
+        var thisObj = topojson.feature(this.topology, this.topoLevel(level)).features.filter(function (d) {
             return shapeId === d.properties.shapeid;
         });
         if (thisObj.length > 0) {
@@ -330,7 +330,7 @@ panel_map.prototype.getSelf = function(shapeId) {
  * @param {type} feature A poligont tartalmazó objektum.
  * @returns {Boolean} True ha benne van, false ha nem.
  */
-panel_map.prototype.isInMultiPolygon = function(lon, lat, feature) {
+panel_map.prototype.isInMultiPolygon = function (lon, lat, feature) {
     var inside = false;
     if (feature !== undefined && feature.geometry !== undefined) {
         var coordinates = feature.geometry.coordinates;
@@ -363,7 +363,7 @@ panel_map.prototype.isInMultiPolygon = function(lon, lat, feature) {
  * @param {Number} poiLegendY A poi jelkulcs bal felső csücskének Y koordinátája.
  * @returns {Number} A nagyítás szorzója.
  */
-panel_map.prototype.scaleModifier = function(centerDX, centerDY, poiLegendX, poiLegendY) {
+panel_map.prototype.scaleModifier = function (centerDX, centerDY, poiLegendX, poiLegendY) {
     var modifier = 1;
     if ((this.w / 2) + centerDX > poiLegendX && (this.h / 2) + centerDY > poiLegendY) {
         modifier = Math.max((poiLegendX - this.w / 2) / centerDX, (poiLegendY - this.h / 2) / centerDY);
@@ -381,7 +381,7 @@ panel_map.prototype.scaleModifier = function(centerDX, centerDY, poiLegendX, poi
  * @param {Object} drill A lefúrást leíró objektum: {dim: a fúrás dimenziója, direction: iránya (+1 fel, -1 le), fromId: az előzőleg kijelzett elem azonosítója, toId: az új elem azonosítója}
  * @returns {undefined}
  */
-panel_map.prototype.preUpdate = function(drill) {
+panel_map.prototype.preUpdate = function (drill) {
     var that = this;
 
     // Lefúrás esetén az adott objektum kivételével mindent törlünk.
@@ -403,21 +403,21 @@ panel_map.prototype.preUpdate = function(drill) {
             }
 
             // Letöröljük a kívül eső poi-kat.
-            that.gPoiHolder.selectAll(".gPoi g").filter(function(d) {
+            that.gPoiHolder.selectAll(".gPoi g").filter(function (d) {
                 return !that.isInMultiPolygon(d.lon, d.lat, toFeature);
             })
                     .remove();
         }
 
         // Letöröljük a kívül eső területeket.
-        that.gMapHolder.selectAll("path").filter(function(d) {
+        that.gMapHolder.selectAll("path").filter(function (d) {
             return (d.id !== drill.toId);
         })
                 .on("click", null)
                 .remove();
 
         // A vízrajz maszkját leszűkítjük a mutatott területre.
-        that.mask.selectAll("path").filter(function(d) {
+        that.mask.selectAll("path").filter(function (d) {
             return (d.id !== drill.toId);
         }).remove();
 
@@ -425,7 +425,7 @@ panel_map.prototype.preUpdate = function(drill) {
 
     // Ha a dimenzióban történt a változás, akkor az aktuális név kivételével minden nevet törlünk.
     if (that.dimToShow === drill.dim && that.currentLevel !== that.maxDepth + 1) {
-        that.gLabelHolder.selectAll(".mapLabel").filter(function(d) {
+        that.gLabelHolder.selectAll(".mapLabel").filter(function (d) {
             return (d.id !== drill.toId);
         }).remove();
     }
@@ -438,7 +438,7 @@ panel_map.prototype.preUpdate = function(drill) {
  * @param {Array} newDataRows Az új adatsorokat tartalmazó tömb.
  * @returns {Object} .data: a térképi elemek az adatokkal, .scale: szükséges nagyítás, .origin: a középpont.
  */
-panel_map.prototype.prepareData = function(newDataRows) {
+panel_map.prototype.prepareData = function (newDataRows) {
     var that = this;
 
     // Ha nincs térképen ábrázolható adat, akkor üres választ adunk.
@@ -463,19 +463,19 @@ panel_map.prototype.prepareData = function(newDataRows) {
             var scalemeasure = that.imageCover / Math.max((extent[1][0] - extent[0][0]) / that.w, (extent[1][1] - extent[0][1]) / that.h);
 
             // A kirajzolandó térképi elemek adatainak megszerzése.
-            var featuresToDraw = topojson.feature(that.topology, that.topoLevel(that.currentLevel)).features.filter(function(d) {
+            var featuresToDraw = topojson.feature(that.topology, that.topoLevel(that.currentLevel)).features.filter(function (d) {
                 return parentShape.properties.shapeid === ((that.currentLevel === that.maxDepth + 1) ? d.properties.shapeid : d.properties.parent);
             });
 
             var pairedData = [];
             var bounds = that.path.bounds;
-            featuresToDraw.map(function(d) {
+            featuresToDraw.map(function (d) {
                 for (var w = 0, wMax = newDataRows.length; w < wMax; w++) {
                     if (newDataRows[w].dims[0].knownId === d.properties.shapeid) {
                         var datarow = newDataRows[w];
                         var b = bounds(d);
                         var val = that.valueToShow(datarow);
-                        var element = {};                        
+                        var element = {};
                         element.geometry = d.geometry;
                         element.properties = d.properties;
                         element.type = d.type;
@@ -505,7 +505,7 @@ panel_map.prototype.prepareData = function(newDataRows) {
     }
 };
 
-panel_map.prototype.preparePoiData = function(rawPois, newDataRows) {
+panel_map.prototype.preparePoiData = function (rawPois, newDataRows) {
     var that = this;
 
     var parentShape = (that.currentLevel !== that.maxDepth + 1) ? that.getParent(newDataRows) : that.getSelf(newDataRows[0].dims[0].knownId);
@@ -552,10 +552,15 @@ panel_map.prototype.preparePoiData = function(rawPois, newDataRows) {
  * @param {Object} drill Az épp végrehajzásra kerülő fúrás.
  * @returns {undefined}
  */
-panel_map.prototype.update = function(data, drill) {
+panel_map.prototype.update = function (data, drill) {
     var that = this;
     that.data = data || that.data;
     drill = drill || {dim: -1, direction: 0};
+
+    // Színséma feltöltése
+    if (!that.isColorsLocked) {
+        that.colorRange = [that.defaultColorMin, global.colorValue(that.valToShow), that.defaultColorMax];
+    }
 
     // A hányados kijelzés, és a szorzó felfrissítése.
     if (that.valFraction && that.meta.indicators[that.valToShow].fraction.hide) {
@@ -577,7 +582,7 @@ panel_map.prototype.update = function(data, drill) {
         that.panic(false);
 
         // A színskála beállítása.
-        var dataExtent = d3.extent(preparedData.data, function(d) {
+        var dataExtent = d3.extent(preparedData.data, function (d) {
             return d.value;
         });
         var dataMed = (dataExtent[0] * dataExtent[1] < 0) ? 0 : (dataExtent[0] + dataExtent[1]) / 2;
@@ -625,10 +630,10 @@ panel_map.prototype.update = function(data, drill) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_map.prototype.drawMap = function(currentFeatures, drill, trans) {
+panel_map.prototype.drawMap = function (currentFeatures, drill, trans) {
     var that = this;
 
-    var terrains = that.gMapHolder.selectAll(".subunit").data(currentFeatures.data, function(d) {
+    var terrains = that.gMapHolder.selectAll(".subunit").data(currentFeatures.data, function (d) {
         return d.uniqueId;
     });
 
@@ -644,29 +649,29 @@ panel_map.prototype.drawMap = function(currentFeatures, drill, trans) {
     terrains = terrains.enter().append("svg:path")
             .attr("class", "subunit listener")
             .attr("d", that.path)
-            .attr("fill", function(d) {
+            .attr("fill", function (d) {
                 return that.colorLinear(d.value);
-            })
-            .attr("stroke-width", global.mapBorder / currentFeatures.scale)
+            })            
             .attr("opacity", 0)
             .merge(terrains);
 
     // Maradó területek animálása.
-    terrains.on("click", function(d) {
+    terrains.on("click", function (d) {
         that.drill(d);
     })
+            .attr("stroke-width", global.mapBorder / currentFeatures.scale)
             .transition(trans)
-            .attr("fill", function(d) {
+            .attr("fill", function (d) {
                 return that.colorLinear(d.value);
             })
             .attr("opacity", 1)
-            .on('end', function() {
+            .on('end', function () {
                 d3.select(this).classed("darkenable", true);
             });
 
     // Fel vagy lefúrás esetén, vagy üresből rajzoláskor felfrissítjük a vízréteg maszkját.
     if (drill.direction !== 0 || drill.dim < 0) {
-        var mask = that.mask.selectAll("path").data(currentFeatures.data, function(d) {
+        var mask = that.mask.selectAll("path").data(currentFeatures.data, function (d) {
             return d.uniqueId;
         });
 
@@ -691,16 +696,16 @@ panel_map.prototype.drawMap = function(currentFeatures, drill, trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_map.prototype.drawLabels = function(currentFeatures, trans) {
+panel_map.prototype.drawLabels = function (currentFeatures, trans) {
     var that = this;
 
-    var labels = that.gLabelHolder.selectAll(".mapLabel").data(currentFeatures.data, function(d) {
+    var labels = that.gLabelHolder.selectAll(".mapLabel").data(currentFeatures.data, function (d) {
         return d.id + "N" + d.name;
     })
             .moveToFront();
 
     labels.transition(trans)
-            .attr("fill", function(d) {
+            .attr("fill", function (d) {
                 return global.readableColor(that.colorLinear(d.value));
             });
 
@@ -712,17 +717,17 @@ panel_map.prototype.drawLabels = function(currentFeatures, trans) {
     labels.enter().append("svg:text")
             .attr("class", "mapLabel")
             .attr("text-anchor", "middle")
-            .attr("x", function(d) {
+            .attr("x", function (d) {
                 return d.centerX;
             })
-            .attr("y", function(d) {
+            .attr("y", function (d) {
                 return d.centerY;
             })
-            .attr("fill", function(d) {
+            .attr("fill", function (d) {
                 return global.readableColor(that.colorLinear(d.value));
             })
             .attr("opacity", 0)
-            .text(function(d) {
+            .text(function (d) {
                 return d.name;
             })
             .style("font-size", (that.mapLabelSize / currentFeatures.scale) + "px")
@@ -738,21 +743,21 @@ panel_map.prototype.drawLabels = function(currentFeatures, trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_map.prototype.drawPois = function(currentFeatures, pois, trans) {
+panel_map.prototype.drawPois = function (currentFeatures, pois, trans) {
     var that = this;
 
     var gPoi = that.gPoiHolder.selectAll(".gPoi").data(pois);
 
     gPoi = gPoi.enter().append("svg:g")
-            .attr("class", function(d, i) {
+            .attr("class", function (d, i) {
                 return "gPoi inactive gPoi" + i;
             })
             .merge(gPoi);
 
 
-    var gPoint = gPoi.selectAll("g").data(function(d) {
+    var gPoint = gPoi.selectAll("g").data(function (d) {
         return d.points;
-    }, function(d2) {
+    }, function (d2) {
         return d2.uniqueId;
     });
 
@@ -763,26 +768,26 @@ panel_map.prototype.drawPois = function(currentFeatures, pois, trans) {
     // Új és maradó elemek összeöntése.
     var newGPoi = gPoint.enter().append("svg:g");
 
-    newGPoi.attr("transform", function(d) {
+    newGPoi.attr("transform", function (d) {
         return "translate(" + d.coordinates[0] + ", " + d.coordinates[1] + ")";
     })
             .attr("opacity", 0);
 
     newGPoi.append("svg:path")
-            .attr("d", function(d) {
+            .attr("d", function (d) {
                 return d3.symbol().type(d3.symbols[d.symbol]).size((d.size / currentFeatures.scale) * (d.size / currentFeatures.scale))();
             })
-            .attr("fill", function(d) {
+            .attr("fill", function (d) {
                 return d.color;
             });
 
     newGPoi.append("svg:text")
-            .attr("y", function(d) {
+            .attr("y", function (d) {
                 return -d.size / currentFeatures.scale / 1.8;
             })
             .attr("dy", "-0.35em")
             .attr("text-anchor", "middle")
-            .text(function(d) {
+            .text(function (d) {
                 return d.caption;
             })
             .style("font-size", (that.mapLabelSize / currentFeatures.scale) + "px");
@@ -797,7 +802,7 @@ panel_map.prototype.drawPois = function(currentFeatures, pois, trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_map.prototype.drawPoiLegend = function(trans) {
+panel_map.prototype.drawPoiLegend = function (trans) {
     var that = this;
 
     // Csak ha üres még a jelkulcs, ez ugyanis nem változhat.
@@ -834,25 +839,25 @@ panel_map.prototype.drawPoiLegend = function(trans) {
                 .data(that.pois).enter();
 
         var gLegend = legendEntry.append("svg:g")
-                .attr("class", function(d, i) {
+                .attr("class", function (d, i) {
                     return "listener inactive poiLegend legendControl" + i;
                 })
-                .attr("transform", function(d, i) {
+                .attr("transform", function (d, i) {
                     return "translate(0, " + i * that.poiLegendHeight + ")";
                 })
-                .on("mouseover", function(d, i) {
+                .on("mouseover", function (d, i) {
                     if (!d3.select(this).classed("inactive")) {
                         that.gLabelHolder.classed("opaque", true);
                         that.gPoiHolder.selectAll(".gPoi" + i).classed("opaque", false).classed("noText", false);
                         that.gPoiHolder.selectAll(".gPoi:not(.gPoi" + i + ")").classed("opaque", true);
                     }
                 })
-                .on("mouseout", function() {
+                .on("mouseout", function () {
                     that.gLabelHolder.classed("opaque", false);
                     that.gPoiHolder.selectAll(".gPoi").classed("opaque", false);
                     that.gPoiHolder.selectAll(".gPoi").classed("noText", true);
                 })
-                .on("click", function(d, i) {
+                .on("click", function (d, i) {
                     that.tooglePoi(i);
                 });
 
@@ -866,10 +871,10 @@ panel_map.prototype.drawPoiLegend = function(trans) {
         // Jelölő maga.
         gLegend.append("svg:path")
                 .attr("class", "lineSymbol legend noEvents")
-                .attr("d", function(d) {
+                .attr("d", function (d) {
                     return d3.symbol().type(d3.symbols[d.symbol]).size(that.poiLegendRadius * that.poiLegendRadius)();
                 })
-                .attr("fill", function(d) {
+                .attr("fill", function (d) {
                     return (d.color === parseInt(d.color, 10)) ? global.colorValue(d.color) : d.color;
                 })
                 .attr("transform", "translate(" + (that.poiLegendRadius + 5) + ", " + (that.poiLegendHeight / 2) + ")");
@@ -881,7 +886,7 @@ panel_map.prototype.drawPoiLegend = function(trans) {
                 .attr("x", 2 * (that.poiLegendRadius + 5))
                 .attr("y", (that.poiLegendHeight / 2))
                 .attr("dy", ".35em")
-                .text(function(d) {
+                .text(function (d) {
                     return d.caption;
                 });
 
@@ -896,7 +901,7 @@ panel_map.prototype.drawPoiLegend = function(trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_map.prototype.drawLegend = function(trans) {
+panel_map.prototype.drawLegend = function (trans) {
     var that = this;
 
     // A jelkulcsban megjelenő értékek.
@@ -917,7 +922,7 @@ panel_map.prototype.drawLegend = function(trans) {
     that.gLegend.selectAll().data(domain)
             .enter().append("svg:path")
             .attr("class", "bordered")
-            .attr("d", function(d, i) {
+            .attr("d", function (d, i) {
                 return global.rectanglePath(
                         i * elementWidth + global.legendOffsetX, // x
                         that.h - elementHeight - global.legendOffsetY, // y
@@ -937,16 +942,16 @@ panel_map.prototype.drawLegend = function(trans) {
     that.gLegend.selectAll().data(domain)
             .enter().append("svg:text")
             .attr("text-anchor", "middle")
-            .attr("x", function(d, i) {
+            .attr("x", function (d, i) {
                 return (i * elementWidth + elementWidth / 2 + global.legendOffsetX);
             })
             .attr("y", that.h - elementHeight / 2 - global.legendOffsetY)
             .attr("dy", ".35em")
-            .attr("fill", function(d) {
+            .attr("fill", function (d) {
                 return global.readableColor(that.colorScale(d));
             })
             .attr("opacity", 0)
-            .text(function(d, i) {
+            .text(function (d, i) {
                 return global.cleverRound3(domain[i]);
             })
             .transition(trans)
@@ -963,7 +968,7 @@ panel_map.prototype.drawLegend = function(trans) {
  * @param {Integer} i A ki/bekapcsolandó poi sorszáma.
  * @returns {undefined}
  */
-panel_map.prototype.tooglePoi = function(i) {
+panel_map.prototype.tooglePoi = function (i) {
     var poiControl = this.gPoiLegend.select(".legendControl" + i);
     var state = !poiControl.classed("inactive");	// True: most kapcsolják le, false: most fel.
     poiControl.classed("inactive", state);
@@ -979,7 +984,7 @@ panel_map.prototype.tooglePoi = function(i) {
  * @param {Object} d Lefúrás esetén a lefúrás céleleme. Ha undefined, akkor felfúrásról van szó.
  * @returns {undefined}
  */
-panel_map.prototype.drill = function(d) {
+panel_map.prototype.drill = function (d) {
     global.tooltip.kill();
     var drill = {
         dim: this.dimToShow,
@@ -998,7 +1003,7 @@ panel_map.prototype.drill = function(d) {
  * @param {boolean} ratio Hányadost mutasson-e. Ha -1 akkor a másikra ugrik, ha undefined, nem vált.
  * @returns {undefined}
  */
-panel_map.prototype.doChangeValue = function(panelId, value, ratio) {
+panel_map.prototype.doChangeValue = function (panelId, value, ratio) {
     var that = this;
     if (panelId === undefined || panelId === that.panelId) {
         if (value !== undefined) {
@@ -1024,7 +1029,7 @@ panel_map.prototype.doChangeValue = function(panelId, value, ratio) {
  * @param {Integer} newDimId A helyére bejövő dimenzió ID-ja.
  * @returns {undefined}
  */
-panel_map.prototype.doChangeDimension = function(panelId, newDimId) {
+panel_map.prototype.doChangeDimension = function (panelId, newDimId) {
     var that = this;
     if (panelId === that.panelId) {
         if (that.meta.dimensions[newDimId].is_territorial === 1) {

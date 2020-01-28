@@ -1,4 +1,4 @@
-/* global Panel, d3 */
+/* global Panel, d3, global */
 
 'use strict';
 
@@ -62,13 +62,13 @@ function panel_bar2d(init) {
     // A fő alapréteg, ami mentén az X dimenzóban való furkálás történik.
     that.svg.insert("svg:g", ".title_group")
             .attr("class", "background listener droptarget droptarget0")
-            .on('click', function() {
+            .on('click', function () {
                 that.drill(that.dimX);
             })
-            .on('mouseover', function() {
+            .on('mouseover', function () {
                 that.hoverOn(this, 0);
             })
-            .on('mouseout', function() {
+            .on('mouseout', function () {
                 that.hoverOff();
             })
             .append("svg:rect")
@@ -78,13 +78,13 @@ function panel_bar2d(init) {
     // Az alsó alapréteg, ami mentén az Y dimenzóban való furkálás történik.
     that.svg.insert("svg:g", ".title_group")
             .attr("class", "background listener droptarget droptarget0")
-            .on('click', function() {
+            .on('click', function () {
                 that.drill(that.dimY);
             })
-            .on('mouseover', function() {
+            .on('mouseover', function () {
                 that.hoverOn(this, 1);
             })
-            .on('mouseout', function() {
+            .on('mouseout', function () {
                 that.hoverOff();
             })
             .append("svg:rect")
@@ -121,13 +121,13 @@ function panel_bar2d(init) {
 
     // Feliratkozás az értékváltás mediátorra.
     var med;
-    med = that.mediator.subscribe("changeValue", function(id, val, ratio) {
+    med = that.mediator.subscribe("changeValue", function (id, val, ratio) {
         that.doChangeValue(id, val, ratio);
     });
     that.mediatorIds.push({"channel": "changeValue", "id": med.id});
 
     // Feliratkozás a dimenzióváltó mediátorra.
-    med = that.mediator.subscribe("changeDimension", function(panelId, newDimId, dimToChange) {
+    med = that.mediator.subscribe("changeDimension", function (panelId, newDimId, dimToChange) {
         that.doChangeDimension(panelId, newDimId, dimToChange);
     });
     that.mediatorIds.push({"channel": "changeDimension", "id": med.id});
@@ -156,7 +156,7 @@ function panel_bar2d(init) {
  * @param {Object} d Nyers adatsor.
  * @returns {Number} Az értékek.
  */
-panel_bar2d.prototype.valueToShow = function(d) {
+panel_bar2d.prototype.valueToShow = function (d) {
     var that = this;
     if (d !== undefined && d.vals !== undefined) {
         var val = (that.valFraction) ? that.valMultiplier * d.vals[that.valToShow].sz / d.vals[that.valToShow].n : d.vals[that.valToShow].sz;
@@ -166,7 +166,7 @@ panel_bar2d.prototype.valueToShow = function(d) {
         }
         if (isNaN(parseFloat(origVal))) {
             origVal = "???";
-        }        
+        }
         return {value: val, originalValue: origVal};
     } else {
         return null;
@@ -180,7 +180,7 @@ panel_bar2d.prototype.valueToShow = function(d) {
  * @param {type} yElement Az Y dimenzió mentén az érték.
  * @returns {String} A megjelenítendő tooltip.
  */
-panel_bar2d.prototype.getTooltip = function(xElement, yElement) {
+panel_bar2d.prototype.getTooltip = function (xElement, yElement) {
     var that = this;
     //var xUnitProperty = (xElement.value === 1) ? "unit" : "unitPlural";
     var yUnitProperty = (yElement.value === 1) ? "unit" : "unitPlural";
@@ -207,9 +207,9 @@ panel_bar2d.prototype.getTooltip = function(xElement, yElement) {
  * 
  * @returns {Function} Az összehasonlító-függvény.
  */
-panel_bar2d.prototype.getCmpFunction = function() {
+panel_bar2d.prototype.getCmpFunction = function () {
     var that = this;
-    return function(a, b) {
+    return function (a, b) {
         return global.realCompare(a.dims[that.dimX].name + ":" + a.dims[that.dimY].name, b.dims[that.dimX].name + ":" + b.dims[that.dimY].name);
     };
 };
@@ -221,7 +221,7 @@ panel_bar2d.prototype.getCmpFunction = function() {
  * @param {Object} b Egy másik adatelem.
  * @returns {boolean} Az összehasonlítás eredménye.
  */
-panel_bar2d.prototype.simpleCmp = function(a, b) {
+panel_bar2d.prototype.simpleCmp = function (a, b) {
     return a.name.localeCompare(b.name);
 };
 
@@ -233,7 +233,7 @@ panel_bar2d.prototype.simpleCmp = function(a, b) {
  * @param {Array} scale 2 elemű tömb a minimális és maximális értékkel.
  * @returns {undefined}
  */
-panel_bar2d.prototype.setYScale = function(scale) {
+panel_bar2d.prototype.setYScale = function (scale) {
     var actualScaleDomain = (this.valFraction) ? this.actualInit.domainr : this.actualInit.domain;
     if ((actualScaleDomain instanceof Array) && actualScaleDomain.length === 2) {
         this.yScale.domain(actualScaleDomain);
@@ -255,7 +255,7 @@ panel_bar2d.prototype.setYScale = function(scale) {
  * @param {Object} drill A lefúrást leíró objektum: {dim: a fúrás dimenziója, direction: iránya (+1 fel, -1 le), fromId: az előzőleg kijelzett elem azonosítója, toId: az új elem azonosítója}
  * @returns {undefined}
  */
-panel_bar2d.prototype.preUpdate = function(drill) {
+panel_bar2d.prototype.preUpdate = function (drill) {
     var that = this;
     var oldPreparedData = this.preparedData;
 
@@ -267,7 +267,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
 
             // Tengelyfeliratok: nem kellőek törlése.
             that.gAxisX.selectAll("text")
-                    .filter(function(d) {
+                    .filter(function (d) {
                         return (d.id !== drill.toId);
                     })
                     .remove();
@@ -278,7 +278,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
 
             // Oszlopok: nem kellőek letörlése.
             that.gBars.selectAll(".bar")
-                    .filter(function(d) {
+                    .filter(function (d) {
                         return (d.id !== drill.toId);
                     })
                     .on("click", null)
@@ -290,7 +290,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
 
             // Tengelyfeliratok: minden törlése.
             that.gAxisX.selectAll("text")
-                    .filter(function(d) {
+                    .filter(function (d) {
                         return (d.id !== drill.fromId);
                     })
                     .remove();
@@ -303,10 +303,10 @@ panel_bar2d.prototype.preUpdate = function(drill) {
             var avgValues = [];
             var levelY = (global.baseLevels[that.panelSide])[that.dimYToShow].length;
             for (var j = 0, jMax = oldPreparedData.dimYArray.length; j < jMax; j++) {
-                var avgHeight = d3.mean(oldPreparedData.dataArray, function(d) {
+                var avgHeight = d3.mean(oldPreparedData.dataArray, function (d) {
                     return (d.values[j] === undefined) ? undefined : d.values[j].height;
                 });
-                var avgY = d3.mean(oldPreparedData.dataArray, function(d) {
+                var avgY = d3.mean(oldPreparedData.dataArray, function (d) {
                     return (d.values[j] === undefined) ? undefined : d.values[j].y;
                 });
                 avgValues.push({dimYId: oldPreparedData.dimYArray[j].id, dimYUniqueId: levelY + "L" + oldPreparedData.dimYArray[j].id, height: avgHeight, y: avgY, startOpacity: 1});
@@ -327,13 +327,13 @@ panel_bar2d.prototype.preUpdate = function(drill) {
                     .enter().append("svg:rect")
                     .attr("x", 0)
                     .attr("width", that.xScale.range()[1] * (1 - that.barPadding))
-                    .attr("y", function(d) {
+                    .attr("y", function (d) {
                         return d.y;
                     })
-                    .attr("height", function(d) {
+                    .attr("height", function (d) {
                         return d.height;
                     })
-                    .attr("fill", function(d) {
+                    .attr("fill", function (d) {
                         return global.color(d.dimYId);
                     })
                     .attr("opacity", 1);
@@ -348,7 +348,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
 
             // Jelkulcstéglalapok és feliratok: nem kellőek letörlése.
             that.gLegend.selectAll(".legendEntry")
-                    .filter(function(d) {
+                    .filter(function (d) {
                         return (d.id !== drill.toId);
                     })
                     .on("click", null)
@@ -358,7 +358,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
 
             // Oszlopok: mindent, kivéve amibe fúrunk, törlünk.
             that.gBars.selectAll(".bar rect")
-                    .filter(function(d) {
+                    .filter(function (d) {
                         return (d.dimYId !== drill.toId);
                     })
                     .remove();
@@ -401,7 +401,7 @@ panel_bar2d.prototype.preUpdate = function(drill) {
  * @param {Object} drill Az épp végrehajtandó fúrás.
  * @returns {Object} Az új megjelenítendő adatok.
  */
-panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill) {
+panel_bar2d.prototype.prepareData = function (oldPreparedData, newDataRows, drill) {
     var that = this;
     var levelX = (global.baseLevels[that.panelSide])[that.dimXToShow].length;
     var levelY = (global.baseLevels[that.panelSide])[that.dimYToShow].length;
@@ -475,7 +475,7 @@ panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill
     var onlyOneBarWidth = onlyOneBarX * (1 - that.barPadding); // Ha csak 1 diagramelem van, az ilyen széles.
 
     var oldDataMax = that.yScale.domain()[1]; // Az Y skála régi végpontja.
-    var dataMax = d3.max(dataArray, function(d) {
+    var dataMax = d3.max(dataArray, function (d) {
         return d.sumValues;
     });
 
@@ -617,7 +617,7 @@ panel_bar2d.prototype.prepareData = function(oldPreparedData, newDataRows, drill
  * @param {Object} drill Az épp végrehajzásra kerülő fúrás.
  * @returns {undefined}
  */
-panel_bar2d.prototype.update = function(data, drill) {
+panel_bar2d.prototype.update = function (data, drill) {
     var that = this;
     that.data = data || that.data;
     drill = drill || {dim: -1, direction: 0};
@@ -660,12 +660,12 @@ panel_bar2d.prototype.update = function(data, drill) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drawBars = function(preparedData, trans) {
+panel_bar2d.prototype.drawBars = function (preparedData, trans) {
     var that = this;
 
     // Egy téglalap konténere, és a hozzá tartozó adat hozzácsapása.
     var gBar = that.gBars.selectAll(".bar")
-            .data(preparedData.dataArray, function(d) {
+            .data(preparedData.dataArray, function (d) {
                 return d.uniqueId;
             });
 
@@ -677,23 +677,23 @@ panel_bar2d.prototype.drawBars = function(preparedData, trans) {
     // Az új oszlopok tartójának elkészítése.
     gBar = gBar.enter().append("svg:g")
             .attr("class", "bar bordered darkenable")
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(" + d.oldX + ", 0)";
             })
             .merge(gBar);
 
     // Lefúrás eseménykezelőjének hozzácsapása az oszlopkonténerhez.
     gBar.classed("listener", true)
-            .on("click", function(d) {
+            .on("click", function (d) {
                 that.drill(that.dimX, d);
             });
 
     // Elemi oszlopelemek megrajzolása, kilépők letörlése.
     var oldWidth = preparedData.dataArray[0].oldWidth; // A régi téglalapszélesség; ki kell szedni, hogy minden elemhez használhassuk.
     var barRect = gBar.selectAll("rect")
-            .data(function(d) {
+            .data(function (d) {
                 return d.values;
-            }, function(d) {
+            }, function (d) {
                 return d.dimYUniqueId;
             });
 
@@ -702,35 +702,38 @@ panel_bar2d.prototype.drawBars = function(preparedData, trans) {
     barRect.enter().append("svg:rect")
             .attr("x", 0)
             .attr("width", oldWidth)
-            .attr("y", function(d2) {
+            .attr("y", function (d2) {
                 return d2.oldY;
             })
-            .attr("height", function(d2) {
+            .attr("height", function (d2) {
                 return d2.oldHeight;
             })
-            .attr("fill", function(d2) {
+            .attr("fill", function (d2) {
                 return global.color(d2.dimYId);
             })
-            .attr("opacity", function(d2) {
+            .attr("opacity", function (d2) {
                 return d2.startOpacity;
             });
 
     // Megjelenési animáció: akárhol is volt, a helyére megy.
     gBar.transition(trans)
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(" + d.x + ", 0)";
             })
             .selectAll("rect")
-            .attr("y", function(d2) {
+            .attr("y", function (d2) {
                 return d2.y;
             })
-            .attr("height", function(d2) {
+            .attr("height", function (d2) {
                 return d2.height;
             })
             .attr("width", that.xScale(1 - that.barPadding))
+            .attr("fill", function (d2) {
+                return global.color(d2.dimYId);
+            })
             .attr("opacity", 1)
-            .on("end", function() {
-                d3.select(this).attr("class", function(d2) {
+            .on("end", function () {
+                d3.select(this).attr("class", function (d2) {
                     return "controlled controlled" + d2.index;
                 });
             });
@@ -743,13 +746,13 @@ panel_bar2d.prototype.drawBars = function(preparedData, trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
+panel_bar2d.prototype.drawLegend = function (preparedData, trans) {
     var that = this;
     var legendArray = preparedData.dimYArray;
 
     // Egy elem tartó g-je, ebbe kerül a téglalp, és rá a szöveg.
     var legend = that.gLegend.selectAll(".legendEntry")
-            .data(legendArray, function(d) {
+            .data(legendArray, function (d) {
                 return d.uniqueId;
             });
 
@@ -762,23 +765,23 @@ panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
 
     // Új elemek létrehozása.
     var legend_new = legend.enter().insert("svg:g", ".bar_group")
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(" + (d.oldX + that.legendOffsetX) + ", " + (that.h - global.legendHeight - global.legendOffsetY) + ")";
             })
-            .on("click", function(d) {
+            .on("click", function (d) {
                 that.drill(that.dimY, d);
             })
-            .on("mouseover", function() {
+            .on("mouseover", function () {
                 d3.select(this).classed("triggered", true);
             })
-            .on("mouseout", function() {
+            .on("mouseout", function () {
                 d3.select(this).classed("triggered", false);
             });
 
     // Kezdőtéglalap rajzolása az új tartókba.
     legend_new.append("svg:path")
             .attr("class", "legend bordered")
-            .attr("d", function(d) {
+            .attr("d", function (d) {
                 return global.rectanglePath(
                         0, // x
                         0, // y
@@ -786,10 +789,10 @@ panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
                         global.legendHeight, // height
                         0, 0, 0, 0);  // rounding
             })
-            .attr("fill", function(d) {
+            .attr("fill", function (d) {
                 return global.color(d.id);
             })
-            .attr("opacity", function(d) {
+            .attr("opacity", function (d) {
                 return d.startOpacity;
             });
 
@@ -799,28 +802,33 @@ panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
             .attr("x", 0)
             .attr("y", global.legendHeight / 2)
             .attr("dy", "0.35em")
-            .attr("fill", function(d) {
-                return global.readableColor(global.color(d.id));
-            })
             .attr("opacity", 0)
-            .text(function(d) {
+            .text(function (d) {
                 return d.name;
             });
 
     legend = legend_new.merge(legend);
-            
-    legend.attr("class", function(d) {
+
+    legend.attr("class", function (d) {
         return "legendEntry listener legendControl" + d.index;
-    });
+    })
+            .select("text")
+            .attr("fill", function (d) {
+                return global.readableColor(global.color(d.id));
+            });
 
     // A téglalapok helyre animálása.
     legend.transition(trans)
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "translate(" + (d.x + that.legendOffsetX) + ", " + (that.h - global.legendHeight - global.legendOffsetY) + ")";
             });
-            
-    legend.select("path").transition(trans)
-            .attr("d", function(d, i) {
+
+    legend.select("path")
+            .attr("fill", function (d) {
+                return global.color(d.id);
+            })
+            .transition(trans)
+            .attr("d", function (d, i) {
                 return global.rectanglePath(
                         0, // x
                         0, // y
@@ -832,13 +840,13 @@ panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
                         (i === 0) ? global.rectRounding : 0); // balalsó
             })
             .attr("opacity", 1)
-            .on("end", function() {
+            .on("end", function () {
                 d3.select(this).classed("darkenable", true);
             });
 
     // Szövegelemek helyre animálása.
     legend.select("text")
-            .text(function(d) {
+            .text(function (d) {
                 return d.name;
             })
             .transition(trans)
@@ -856,9 +864,10 @@ panel_bar2d.prototype.drawLegend = function(preparedData, trans) {
  * @param {Object} trans Az animáció objektum, amelyhez csatlakozni fog.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drawAxes = function(preparedData, trans) {
+panel_bar2d.prototype.drawAxes = function (preparedData, trans) {
     var that = this;
 
+    that.xAxisTextColor = global.readableColor(global.colorValue(0));
     var shadowSize = global.axisTextSize(that.xScale(1));	// A vízszintes tengely betűje mögötti klikk-téglalap mérete.
     var axisTextSize = (shadowSize < 6) ? 0 : shadowSize;	// A vízszintes tengely betűmérete.
 
@@ -871,7 +880,7 @@ panel_bar2d.prototype.drawAxes = function(preparedData, trans) {
 
     // Feliratok a vízszintes tengelyre, és a hozzá tartozó adat.
     var axisLabelX = that.gAxisX.selectAll("text")
-            .data(preparedData.dataArray, function(d) {
+            .data(preparedData.dataArray, function (d) {
                 return d.id + d.name;
             });
 
@@ -885,29 +894,30 @@ panel_bar2d.prototype.drawAxes = function(preparedData, trans) {
             .append("svg:text")
             .attr("class", "shadowedLabel")
             .attr("font-size", axisTextSize)
-            .attr("opacity", function(d) {
+            .attr("opacity", function (d) {
                 return (global.valueInRange(d.oldX, 0, that.w)) ? 0 : global.axisTextOpacity;
             })
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 return "rotate(-90)";
             })
             .attr("x", -that.height + 0.26 * axisTextSize)
-            .attr("y", function(d) {
+            .attr("y", function (d) {
                 return d.oldX + d.oldWidth / 2 + 0.35 * axisTextSize;
             })
-            .attr("fill", that.xAxisTextColor)
             .attr("text-anchor", "beginning")
-            .text(function(d) {
+            .text(function (d) {
                 return d.name;
             });
 
     axisLabelX = axisLabelXText.merge(axisLabelX);
 
     // Maradó feliratok helyre animálása.
-    axisLabelX.transition(trans)
+    axisLabelX
+            .attr("fill", that.xAxisTextColor)
+            .transition(trans)
             .attr("font-size", axisTextSize)
             .attr("x", -that.height + 0.26 * axisTextSize)
-            .attr("y", function(d) {
+            .attr("y", function (d) {
                 return d.x + d.width / 2 + 0.35 * axisTextSize;
             })
             .attr("opacity", global.axisTextOpacity);
@@ -922,30 +932,30 @@ panel_bar2d.prototype.drawAxes = function(preparedData, trans) {
             .remove();
 
     // Háttértéglalapok, eseménykezelő létrehozása, de csak az animáció lefutása után.
-    that.shadowTimeout = setTimeout(function() {
+    that.shadowTimeout = setTimeout(function () {
         that.gAxisXShadow.selectAll("rect")
-                .data(preparedData.dataArray, function(d) {
+                .data(preparedData.dataArray, function (d) {
                     return d.id + d.name;
                 })
                 .enter()
                 .append("svg:rect")
                 .classed("listener", true)
                 .attr("width", shadowSize * 1.05)
-                .attr("height", function(d) {
-                    return Math.max(30, 0.5 * shadowSize + Math.min(that.gAxisX.selectAll("text").filter(function(d2) {
+                .attr("height", function (d) {
+                    return Math.max(30, 0.5 * shadowSize + Math.min(that.gAxisX.selectAll("text").filter(function (d2) {
                         return d === d2;
                     }).nodes()[0].getComputedTextLength(), 0.7 * that.h));
                 })
-                .attr("y", function(d) {
-                    return that.height - Math.max(30, 0.5 * shadowSize + Math.min(that.gAxisX.selectAll("text").filter(function(d2) {
+                .attr("y", function (d) {
+                    return that.height - Math.max(30, 0.5 * shadowSize + Math.min(that.gAxisX.selectAll("text").filter(function (d2) {
                         return d === d2;
                     }).nodes()[0].getComputedTextLength(), 0.7 * that.h));
                 })
-                .attr("x", function(d) {
+                .attr("x", function (d) {
                     return d.x + (d.width - shadowSize) / 2;
                 })
                 .attr("opacity", 0)
-                .on("click", function(d) {
+                .on("click", function (d) {
                     that.drill(that.dimX, d);
                 });
     }, trans.duration());
@@ -963,7 +973,7 @@ panel_bar2d.prototype.drawAxes = function(preparedData, trans) {
  * @param {Object} d Lefúrás esetén a lefúrás céleleme. Ha undefined, akkor felfúrásról van szó.
  * @returns {undefined}
  */
-panel_bar2d.prototype.drill = function(dim, d) {
+panel_bar2d.prototype.drill = function (dim, d) {
     global.tooltip.kill();
     var drill = {
         dim: (dim === this.dimX) ? this.dimXToShow : this.dimYToShow,
@@ -982,7 +992,7 @@ panel_bar2d.prototype.drill = function(dim, d) {
  * @param {boolean} ratio Hányadost mutasson-e. Ha -1 akkor a másikra ugrik, ha undefined, nem vált.
  * @returns {undefined}
  */
-panel_bar2d.prototype.doChangeValue = function(panelId, value, ratio) {
+panel_bar2d.prototype.doChangeValue = function (panelId, value, ratio) {
     var that = this;
     if (panelId === undefined || panelId === that.panelId) {
         if (value !== undefined) {
@@ -1006,7 +1016,7 @@ panel_bar2d.prototype.doChangeValue = function(panelId, value, ratio) {
  * @param {Integer} dimToChange A megváltoztatandó dimenzió sorszáma (0 vagy 1).
  * @returns {undefined}
  */
-panel_bar2d.prototype.doChangeDimension = function(panelId, newDimId, dimToChange) {
+panel_bar2d.prototype.doChangeDimension = function (panelId, newDimId, dimToChange) {
     var that = this;
     if (panelId === that.panelId) {
         if (dimToChange === 0) {

@@ -179,8 +179,8 @@
             </svg>						
           </span>
         </li>
-
-        <li class="languageSwitch" style="display: none;">
+       
+        <li class="languageSwitch switch" style="display: none;">
           <span class="tloc" tooltip="<h4>Nyelv választás</h4>">
             <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
             <use xlink:href="#icon_flag" />	
@@ -200,6 +200,26 @@
           </ul>
         </li>               
 
+        <li class="cssSwitch switch">
+          <span class="tloc" tooltip="<h4>Színsémák</h4>">
+            <svg version="1.1" x="0px" y="0px" width="40px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 32">
+            <use xlink:href="#icon_palette" />	
+            </svg>
+          </span>
+          <ul class="hidden">
+            <li>
+              <span class="tloc" tooltip="<h4>Sötét</h4>" onclick="global.changeCSS('css/containerBlack.css?ver=3.1');">Fekete</span>
+            </li>
+            <li>
+              <span class="tloc" tooltip="<h4>Világos</h4>" onclick="global.changeCSS('css/containerWhite.css?ver=3.1');">Fehér</span>
+            </li>
+            <li>
+              <span class="tloc" tooltip="<h4>Lila</h4>" onclick="global.changeCSS('css/containerPurple.css?ver=3.1');">Lila</span>
+            </li>
+
+          </ul>
+        </li>                       
+                
       </ul>
     </nav>
     <div class="noEvents" id="toolbarShadow">

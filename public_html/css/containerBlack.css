@@ -1,0 +1,1915 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 7, 2017, 3:16:49 PM
+    Author     : ruzsaz
+*/
+/* 
+    Document   : frame
+    Created on : 2014.01.29., 16:03:26
+    Author     : ruzsaz
+    Description:
+        Purpose of the stylesheet follows.
+*/
+/* A toolbar magassága */
+/* A háttérszín */
+/* A panel, és az arra írás színe */
+/* A dimenziók színei */
+/* Értékek színei */
+/* A dimenzióelemek jelölésére szolgáló színpaletta */
+/* Fejléc színei */
+/* Elemek körüli határ */
+/* A panelváltó és becsukógomb szélessége */
+/* A css-es animáció ideje */
+/* Ennyi bejegyzés lehet a legend-ben. */
+#less .panelWidth {
+  width: 600px;
+}
+#less .panelHeight {
+  width: 400px;
+}
+#less .panelMargin {
+  width: 6px;
+}
+#less .elementBorderSize {
+  width: 0px;
+}
+#less .rounding {
+  width: 10px;
+}
+#less .writeOnDimColor {
+  color: white;
+}
+#less .writeOnValColor {
+  color: black;
+}
+#less .writeOnValColor2 {
+  color: white;
+}
+#less .highlightColor {
+  color: white;
+}
+#less .dimHighlightColor {
+  color: black;
+}
+#less .panelWriteColor {
+  color: white;
+}
+#less .panelBackgroundColor {
+  color: #343434;
+}
+#less .switchColor {
+  color: #40bddf;
+}
+#less .oddColor {
+  color: #555;
+}
+#less .evenColor {
+  color: #666;
+}
+#less .stripeWidth {
+  width: 8px;
+}
+#less .axisTextOpacity {
+  opacity: 1;
+}
+#less .fontSizeSmall {
+  width: 12px;
+}
+#less .mainToolbarHeight {
+  width: 32px;
+}
+#less .scrollbarWidth {
+  width: 12px;
+}
+#less .valColorNA {
+  color: grey;
+}
+#less .valColor20 {
+  color: #0885a4;
+}
+#less .valColor19 {
+  color: #7d9c53;
+}
+#less .valColor18 {
+  color: #c2b211;
+}
+#less .valColor17 {
+  color: #badb8e;
+}
+#less .valColor16 {
+  color: #b8bf5a;
+}
+#less .valColor15 {
+  color: #f7e306;
+}
+#less .valColor14 {
+  color: #bfe8f6;
+}
+#less .valColor13 {
+  color: #9ccf61;
+}
+#less .valColor12 {
+  color: #80d4e9;
+}
+#less .valColor11 {
+  color: #3db8a3;
+}
+#less .valColor10 {
+  color: #d4cc4c;
+}
+#less .valColor9 {
+  color: #43b57c;
+}
+#less .valColor8 {
+  color: #9eb060;
+}
+#less .valColor7 {
+  color: #00a6d3;
+}
+#less .valColor6 {
+  color: #faeb4c;
+}
+#less .valColor5 {
+  color: #85c222;
+}
+#less .valColor4 {
+  color: #22ada6;
+}
+#less .valColor3 {
+  color: #8c8014;
+}
+#less .valColor2 {
+  color: #bad642;
+}
+#less .valColor1 {
+  color: #40bddf;
+}
+* {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-family: arial, sans-serif;
+}
+/* Safarihoz bugfix */
+input[type=text],
+input[type=password] {
+  -moz-user-select: -moz-text !important;
+  -khtml-user-select: text !important;
+  -webkit-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+root {
+  display: block;
+}
+body {
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background: black;
+  color: #ffffff;
+}
+svg {
+  overflow: hidden;
+}
+#svgDefs {
+  height: 0px;
+}
+#topdiv {
+  width: 100%;
+  overflow: hidden;
+}
+#progressDiv {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0px;
+  background: rgba(0, 0, 0, 0);
+  color: white;
+  z-index: -1;
+  opacity: 0;
+  font-size: 100px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 100px;
+  cursor: progress;
+}
+/* container */
+.container {
+  position: absolute;
+}
+.container.dragging {
+  cursor: move;
+}
+/* container */
+#scrollPaneP0,
+#scrollPaneP1 {
+  position: absolute;
+  height: calc(100% -  32px);
+  top: 32px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+/* container */
+#scrollPaneP0 {
+  width: 100%;
+  left: 0px;
+}
+/* container */
+#scrollPaneP1 {
+  width: 0%;
+  right: 0px;
+}
+/* container */
+#cutter0,
+#cutter1 {
+  position: relative;
+  height: calc(100vh -  32px);
+  overflow: hidden;
+}
+.panel {
+  box-shadow: 0px 0px 0px 0px white;
+  border-radius: 10px;
+  padding: 0px;
+  float: left;
+  width: 600px;
+  height: 400px;
+  margin: 6px;
+  position: relative;
+}
+.baseDiv:before,
+.baseDiv:after {
+  content: " ";
+  display: table;
+}
+.baseDiv:after {
+  clear: both;
+}
+.halfHead:not(.vertical) {
+  width: 50%;
+  float: left;
+}
+.halfHead.vertical {
+  width: 100%;
+  float: left;
+}
+.buttonBaseDiv {
+  position: absolute;
+}
+.tableScrollPane,
+.mainTitle {
+  margin: 8px;
+  padding: 0px 8px 5px 8px;
+}
+.mainTitle {
+  color: white;
+  text-align: center;
+  font-size: 20px;
+  padding-top: 16px;
+  padding-bottom: 0px;
+}
+.panelMask {
+  background: #343434;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  opacity: 0;
+}
+/* Ez azért kell, hogy az elmentett panel-képen is ott legyen a háttér */
+.background rect {
+  opacity: 0;
+  /*	opacity: 1;
+        rx: @rounding;
+        fill: @panelBackgroundColor;*/
+}
+/* Ez azért kell, hogy az elmentett panel-képen is ott legyen a háttér */
+.backgroundForSave {
+  opacity: 1;
+  rx: 10px;
+  fill: #343434;
+}
+/* Panel */
+.panic rect {
+  fill: #343434;
+}
+/* Panel */
+.panic text {
+  fill: black;
+}
+.panel.double {
+  width: 600px;
+  overflow: hidden;
+  position: relative;
+  height: auto;
+  background: #343434;
+}
+.label {
+  fill: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  color: white;
+  min-width: 30px;
+  min-height: 8px;
+  max-width: 45vw;
+  padding: 6px 12px;
+  background: black;
+  border: 0px;
+  border-radius: 10px;
+  pointer-events: none;
+  font-size: 16px;
+  z-index: 500;
+  text-align: left;
+}
+div.tooltip em {
+  font-size: 16px;
+}
+div.tooltip ul {
+  list-style-position: inside;
+  padding: 0px;
+  margin: 0px;
+}
+div.tooltip li {
+  padding-left: 10px;
+}
+div.tooltip h4 {
+  margin: 2px 0px;
+}
+.bordered {
+  stroke-width: 0px;
+  stroke: black;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: white;
+  stroke-width: 2;
+}
+/* Panel_Pie */
+.pieTicks {
+  stroke: white;
+}
+/* Panel_Pie */
+.pieTicks,
+.gPieTick {
+  opacity: 0;
+}
+/* Panel_Map */
+.mapHolder.water path.Polygon {
+  stroke: #2c748c;
+  stroke-width: 0.05;
+  fill: #2c748c;
+}
+/* Panel_Map */
+.mapHolder.water path.LineString {
+  stroke: #2c748c;
+  stroke-width: 0.3;
+  fill: none;
+}
+/* Panel_Map */
+.subunit {
+  stroke: black;
+}
+/* Panel_Map */
+mask path {
+  fill: white;
+}
+/* Panel_Map */
+.gPoiLegend rect {
+  opacity: 0.6;
+  fill: black;
+}
+/* Panel_Map */
+.poiLegend rect {
+  opacity: 0;
+}
+/* Panel_Map */
+.poiLegend:not(.inactive) text {
+  fill: white;
+}
+/* Panel_Map */
+.poiLegend.inactive path,
+.poiLegend.inactive text {
+  fill: #6d6d6d;
+}
+/* Panel_Map */
+.gPoi.inactive {
+  visibility: hidden;
+}
+/* Panel_Map */
+.gPoi.opaque,
+.mapHolder.labels.opaque {
+  opacity: 0.1;
+}
+.gPoi.noText text {
+  display: none;
+  opacity: 0;
+}
+.gPoi text {
+  text-shadow: 0px 0px 3px white;
+}
+.units {
+  font-size: 12px;
+  fill: white;
+}
+.axisY text {
+  font-size: 12px;
+  font-weight: bold;
+  fill: white;
+}
+/* Panel_Table2D, Panel_Table1D */
+.svgRowHeadLabel {
+  font-size: 12px;
+  fill: white;
+  text-anchor: beginning;
+}
+/* Panel_Table2D, Panel_Table1D */
+.svgTableCell,
+.svgColumnHeadLabel {
+  font-size: 12px;
+  fill: white;
+  text-anchor: middle;
+}
+/* Panel_Table2D */
+.svgTableHolder rect {
+  stroke-width: 1;
+  stroke: #343434;
+}
+/* Panel_Table2D */
+.alterColored[parity="0"] > .backgroundRect {
+  fill: #666;
+}
+/* Panel_Table2D */
+.alterColored[parity="1"] > .backgroundRect {
+  fill: #555;
+}
+/* Panel_Table2D */
+.alterColored[parity="1"] > .alterColored[parity="0"] > .backgroundRect,
+.alterColored[parity="0"] > .alterColored[parity="1"] > .backgroundRect {
+  fill: #606060;
+}
+/* Panel_Table1D */
+.svgColumnHead.showValue text,
+.svgTableCell.showValue text {
+  fill: black;
+}
+/* Panel_BarLine */
+.avg_group text {
+  font-size: 12px;
+  font-style: italic;
+}
+.value {
+  font-size: 12px;
+  fill: #c2b211;
+}
+.legend {
+  font-size: 12px;
+}
+.titleText {
+  font-size: 20px;
+  font-weight: bold;
+  fill: black;
+}
+/* Panel_BarLine */
+.lineChart {
+  fill: none;
+  stroke-width: 3;
+}
+/* Panel_BarLine */
+.lineChartLegend {
+  stroke-width: 3;
+}
+/* Panel_BarLine */
+.top_10_holder {
+  fill: #444;
+}
+/* universal */
+.noEvents {
+  pointer-events: none;
+}
+/* Panel_BarLine */
+.lineSymbol {
+  stroke-width: 0px;
+  stroke: black;
+}
+/* Panel_BarLine */
+.shadow {
+  fill: #343434;
+  stroke: #343434;
+}
+.divTableBase {
+  margin: 0px 4px 16px;
+  position: relative;
+}
+.divTableBase.HeadPanel_Browser {
+  margin-bottom: 8px;
+}
+/* HeadPanel */
+.halfHead .table {
+  color: white;
+}
+/* HeadPanel */
+.table {
+  display: table;
+  color: white;
+  border-spacing: 0px 8px;
+  width: 200%;
+}
+/* HeadPanel */
+.tableHolder {
+  margin: 10px;
+}
+/* HeadPanel */
+.tableScrollPane {
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  max-height: 500px;
+}
+/* HeadPanel */
+.title {
+  display: table-caption;
+  text-align: center;
+  font-weight: bold;
+  font-size: larger;
+}
+/* HeadPanel */
+.row,
+.heading {
+  display: table-row;
+}
+/* HeadPanel */
+.cell {
+  display: table-cell;
+  font-size: 16px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  line-height: 20px;
+  z-index: 2;
+  position: relative;
+}
+.dimTable .cell:nth-child(1),
+.dimTable .cell:nth-child(2) {
+  width: 25%;
+  pointer-events: none;
+}
+.dimTable .tableText0,
+.dimTable .tableText1,
+.dimTable .backgroundCell {
+  color: white;
+}
+.valTable .tableText0,
+.valTable .tableText1,
+.valTable .tableText2,
+.valTable .backgroundCell {
+  color: black;
+}
+.heading .cell {
+  font-size: 16px;
+  font-weight: bold;
+}
+.valTable .realText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.valTable .dummyText {
+  visibility: hidden;
+  height: 0px;
+  overflow: hidden;
+  display: block;
+  white-space: normal;
+}
+#headPanelP0 .row .cell text:not(.spacer),
+#headPanelP1 .row .cell text:not(.spacer) {
+  /* position: absolute; A legújabb próbálkozás szerint ez nem kell */
+  max-width: 90%;
+  /* white-space: nowrap; A legújabb próbálkozás szerint ez nem kell */
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+#headPanelP0 .halfHead .row .cell text:not(.spacer),
+#headPanelP1 .halfHead .row .cell text:not(.spacer) {
+  position: absolute;
+  white-space: nowrap;
+}
+#headPanelP0 text.spacer,
+#headPanelP1 text.spacer {
+  height: 0px;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.cell:first-child {
+  padding-left: 15px;
+}
+.cell {
+  padding-right: 15px;
+}
+/* HeadPanel */
+.backgroundCell {
+  width: 50%;
+  -webkit-transform: translate(-100%);
+  -moz-transform: translate(-100%);
+  -ms-transform: translate(-100%);
+  -o-transform: translate(-100%);
+  transform: translate(-100%);
+  z-index: 1;
+}
+/* HeadPanel */
+.alterColored[parity="0"] .backgroundCell {
+  background: #666;
+}
+/* HeadPanel */
+.alterColored[parity="1"] .backgroundCell {
+  background: #555;
+}
+.row .backgroundCell {
+  border-radius: 10px;
+  border: 0px solid;
+  box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+}
+/* HeadPanel */
+.alterColored[parity="hidden"] {
+  display: none;
+}
+/* A legújabb próbálkozás szerint ez nem kell
+.reportsTable .cell:nth-child(1) {
+        overflow-wrap: break-word;
+        max-width: 10%;
+        width: 10%;
+}
+
+.reportsTable .cell:nth-child(2) {
+        overflow-wrap: break-word;
+        max-width: 30%;
+}
+
+.reportsTable .cell:nth-child(3) {
+        overflow-wrap: break-word;
+        max-width: 5%;
+        width: 5%;
+}
+
+.reportsTable .cell:nth-child(4) {
+        overflow-wrap: break-word;
+        max-width: 5%;
+        width: 5%;
+} */
+.reportsTable .cell:nth-child(5) {
+  overflow-wrap: break-word;
+  max-width: 50%;
+  width: 50%;
+}
+.hoverable:hover text {
+  color: white;
+}
+.hoverable text {
+  transition: color 0.1s linear;
+  -webkit-transition: color 0.1s linear;
+  -moz-transition: color 0.1s linear;
+  -ms-transition: color 0.1s linear;
+  -o-transition: color 0.1s linear;
+}
+/* Cointainer, drag réteg */
+.dragCircle {
+  background: lightGrey;
+  border-radius: 10px;
+  border: 0px solid white;
+  z-index: 900;
+  position: absolute;
+  display: none;
+  visibility: hidden;
+  margin-left: -25px;
+  margin-top: -15px;
+  padding-right: 15px;
+  padding-left: 15px;
+  line-height: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 16px;
+  pointer-events: none;
+  color: red;
+}
+.button {
+  display: inline-block;
+  color: #ffffff;
+  background-color: #FFAD33;
+  border: 1px solid #FFAD33;
+  font-weight: bold;
+  font-size: 11px;
+  text-align: center;
+  padding: 10px;
+  padding-top: 1px;
+  padding-bottom: 2px;
+  text-decoration: none;
+  margin-left: 1px;
+  border-radius: 5px;
+  white-space: nowrap;
+  cursor: default;
+}
+.titleRect {
+  stroke-width: 0px;
+  opacity: 0;
+  fill: #aaaaaa;
+}
+.titleButton0:hover ~ .titleText0,
+.titleButton1:hover ~ .titleText1 {
+  fill: white;
+}
+.titleText {
+  dy: 0.35em;
+  text-anchor: middle;
+  pointer-events: none;
+  opacity: 0;
+  transition: fill 0.1s linear;
+  -webkit-transition: fill 0.1s linear;
+  -moz-transition: fill 0.1s linear;
+  -ms-transition: fill 0.1s linear;
+  -o-transition: fill 0.1s linear;
+}
+body {
+  -ms-scrollbar-face-color: #40bddf;
+  -ms-scrollbar-track-color: black;
+  -ms-scrollbar-arrow-color: #40bddf;
+  -ms-scrollbar-shadow-color: #40bddf;
+}
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background: black;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background: #40bddf;
+  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: #40bddf;
+}
+p {
+  margin: 20px 0 0;
+}
+p:first-child {
+  margin-top: 0;
+}
+input[type=text] {
+  margin: 16px 16px;
+}
+p.submit {
+  text-align: right;
+}
+:-moz-placeholder {
+  color: #c9c9c9 !important;
+  font-size: 16px;
+}
+::-webkit-input-placeholder {
+  color: #ccc;
+  font-size: 16px;
+}
+input {
+  font-size: 16px;
+}
+input[type=text],
+input[type=password] {
+  width: 278px;
+  padding: 0 10px;
+  height: 34px;
+  color: #343434;
+  background: white;
+  border: 0px solid white;
+  border-radius: 10px;
+  -moz-outline-radius: 3px;
+}
+input[type=text],
+input[type=password],
+input[type=submit],
+button,
+textarea {
+  transition: opacity 0s linear, background 0s linear, box-shadow 0s linear, -webkit-box-shadow 0s linear, -moz-box-shadow 0s linear;
+  -webkit-transition: opacity 0s linear, background 0s linear, box-shadow 0s linear, -webkit-box-shadow 0s linear, -moz-box-shadow 0s linear;
+  -moz-transition: opacity 0s linear, background 0s linear, box-shadow 0s linear, -webkit-box-shadow 0s linear, -moz-box-shadow 0s linear;
+  -ms-transition: opacity 0s linear, background 0s linear, box-shadow 0s linear, -webkit-box-shadow 0s linear, -moz-box-shadow 0s linear;
+  -o-transition: opacity 0s linear, background 0s linear, box-shadow 0s linear, -webkit-box-shadow 0s linear, -moz-box-shadow 0s linear;
+}
+input[type=text]:focus,
+input[type=password]:focus,
+input[type=submit]:focus,
+button:focus,
+textarea:focus {
+  background: white;
+  border-radius: 10px;
+  -moz-outline-radius: 3px;
+  outline: none;
+  box-shadow: 0 0 10px white;
+  -webkit-box-shadow: 0 0 10px white;
+  -moz-box-shadow: 0 0 10px white;
+}
+input[type=submit],
+button {
+  margin-right: 5px;
+  padding: 0 18px;
+  height: 29px;
+  font-size: 16px;
+  color: white;
+  background: #555;
+  border: 0px solid;
+  border-radius: 10px;
+}
+/* universal */
+text {
+  cursor: default;
+}
+/* universal */
+.darkenable,
+.controlled {
+  transition: opacity 0s linear;
+  -webkit-transition: opacity 0s linear;
+  -moz-transition: opacity 0s linear;
+  -ms-transition: opacity 0s linear;
+  -o-transition: opacity 0s linear;
+}
+/* universal */
+.darkenable:hover {
+  opacity: 0.7;
+}
+/* Panel_BarLine, Bar2Panel, HoritzontalBarPanel */
+.legendControl0.triggered ~ * .controlled:not(.controlled0) {
+  opacity: 0.1;
+}
+.legendControl1.triggered ~ * .controlled:not(.controlled1) {
+  opacity: 0.1;
+}
+.legendControl2.triggered ~ * .controlled:not(.controlled2) {
+  opacity: 0.1;
+}
+.legendControl3.triggered ~ * .controlled:not(.controlled3) {
+  opacity: 0.1;
+}
+.legendControl4.triggered ~ * .controlled:not(.controlled4) {
+  opacity: 0.1;
+}
+.legendControl5.triggered ~ * .controlled:not(.controlled5) {
+  opacity: 0.1;
+}
+.legendControl6.triggered ~ * .controlled:not(.controlled6) {
+  opacity: 0.1;
+}
+.legendControl7.triggered ~ * .controlled:not(.controlled7) {
+  opacity: 0.1;
+}
+.legendControl8.triggered ~ * .controlled:not(.controlled8) {
+  opacity: 0.1;
+}
+.legendControl9.triggered ~ * .controlled:not(.controlled9) {
+  opacity: 0.1;
+}
+.legendControl10.triggered ~ * .controlled:not(.controlled10) {
+  opacity: 0.1;
+}
+.legendControl11.triggered ~ * .controlled:not(.controlled11) {
+  opacity: 0.1;
+}
+.legendControl12.triggered ~ * .controlled:not(.controlled12) {
+  opacity: 0.1;
+}
+.legendControl13.triggered ~ * .controlled:not(.controlled13) {
+  opacity: 0.1;
+}
+.legendControl14.triggered ~ * .controlled:not(.controlled14) {
+  opacity: 0.1;
+}
+.legendControl15.triggered ~ * .controlled:not(.controlled15) {
+  opacity: 0.1;
+}
+.legendControl16.triggered ~ * .controlled:not(.controlled16) {
+  opacity: 0.1;
+}
+.legendControl17.triggered ~ * .controlled:not(.controlled17) {
+  opacity: 0.1;
+}
+.legendControl18.triggered ~ * .controlled:not(.controlled18) {
+  opacity: 0.1;
+}
+.legendControl19.triggered ~ * .controlled:not(.controlled19) {
+  opacity: 0.1;
+}
+.legendControl20.triggered ~ * .controlled:not(.controlled20) {
+  opacity: 0.1;
+}
+.legendControl21.triggered ~ * .controlled:not(.controlled21) {
+  opacity: 0.1;
+}
+.legendControl22.triggered ~ * .controlled:not(.controlled22) {
+  opacity: 0.1;
+}
+.legendControl23.triggered ~ * .controlled:not(.controlled23) {
+  opacity: 0.1;
+}
+.legendControl24.triggered ~ * .controlled:not(.controlled24) {
+  opacity: 0.1;
+}
+.legendControl25.triggered ~ * .controlled:not(.controlled25) {
+  opacity: 0.1;
+}
+.legendControl26.triggered ~ * .controlled:not(.controlled26) {
+  opacity: 0.1;
+}
+.legendControl27.triggered ~ * .controlled:not(.controlled27) {
+  opacity: 0.1;
+}
+.legendControl28.triggered ~ * .controlled:not(.controlled28) {
+  opacity: 0.1;
+}
+.legendControl29.triggered ~ * .controlled:not(.controlled29) {
+  opacity: 0.1;
+}
+.legendControl30.triggered ~ * .controlled:not(.controlled30) {
+  opacity: 0.1;
+}
+.legendControl31.triggered ~ * .controlled:not(.controlled31) {
+  opacity: 0.1;
+}
+.legendControl32.triggered ~ * .controlled:not(.controlled32) {
+  opacity: 0.1;
+}
+.legendControl33.triggered ~ * .controlled:not(.controlled33) {
+  opacity: 0.1;
+}
+.legendControl34.triggered ~ * .controlled:not(.controlled34) {
+  opacity: 0.1;
+}
+.legendControl35.triggered ~ * .controlled:not(.controlled35) {
+  opacity: 0.1;
+}
+.legendControl36.triggered ~ * .controlled:not(.controlled36) {
+  opacity: 0.1;
+}
+.legendControl37.triggered ~ * .controlled:not(.controlled37) {
+  opacity: 0.1;
+}
+.legendControl38.triggered ~ * .controlled:not(.controlled38) {
+  opacity: 0.1;
+}
+.legendControl39.triggered ~ * .controlled:not(.controlled39) {
+  opacity: 0.1;
+}
+.legendControl40.triggered ~ * .controlled:not(.controlled40) {
+  opacity: 0.1;
+}
+.legendControl41.triggered ~ * .controlled:not(.controlled41) {
+  opacity: 0.1;
+}
+.legendControl42.triggered ~ * .controlled:not(.controlled42) {
+  opacity: 0.1;
+}
+.legendControl43.triggered ~ * .controlled:not(.controlled43) {
+  opacity: 0.1;
+}
+.legendControl44.triggered ~ * .controlled:not(.controlled44) {
+  opacity: 0.1;
+}
+.legendControl45.triggered ~ * .controlled:not(.controlled45) {
+  opacity: 0.1;
+}
+.legendControl46.triggered ~ * .controlled:not(.controlled46) {
+  opacity: 0.1;
+}
+.legendControl47.triggered ~ * .controlled:not(.controlled47) {
+  opacity: 0.1;
+}
+.legendControl48.triggered ~ * .controlled:not(.controlled48) {
+  opacity: 0.1;
+}
+.legendControl49.triggered ~ * .controlled:not(.controlled49) {
+  opacity: 0.1;
+}
+.legendControl50.triggered ~ * .controlled:not(.controlled50) {
+  opacity: 0.1;
+}
+.legendControl51.triggered ~ * .controlled:not(.controlled51) {
+  opacity: 0.1;
+}
+.legendControl52.triggered ~ * .controlled:not(.controlled52) {
+  opacity: 0.1;
+}
+.legendControl53.triggered ~ * .controlled:not(.controlled53) {
+  opacity: 0.1;
+}
+.legendControl54.triggered ~ * .controlled:not(.controlled54) {
+  opacity: 0.1;
+}
+.legendControl55.triggered ~ * .controlled:not(.controlled55) {
+  opacity: 0.1;
+}
+.legendControl56.triggered ~ * .controlled:not(.controlled56) {
+  opacity: 0.1;
+}
+.legendControl57.triggered ~ * .controlled:not(.controlled57) {
+  opacity: 0.1;
+}
+.legendControl58.triggered ~ * .controlled:not(.controlled58) {
+  opacity: 0.1;
+}
+.legendControl59.triggered ~ * .controlled:not(.controlled59) {
+  opacity: 0.1;
+}
+.legendControl60.triggered ~ * .controlled:not(.controlled60) {
+  opacity: 0.1;
+}
+.legendControl61.triggered ~ * .controlled:not(.controlled61) {
+  opacity: 0.1;
+}
+.legendControl62.triggered ~ * .controlled:not(.controlled62) {
+  opacity: 0.1;
+}
+.legendControl63.triggered ~ * .controlled:not(.controlled63) {
+  opacity: 0.1;
+}
+.legendControl64.triggered ~ * .controlled:not(.controlled64) {
+  opacity: 0.1;
+}
+.legendControl65.triggered ~ * .controlled:not(.controlled65) {
+  opacity: 0.1;
+}
+.legendControl66.triggered ~ * .controlled:not(.controlled66) {
+  opacity: 0.1;
+}
+.legendControl67.triggered ~ * .controlled:not(.controlled67) {
+  opacity: 0.1;
+}
+.legendControl68.triggered ~ * .controlled:not(.controlled68) {
+  opacity: 0.1;
+}
+.legendControl69.triggered ~ * .controlled:not(.controlled69) {
+  opacity: 0.1;
+}
+.legendControl70.triggered ~ * .controlled:not(.controlled70) {
+  opacity: 0.1;
+}
+.legendControl71.triggered ~ * .controlled:not(.controlled71) {
+  opacity: 0.1;
+}
+.legendControl72.triggered ~ * .controlled:not(.controlled72) {
+  opacity: 0.1;
+}
+.legendControl73.triggered ~ * .controlled:not(.controlled73) {
+  opacity: 0.1;
+}
+.legendControl74.triggered ~ * .controlled:not(.controlled74) {
+  opacity: 0.1;
+}
+.legendControl75.triggered ~ * .controlled:not(.controlled75) {
+  opacity: 0.1;
+}
+.legendControl76.triggered ~ * .controlled:not(.controlled76) {
+  opacity: 0.1;
+}
+.legendControl77.triggered ~ * .controlled:not(.controlled77) {
+  opacity: 0.1;
+}
+.legendControl78.triggered ~ * .controlled:not(.controlled78) {
+  opacity: 0.1;
+}
+.legendControl79.triggered ~ * .controlled:not(.controlled79) {
+  opacity: 0.1;
+}
+.legendControl80.triggered ~ * .controlled:not(.controlled80) {
+  opacity: 0.1;
+}
+.legendControl81.triggered ~ * .controlled:not(.controlled81) {
+  opacity: 0.1;
+}
+.legendControl82.triggered ~ * .controlled:not(.controlled82) {
+  opacity: 0.1;
+}
+.legendControl83.triggered ~ * .controlled:not(.controlled83) {
+  opacity: 0.1;
+}
+.legendControl84.triggered ~ * .controlled:not(.controlled84) {
+  opacity: 0.1;
+}
+.legendControl85.triggered ~ * .controlled:not(.controlled85) {
+  opacity: 0.1;
+}
+.legendControl86.triggered ~ * .controlled:not(.controlled86) {
+  opacity: 0.1;
+}
+.legendControl87.triggered ~ * .controlled:not(.controlled87) {
+  opacity: 0.1;
+}
+.legendControl88.triggered ~ * .controlled:not(.controlled88) {
+  opacity: 0.1;
+}
+.legendControl89.triggered ~ * .controlled:not(.controlled89) {
+  opacity: 0.1;
+}
+.legendControl90.triggered ~ * .controlled:not(.controlled90) {
+  opacity: 0.1;
+}
+.legendControl91.triggered ~ * .controlled:not(.controlled91) {
+  opacity: 0.1;
+}
+.legendControl92.triggered ~ * .controlled:not(.controlled92) {
+  opacity: 0.1;
+}
+.legendControl93.triggered ~ * .controlled:not(.controlled93) {
+  opacity: 0.1;
+}
+.legendControl94.triggered ~ * .controlled:not(.controlled94) {
+  opacity: 0.1;
+}
+.legendControl95.triggered ~ * .controlled:not(.controlled95) {
+  opacity: 0.1;
+}
+.legendControl96.triggered ~ * .controlled:not(.controlled96) {
+  opacity: 0.1;
+}
+.legendControl97.triggered ~ * .controlled:not(.controlled97) {
+  opacity: 0.1;
+}
+.legendControl98.triggered ~ * .controlled:not(.controlled98) {
+  opacity: 0.1;
+}
+.legendControl99.triggered ~ * .controlled:not(.controlled99) {
+  opacity: 0.1;
+}
+.legendControl100.triggered ~ * .controlled:not(.controlled100) {
+  opacity: 0.1;
+}
+.legendControl101.triggered ~ * .controlled:not(.controlled101) {
+  opacity: 0.1;
+}
+.legendControl102.triggered ~ * .controlled:not(.controlled102) {
+  opacity: 0.1;
+}
+.legendControl103.triggered ~ * .controlled:not(.controlled103) {
+  opacity: 0.1;
+}
+.legendControl104.triggered ~ * .controlled:not(.controlled104) {
+  opacity: 0.1;
+}
+.legendControl105.triggered ~ * .controlled:not(.controlled105) {
+  opacity: 0.1;
+}
+.legendControl106.triggered ~ * .controlled:not(.controlled106) {
+  opacity: 0.1;
+}
+.legendControl107.triggered ~ * .controlled:not(.controlled107) {
+  opacity: 0.1;
+}
+.legendControl108.triggered ~ * .controlled:not(.controlled108) {
+  opacity: 0.1;
+}
+.legendControl109.triggered ~ * .controlled:not(.controlled109) {
+  opacity: 0.1;
+}
+.legendControl110.triggered ~ * .controlled:not(.controlled110) {
+  opacity: 0.1;
+}
+.legendControl111.triggered ~ * .controlled:not(.controlled111) {
+  opacity: 0.1;
+}
+.legendControl112.triggered ~ * .controlled:not(.controlled112) {
+  opacity: 0.1;
+}
+.legendControl113.triggered ~ * .controlled:not(.controlled113) {
+  opacity: 0.1;
+}
+.legendControl114.triggered ~ * .controlled:not(.controlled114) {
+  opacity: 0.1;
+}
+.legendControl115.triggered ~ * .controlled:not(.controlled115) {
+  opacity: 0.1;
+}
+.legendControl116.triggered ~ * .controlled:not(.controlled116) {
+  opacity: 0.1;
+}
+.legendControl117.triggered ~ * .controlled:not(.controlled117) {
+  opacity: 0.1;
+}
+.legendControl118.triggered ~ * .controlled:not(.controlled118) {
+  opacity: 0.1;
+}
+.legendControl119.triggered ~ * .controlled:not(.controlled119) {
+  opacity: 0.1;
+}
+.legendControl120.triggered ~ * .controlled:not(.controlled120) {
+  opacity: 0.1;
+}
+.legendControl121.triggered ~ * .controlled:not(.controlled121) {
+  opacity: 0.1;
+}
+.legendControl122.triggered ~ * .controlled:not(.controlled122) {
+  opacity: 0.1;
+}
+.legendControl123.triggered ~ * .controlled:not(.controlled123) {
+  opacity: 0.1;
+}
+.legendControl124.triggered ~ * .controlled:not(.controlled124) {
+  opacity: 0.1;
+}
+.legendControl125.triggered ~ * .controlled:not(.controlled125) {
+  opacity: 0.1;
+}
+.legendControl126.triggered ~ * .controlled:not(.controlled126) {
+  opacity: 0.1;
+}
+.legendControl127.triggered ~ * .controlled:not(.controlled127) {
+  opacity: 0.1;
+}
+.legendControl128.triggered ~ * .controlled:not(.controlled128) {
+  opacity: 0.1;
+}
+.legendControl129.triggered ~ * .controlled:not(.controlled129) {
+  opacity: 0.1;
+}
+.legendControl130.triggered ~ * .controlled:not(.controlled130) {
+  opacity: 0.1;
+}
+.legendControl131.triggered ~ * .controlled:not(.controlled131) {
+  opacity: 0.1;
+}
+.legendControl132.triggered ~ * .controlled:not(.controlled132) {
+  opacity: 0.1;
+}
+.legendControl133.triggered ~ * .controlled:not(.controlled133) {
+  opacity: 0.1;
+}
+.legendControl134.triggered ~ * .controlled:not(.controlled134) {
+  opacity: 0.1;
+}
+.legendControl135.triggered ~ * .controlled:not(.controlled135) {
+  opacity: 0.1;
+}
+.legendControl136.triggered ~ * .controlled:not(.controlled136) {
+  opacity: 0.1;
+}
+.legendControl137.triggered ~ * .controlled:not(.controlled137) {
+  opacity: 0.1;
+}
+.legendControl138.triggered ~ * .controlled:not(.controlled138) {
+  opacity: 0.1;
+}
+.legendControl139.triggered ~ * .controlled:not(.controlled139) {
+  opacity: 0.1;
+}
+.legendControl140.triggered ~ * .controlled:not(.controlled140) {
+  opacity: 0.1;
+}
+.legendControl141.triggered ~ * .controlled:not(.controlled141) {
+  opacity: 0.1;
+}
+.legendControl142.triggered ~ * .controlled:not(.controlled142) {
+  opacity: 0.1;
+}
+.legendControl143.triggered ~ * .controlled:not(.controlled143) {
+  opacity: 0.1;
+}
+.legendControl144.triggered ~ * .controlled:not(.controlled144) {
+  opacity: 0.1;
+}
+.legendControl145.triggered ~ * .controlled:not(.controlled145) {
+  opacity: 0.1;
+}
+.legendControl146.triggered ~ * .controlled:not(.controlled146) {
+  opacity: 0.1;
+}
+.legendControl147.triggered ~ * .controlled:not(.controlled147) {
+  opacity: 0.1;
+}
+.legendControl148.triggered ~ * .controlled:not(.controlled148) {
+  opacity: 0.1;
+}
+.legendControl149.triggered ~ * .controlled:not(.controlled149) {
+  opacity: 0.1;
+}
+.legendControl150.triggered ~ * .controlled:not(.controlled150) {
+  opacity: 0.1;
+}
+/* DragDrop */
+.hoveredDropTarget {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 2000ms linear;
+  -webkit-transition: opacity 2000ms linear;
+  -moz-transition: opacity 2000ms linear;
+  -ms-transition: opacity 2000ms linear;
+  -o-transition: opacity 2000ms linear;
+}
+/* HeadPanel */
+#mainToolbar {
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  z-index: 100;
+}
+#mainToolbar * {
+  overflow-x: visible;
+  overflow-y: visible;
+  z-index: 100;
+  transition: visibility 0.1s linear, color 0.1s linear, opacity 0.1s linear, fill 0.1s linear, stroke 0.1s linear;
+  -webkit-transition: visibility 0.1s linear, color 0.1s linear, opacity 0.1s linear, fill 0.1s linear, stroke 0.1s linear;
+  -moz-transition: visibility 0.1s linear, color 0.1s linear, opacity 0.1s linear, fill 0.1s linear, stroke 0.1s linear;
+  -ms-transition: visibility 0.1s linear, color 0.1s linear, opacity 0.1s linear, fill 0.1s linear, stroke 0.1s linear;
+  -o-transition: visibility 0.1s linear, color 0.1s linear, opacity 0.1s linear, fill 0.1s linear, stroke 0.1s linear;
+}
+/* mainToolbar */
+#mainToolbar nav ul ul {
+  padding: 0;
+  top: 100%;
+  border-radius: 10px;
+  display: block;
+  opacity: 0;
+  position: absolute;
+  visibility: hidden;
+  box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
+}
+#mainToolbar nav ul {
+  background: #888888;
+  padding: 0 20px;
+  margin-top: 0px;
+}
+#mainToolbar > nav > ul {
+  height: 32px;
+  width: 100vw;
+  padding: 0px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+#mainToolbar nav ul li {
+  float: left;
+  min-width: 60px;
+  max-width: 160px;
+  width: 7%;
+  position: relative;
+  display: inline-block;
+}
+#mainToolbar nav ul li:hover > ul {
+  display: block;
+  opacity: 1;
+  pointer-events: all;
+  visibility: visible;
+}
+#mainToolbar > nav > ul > li#mainPlusButton,
+svg.plusButtonHelp {
+  min-width: 32px;
+  max-width: 44px;
+  width: 5%;
+  border-bottom-left-radius: 10px;
+  background: #40bddf;
+}
+#mainToolbar > nav > ul > li#mainMinusButton,
+svg.minusButtonHelp {
+  min-width: 32px;
+  max-width: 44px;
+  width: 5%;
+  background: #bad642;
+}
+#mainToolbar > nav > ul > li#mainCloseButton,
+svg.closeButtonHelp {
+  float: right;
+  min-width: 32px;
+  max-width: 44px;
+  width: 5%;
+  border-bottom-right-radius: 10px;
+  background: #40bddf;
+}
+#mainToolbar > nav > ul > li#mainSwitchButton,
+svg.switchButtonHelp {
+  float: right;
+  min-width: 32px;
+  max-width: 44px;
+  width: 5%;
+  background: #bad642;
+}
+#mainToolbar > nav > ul > li.languageSwitch,
+#mainToolbar > nav > ul > li.cssSwitch {
+  float: right;
+}
+#mainToolbar > nav > ul {
+  height: 32px;
+  width: 100vw;
+  padding: 0px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+#mainToolbar nav ul li > span {
+  width: 100%;
+}
+/* Ha nincs fölémenve, akkor maradjon alapszínű. */
+#mainToolbar nav ul li:not(:hover) > span > svg > *,
+#mainToolbar nav ul li:hover:not(.inactive) > span:not(:hover) > svg > *,
+.helpContent svg * {
+  stroke: #000000;
+}
+/* Egy nem inaktív ikon fölé menve váltson aktív színre. */
+#mainToolbar nav ul li:hover:not(.inactive) > span:hover > svg > * {
+  stroke: #ffffff;
+}
+/* Az ikonok svg-rajzolási stílusa. */
+#mainToolbar svg *,
+.helpContent svg * {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  fill: none;
+}
+#icon_flag *,
+#icon_flag * {
+  stroke-width: 1.6;
+}
+/* Inaktív ikon szín és viselkedés-megadása. */
+#mainToolbar nav ul li.inactive > span {
+  stroke: #000000;
+  opacity: 0.2;
+  cursor: default;
+  pointer-events: none;
+}
+/* Ha inaktív az új panel gomb, akkor a lenyíló menű legyen a képernyőn kívül. */
+#mainToolbar nav ul li.inactive > ul {
+  position: fixed;
+  left: -500px;
+}
+#mainToolbar nav ul li span {
+  display: block;
+  color: #000000;
+  text-decoration: none;
+  text-align: center;
+  height: 32px;
+  line-height: 32px;
+  margin: auto;
+}
+#mainToolbar nav ul ul li {
+  background: #888888;
+  float: none;
+  border-top: 1px solid #a0a0a0;
+  border-bottom: 1px solid #6d6d6d;
+  position: relative;
+  width: 180px;
+  display: flex;
+}
+#mainToolbar nav ul .languageSwitch ul li {
+  /*    width: 6em;*/
+}
+#mainToolbar nav ul .languageSwitch .hidden {
+  /*	width: 6em;
+        left: 2em;*/
+}
+/* Ha nincs fölémenve, akkor maradjon alapszínű. */
+#mainToolbar nav ul li.switch li:not(:hover) text,
+#mainToolbar nav ul li.switch li:hover:not(.inactive) > span:not(:hover) {
+  stroke-width: 0.5;
+  fill: #000000;
+  color: #000000;
+}
+/* Egy nem inaktív ikon fölé menve váltson aktív színre. */
+#mainToolbar nav ul li.switch li:hover:not(.inactive) > span {
+  stroke-width: 0.5;
+  fill: #ffffff;
+  color: #ffffff;
+}
+#mainToolbar nav ul li.switch span {
+  margin: 0px;
+  font-size: larger;
+}
+#mainToolbar nav ul ul li:first-child {
+  background: top, #a0a0a0 0%, #888888 50%;
+  background: linear-gradient(top, #a0a0a0 0%, #888888 50%);
+  background: -moz-linear-gradient(top, #a0a0a0 0%, #888888 50%);
+  background: -webkit-linear-gradient(top, #a0a0a0 0%, #888888 50%);
+  background: -ms-linear-gradient(top, #a0a0a0 0%, #888888 50%);
+  background: -o-linear-gradient(top, #a0a0a0 0%, #888888 50%);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+#mainToolbar nav ul ul li:last-child {
+  background: top, #888888 50%, #6d6d6d 100%;
+  background: linear-gradient(top, #888888 50%, #6d6d6d 100%);
+  background: -moz-linear-gradient(top, #888888 50%, #6d6d6d 100%);
+  background: -webkit-linear-gradient(top, #888888 50%, #6d6d6d 100%);
+  background: -ms-linear-gradient(top, #888888 50%, #6d6d6d 100%);
+  background: -o-linear-gradient(top, #888888 50%, #6d6d6d 100%);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+#mainToolbar nav ul ul li span {
+  padding: 9px 0px;
+  height: 32px;
+  line-height: 32px;
+  color: #000000;
+  border-left: 1px solid #a0a0a0;
+  border-right: 1px solid #6d6d6d;
+  width: 50%;
+}
+#mainToolbar nav ul ul li span:only-child {
+  width: 100%;
+}
+#mainToolbar nav ul ul li span:first-child {
+  border-left: none;
+}
+#mainToolbar nav ul ul li span:last-child {
+  border-right: none;
+}
+#mainToolbar span,
+#mainToolbar svg text {
+  cursor: pointer;
+}
+#mainToolbar nav ul ul ul {
+  position: absolute;
+  left: 100%;
+  top: 0;
+}
+#mainToolbar #toolbarShadow {
+  position: absolute;
+  top: 0px;
+  width: 100vw;
+  height: 32px;
+  backround: rgba(0, 0, 0, 0);
+  box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
+}
+#mainToolbar nav li.newpanel,
+#mainToolbar nav li.switch {
+  z-index: 101;
+}
+/* Nagyító-fül. */
+.magnifyPanelButton:not(:hover) > g {
+  stroke: #000000;
+}
+/* Nagyító-fül, ha fölötte van az egér */
+.magnifyPanelButton:hover > g {
+  stroke: #ffffff;
+}
+.magnifyPanelButton * {
+  stroke-width: 2;
+  stroke-linecap: round;
+  fill: red;
+  fill-opacity: 0;
+  transition: stroke 0.1s linear;
+  -webkit-transition: stroke 0.1s linear;
+  -moz-transition: stroke 0.1s linear;
+  -ms-transition: stroke 0.1s linear;
+  -o-transition: stroke 0.1s linear;
+}
+.svgScrollbarG {
+  opacity: 0;
+}
+.svgScrollbarTrack {
+  fill: black;
+  box-shadow: 0px 0px 0px 1px #343434;
+  -webkit-box-shadow: 0px 0px 0px 1px #343434;
+  -moz-box-shadow: 0px 0px 0px 1px #343434;
+}
+.svgScrollbarThumb {
+  fill: #aaaaaa;
+}
+.svgScrollbar::-webkit-scrollbar-track {
+  box-shadow: 0px 0px 0px 1px #343434;
+  -webkit-box-shadow: 0px 0px 0px 1px #343434;
+  -moz-box-shadow: 0px 0px 0px 1px #343434;
+}
+/* Help oldal */
+#helpMask,
+#dialogMask {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  background: black;
+  opacity: 0;
+  z-index: 150;
+  transition: opacity 0.2s linear;
+  -webkit-transition: opacity appearDuration linear;
+  -moz-transition: opacity appearDuration linear;
+  -ms-transition: opacity appearDuration linear;
+  -o-transition: opacity appearDuration linear;
+}
+.helpStart h3 {
+  margin-bottom: 0px;
+}
+#dialogPanel {
+  left: 50vw;
+  top: 50vh;
+  overflow: hidden;
+  position: relative;
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  padding: 20px 20px 20px;
+  width: 310px;
+  min-height: 208px;
+  border-radius: 10px;
+  background: #343434;
+}
+#dialogPanel h1 {
+  margin: -20px -20px 21px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 16px;
+  color: white;
+  fill: white;
+  stroke-width: 0px;
+  text-align: center;
+  background: #555;
+  border-radius: 10px 10px 0 0;
+}
+#dialogMask {
+  z-index: 150;
+  background: rgba(0, 0, 0, 0.9);
+}
+#dialogMessage {
+  margin: 5px;
+  min-height: 102px;
+}
+#dialogPanel button {
+  width: 137px;
+  margin-bottom: 5px;
+}
+#dialogPanel button.hidden {
+  opacity: 0;
+}
+#dialogPanel #dialogFirstButton {
+  float: left;
+  margin-right: 10px;
+  margin-left: 5px;
+}
+#dialogPanel #dialogSecondButton {
+  float: right;
+  margin-left: 10px;
+  margin-right: 5px;
+}
+#dialogPanel #dialogExtraButton {
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 15px;
+  width: 299px;
+}
+#dialogPanel #dialogExtraButton.hidden {
+  display: none;
+}
+#dialogPanel .errorStaticText,
+#dialogPanel .saveStaticText {
+  text-align: justify;
+}
+#dialogPanel .errorVariableText {
+  text-align: center;
+  padding: 15px 0px;
+}
+#dialogPanel .saveVariableText {
+  margin: 10px 10px 15px 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+#dialogPanel .saveTextAreaHolder {
+  overflow: hidden;
+  margin: 10px 10px 15px 10px;
+}
+#dialogPanel #saveTextArea {
+  resize: none;
+  overflow: hidden;
+  margin: 10px 10px 15px 10px;
+  width: 272px;
+  background-color: white;
+  border: 4px solid white;
+  border-radius: 10px;
+  padding: 0px;
+  outline: none;
+}
+#dialogPanel #saveTextArea::selection {
+  background: #aaaaaa;
+}
+#dialogPanel #saveTextArea::-moz-selection {
+  background: #aaaaaa;
+}
+#dialogPanel input#loginName {
+  margin: 4px 0px 18px 0px !important;
+}
+#dialogPanel input#loginPassword {
+  margin: 4px 0px 0px 0px !important;
+}
+#dialogButtonHolder {
+  margin-top: 26px;
+}
+#helpPanel {
+  display: block;
+  position: absolute;
+  z-index: 150;
+  width: calc(100% - 2 *  6px);
+  height: calc(100% - 2 *  6px);
+  opacity: 1;
+  top: 0px;
+  overflow: hidden;
+  margin: 6px;
+  border-radius: 10px;
+}
+#helpScrollPane {
+  position: relative;
+  overflow: auto;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding-left: 16px;
+  padding-right: 8px;
+  padding-bottom: 8px;
+  height: calc(100% - 32px);
+}
+.helpContent p,
+.helpContent div.p {
+  margin: 20px 0 0;
+}
+.helpContent ul {
+  margin: 0px;
+  padding: 0px 40px;
+}
+.helpContent li {
+  margin: 0.3em;
+}
+.helpContent h4 {
+  font-style: italic;
+}
+.helpContent {
+  text-align: justify;
+}
+.helpContent .example {
+  margin: 20px 40px 0px 40px;
+  max-width: 60vw;
+  width: calc(100% - 120px);
+  font-weight: normal;
+  font-style: italic;
+  display: inline-block;
+  padding: 10px 20px;
+  color: #000000;
+  background: #888888;
+  background: linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  background: -moz-linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  background: -webkit-linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  background: -o-linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  background: -ms-linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  border: 0px solid white;
+  border-radius: 10px;
+}
+.helpContent .indent {
+  padding-left: 20px;
+}
+.tooltip em {
+  color: #c2b211;
+}
+.helpContent.h3,
+.helpContent.h4 {
+  margin: 0px;
+  color: #ffffff;
+}
+#helpControl {
+  white-space: nowrap;
+  overflow: auto;
+  background: #888888;
+  background: linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  background: -moz-linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  background: -webkit-linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  background: -o-linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  background: -ms-linear-gradient(top, #a0a0a0 0%, #888888 30px, #6d6d6d 100%);
+  box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+  padding-top: 16px;
+  padding-bottom: 16px;
+  height: calc(100% - 32px);
+  float: left;
+}
+#helpControl * {
+  transition: color 0.1s linear, opacity 0.1s linear;
+  -webkit-transition: color 0.1s linear, opacity 0.1s linear;
+  -moz-transition: color 0.1s linear, opacity 0.1s linear;
+  -ms-transition: color 0.1s linear, opacity 0.1s linear;
+  -o-transition: color 0.1s linear, opacity 0.1s linear;
+}
+#helpControl nav {
+  height: 100%;
+  min-height: calc(15 *  32px);
+  /* 30*help-elemszám px */
+}
+#helpControl nav ul {
+  margin: 0px;
+  height: 100%;
+  position: relative;
+  padding: 0px;
+}
+#helpControl > nav > ul > li:last-child {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+}
+#helpControl nav li {
+  padding: 0 0px;
+  list-style: none;
+}
+#helpControl nav span {
+  display: block;
+  color: #000000;
+  height: 32px;
+  line-height: 32px;
+  padding-left: calc(24px -  8px);
+  padding-right: 16px;
+  cursor: pointer;
+  border-left: rgba(0, 0, 0, 0) 8px solid;
+}
+#helpControl nav ul ul li span {
+  padding-left: 32px;
+}
+#helpControl nav span:hover {
+  color: #ffffff;
+}
+#helpControl nav span.activeHelp {
+  border-left-color: #40bddf;
+}
+.helpContent img {
+  float: left;
+  margin-right: 20px;
+}
+.helpToolbar svg {
+  vertical-align: middle;
+  margin-right: 1em;
+}
+.helpToolbar ul {
+  list-style-type: none;
+  padding-left: 100px;
+  padding-right: 44px;
+}
+.helpToolbar ul li {
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+.helpToolbar ul li svg:not([class]) {
+  background: #888888;
+}
+.helpToolbar ul li svg {
+  float: none;
+  margin-top: -7px;
+  left: 60px;
+  width: 44px;
+  position: absolute;
+  box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+}
+.helpContent .inlineSvgHolder svg {
+  display: block;
+  margin: auto;
+  position: relative;
+  top: 3px;
+}
+.helpContent .inlineSvgHolder {
+  margin: 0px 5px;
+  border-top: 1px solid #999999;
+  border-left: 1px solid #999999;
+  border-bottom: 1px solid #6d6d6d;
+  border-right: 1px solid #6d6d6d;
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 10px;
+  background: #888888;
+  width: 63px;
+  height: 38px;
+  box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
+}
+.helpContent .helpAbout > .changelog > span,
+.helpContent div.helpInnerHTML {
+  display: block;
+  margin-left: 40px;
+  margin-bottom: 1ex;
+}
+.helpContent .helpAbout > .changelog > span > span {
+  font-weight: bold;
+}
+/*# sourceMappingURL=containerBlack.css.map */

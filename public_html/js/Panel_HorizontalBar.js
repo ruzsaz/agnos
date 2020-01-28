@@ -31,8 +31,8 @@ function panel_horizontalbar(init) {
     this.maxEntries = global.maxEntriesIn1D;            // A panel által maximálisan megjeleníthető adatok száma.    
     this.shadowTimeout;									// A háttértéglalapokat létrehozó időzítés.
 
-    // Az x tengely szövegszínének meghatározása.	
-    this.xAxisColor = global.readableColor(global.colorValue(that.valBarsToShow[0]));
+    // Az y tengely szövegszínének meghatározása.	
+    this.yAxisColor = global.readableColor(global.colorValue(that.valBarsToShow[0]));
 
     // Vízszintes skála.
     this.xScale = d3.scaleLinear()
@@ -701,6 +701,7 @@ panel_horizontalbar.prototype.drawLegend = function() {
 panel_horizontalbar.prototype.drawAxes = function(preparedData, trans) {
     var that = this;
 
+    that.yAxisColor = global.readableColor(global.colorValue(that.valBarsToShow[0]))
     var shadowSize = global.axisTextSize(that.yScale(1));	// A függőleges tengely betűje mögötti klikk-téglalap mérete.
     var axisTextSize = (shadowSize < 6) ? 0 : shadowSize;	// A függőleges tengely betűmérete.
 
@@ -770,6 +771,7 @@ panel_horizontalbar.prototype.drawAxes = function(preparedData, trans) {
 
     // Maradó feliratok helyre animálása.
     axisLabelY
+            .attr("fill", that.yAxisColor)
             .transition(trans)
             .attr("font-size", axisTextSize)
             .attr("y", function(d) {

@@ -12,15 +12,15 @@ console.log("A fordítás segítéséhez: global.getUntranslated('lang');");
  * 
  * @returns {d3.selection.prototype@call;each}
  */
-d3.selection.prototype.moveToFront = function() {
-    return this.each(function() {
+d3.selection.prototype.moveToFront = function () {
+    return this.each(function () {
         this.parentNode.appendChild(this);
     });
 };
 
 
 // Nyelv beállító függvény. "blabla" helyett _("blabla") írandó.
-var _ = function(string) {
+var _ = function (string) {
     return string.toLocaleString();
 };
 
@@ -30,11 +30,58 @@ var _ = function(string) {
  * 
  * @type _L101.Anonym$8
  */
-var global = function() {
+var global = function () {
 
 //////////////////////////////////////////////////
 // Lokálisan használt függvények.
 //////////////////////////////////////////////////
+
+    var changeCSS = function (cssFile) {
+
+        var savedDuration = global.selfDuration;
+        global.selfDuration = 0;
+
+        global.changeCSSInProgress = true;
+        var oldLink = document.getElementById("cssLink");
+        oldLink.removeAttribute("id");
+
+        var newLink = document.createElement("link");
+        newLink.setAttribute("id", "cssLink");
+        newLink.setAttribute("rel", "stylesheet");
+        newLink.setAttribute("type", "text/css");
+        newLink.setAttribute("href", cssFile);
+
+        d3.select('body').transition(100).style("opacity", 0)
+                .on("end", function () {
+                    document.getElementsByTagName("head").item(0).replaceChild(newLink, oldLink);
+
+                    d3.select(this).transition(0).delay(50).style("opacity", 0)
+                            .on("end", function () {
+                                varsFromCSS = readVarsFromCSS();
+                                initValuesFromCss();
+
+                                // Féldinamikus (metával megkapott) szövegek átírása.
+                                global.mediators[0].publish("langSwitch");
+                                global.mediators[1].publish("langSwitch");
+
+                                // Dinamikus (adattal megkapott) szövegek átírása egy önmagába fúrással.
+                                if (global.facts[0] && global.facts[0].reportMeta) {
+                                    global.mediators[0].publish("drill", {dim: -1, direction: 0});
+                                }
+                                if (global.facts[1] && global.facts[1].reportMeta) {
+                                    global.mediators[1].publish("drill", {dim: -1, direction: 0});
+                                }
+
+                                d3.select(this).transition(100).delay(0).style("opacity", 1)
+                                        .on("end", function () {
+                                            global.changeCSSInProgress = false;
+                                            global.selfDuration = savedDuration;
+                                        });
+                            });
+
+                });
+    };
+
 
     /**
      * Átírja a fix szövegeket a beállított nyelvre. A nyelvbeállítás a
@@ -42,8 +89,8 @@ var global = function() {
      * 
      * @returns {undefined}
      */
-    var localizeAll = function() {
-        $("[origText]").html(function() {
+    var localizeAll = function () {
+        $("[origText]").html(function () {
             return _($(this).attr('origText'));
         });
     };
@@ -54,7 +101,7 @@ var global = function() {
      * @param {type} input A bemenő sztring.
      * @returns {unresolved} Ugyanaz, gyanús karakterek nélkül.
      */
-    var convertFileFriendly = function(input) {
+    var convertFileFriendly = function (input) {
         return input
                 .replace(/[őóö]/ig, "o")
                 .replace(/[űüú]/ig, "u")
@@ -74,13 +121,17 @@ var global = function() {
      * 
      * @type Function|@exp;Global_L32@pro;configVars
      */
-    var varsFromCSS = function() {
+    var readVarsFromCSS = function () {
         var configVars = {};
+        console.log(document.styleSheets);
         for (var css = 0, cssMax = document.styleSheets.length; css < cssMax; css++) {
             var sheet = document.styleSheets[css];
+            console.log(sheet)
+
             for (var r = 0, rMax = sheet.cssRules.length; r < rMax; r++) {
                 var sRule = sheet.cssRules[r].cssText;
                 if (sRule.substr(0, 5) === "#less") {
+                    console.log(sRule)
                     var aKey = sRule.match(/\.(\w+)/);
                     var aVal = sRule.match(/: .*;/)[0].replace(": ", "").replace(";", "");
                     if (aKey && aVal) {
@@ -96,7 +147,9 @@ var global = function() {
             }
         }
         return configVars;
-    }();
+    };
+
+    var varsFromCSS = readVarsFromCSS();
 
     /**
      * Eldönti, hogy egy panel közepe a képrenyőn van-e?
@@ -104,7 +157,7 @@ var global = function() {
      * @param {Object} panel A panel.
      * @returns {Boolean} True ha igen, false ha nem.
      */
-    var isPanelVisible = function(panel) {
+    var isPanelVisible = function (panel) {
         var rect = $(panel)[0].getBoundingClientRect();
         var x = (rect.left + rect.right) / 2;
         var y = (rect.top + rect.bottom) / 2;
@@ -128,7 +181,7 @@ var global = function() {
      * @param {Number} sizeToCenterIn Ha centrálni kell, ekkora területen belül.
      * @returns {undefined}
      */
-    var _cleverCompress = function(renderedText, maxSize, maxRatio, isVerical, isCenter, sizeToCenterIn) {
+    var _cleverCompress = function (renderedText, maxSize, maxRatio, isVerical, isCenter, sizeToCenterIn) {
         maxRatio = maxRatio || 1.7;
         if (maxSize < 10) { // 10px alatt üres szöveget csinálunk.
             renderedText.text("");
@@ -175,7 +228,7 @@ var global = function() {
      * @param {Number} y Pl. 5.
      * @returns {String} Ekkor: "3 5 "
      */
-    var pathHelper = function(x, y) {
+    var pathHelper = function (x, y) {
         return x + " " + y + " ";
     };
 
@@ -185,7 +238,7 @@ var global = function() {
      * @param {String} str A bemeneti sztring.
      * @returns {Number} Kapott hash-szám.
      */
-    var djb2Code = function(str) {
+    var djb2Code = function (str) {
         var hash = 5381;
         for (var i = 0, iMax = str.length; i < iMax; i++) {
             var char = str.charCodeAt(i);
@@ -205,10 +258,10 @@ var global = function() {
      * 
      * @returns {undefined}
      */
-    var tagForLocalization = function() {
-        $(".loc").each(function() {
+    var tagForLocalization = function () {
+        $(".loc").each(function () {
             if ($(this).attr('origText') === undefined) {
-                $(this).attr('origText', function() {
+                $(this).attr('origText', function () {
                     return $(this).html().trim().replace(/\r?\n|\r/g, '').replace(/\s\s+/g, ' ');
                 });
             }
@@ -223,7 +276,7 @@ var global = function() {
      * @param {Number} expires Lejárati idő, nap.
      * @returns {undefined}
      */
-    var setCookie = function(name, value, expires) {
+    var setCookie = function (name, value, expires) {
         var d = new Date();
         d.setTime(d.getTime() + (expires * 24 * 60 * 60 * 1000));
         var expires = "expires=" + d.toUTCString();
@@ -236,7 +289,7 @@ var global = function() {
      * @param {String} name A kiolvasandó cookie neve.
      * @returns {String} A kiolvasott cookie értéke, vagy undefined, ha nincs.
      */
-    var getCookie = function(name) {
+    var getCookie = function (name) {
         name = name + "=";
         var decodedCookie = decodeURIComponent(document.cookie);
         var ca = decodedCookie.split(';');
@@ -258,7 +311,7 @@ var global = function() {
      * @param {String} lang A nyelv kódja, pl. 'hu', 'en'.
      * @returns {undefined}
      */
-    var setLanguage = function(lang) {
+    var setLanguage = function (lang) {
         tagForLocalization();
         String.locale = lang;
 
@@ -295,14 +348,14 @@ var global = function() {
      * @param {String} lang A kiírandó nyelv nyevlkódja.
      * @returns {undefined}
      */
-    var getUntranslated = function(lang) {
+    var getUntranslated = function (lang) {
         var localeToStore = String.locale;
         String.locale = lang;
         tagForLocalization();
         var untranslated = [];
 
         // A statikus tartalmak kinyerése
-        $("[origText]").text(function() {
+        $("[origText]").text(function () {
             var original = $(this).attr('origText');
             var translated = original.toLocaleString(true);
             if (translated === undefined) {
@@ -315,7 +368,7 @@ var global = function() {
         });
 
         // A tooltip-ek kinyerése
-        $(".tloc[tooltip]").text(function() {
+        $(".tloc[tooltip]").text(function () {
             var original = $(this).attr('tooltip');
             var translated = original.toLocaleString(true);
             if (translated === undefined) {
@@ -339,7 +392,7 @@ var global = function() {
      * 
      * @returns {undefined}
      */
-    var getConfig = function() {
+    var getConfig = function () {
         global.mediators[0].publish("getConfig");
         global.mediators[1].publish("getConfig");
     };
@@ -350,13 +403,13 @@ var global = function() {
      * 
      * @returns {undefined}
      */
-    var getConfigToHash = function() {
+    var getConfigToHash = function () {
         var startObject = {}; // A bookmarkban tárolandó objektum.
         startObject.p = []; // A betöltendő oldalak inicializációs objektumai.
         var panelsToWaitFor = 2;
 
         // A bal és a jobb oldal konfigurációs sztringjeit feldolgozó callback-függvény.
-        var receiveConfig = function(oneSideStartObject) {
+        var receiveConfig = function (oneSideStartObject) {
             startObject.p.push(oneSideStartObject);
             panelsToWaitFor = panelsToWaitFor - 1;
 
@@ -376,7 +429,7 @@ var global = function() {
 
                 // A képernyőn egy sorba kiférő panelek száma.
                 startObject.n = global.panelNumberOnScreen;
-                
+
                 // Tényleges URL-be írás. Ha nem kell, kikommentelendő.
                 if (global.saveToBookmarkRequired) {
                     location.hash = LZString.compressToEncodedURIComponent(JSON.stringify(startObject));
@@ -397,25 +450,25 @@ var global = function() {
      * @param {String} callback Sikeres autentikáció után meghívandó függvény.	 
      * @returns {undefined}
      */
-    var login = function(username, password, callback) {
+    var login = function (username, password, callback) {
         var progressDiv = d3.select("#progressDiv");
-        var progressCounter = setTimeout(function() {
+        var progressCounter = setTimeout(function () {
             progressDiv.style("z-index", 1000);
         }, 50);
 
         $.ajax({
             url: global.url.auth,
             timeout: 5000,
-            beforeSend: function(xhr) {
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', 'Basic ' + btoa(username + ':' + password));
             },
-            success: function(result) { // Sikeres autentikáció esetén.
+            success: function (result) { // Sikeres autentikáció esetén.
                 global.secretUsername = username;
                 global.secretToken = result;
                 setDialog(); // Esetleges hibaüzenet levétele.                
                 callback();
             },
-            error: function(jqXHR, textStatus, errorThrown) { // Hálózati, vagy autentikációs hiba esetén.
+            error: function (jqXHR, textStatus, errorThrown) { // Hálózati, vagy autentikációs hiba esetén.
                 $(':focus').blur();
                 if (jqXHR.status === 401) { // Ha a szerver 'nem vagy autentikálva' választ ad, újra megpróbáljuk.
                     setDialog(
@@ -423,18 +476,18 @@ var global = function() {
                             "<div class='errorStaticText'>Username:</div><div><input id='loginName' type='text' name='username'></div>" +
                             "<div class='errorStaticText'>Password:</div><div><input id='loginPassword' type='password' name='password'></div>",
                             "Login",
-                            function() {
+                            function () {
                                 login($('#loginName').val(),
                                         $('#loginPassword').val(),
                                         callback);
                             },
                             "Quit",
-                            function() {
+                            function () {
                                 location.reload();
                             },
                             1,
                             (global.demoEntry) ? "Anonymous login" : undefined,
-                            function() {
+                            function () {
                                 login('agnos.demo',
                                         'zolikaokos',
                                         callback);
@@ -449,12 +502,12 @@ var global = function() {
                             undefined,
                             undefined,
                             "Quit",
-                            function() {
+                            function () {
                                 location.reload();
                             },
                             2,
                             (global.demoEntry) ? "Anonymous login" : undefined,
-                            function() {
+                            function () {
                                 login('agnos.demo',
                                         'zolikaokos',
                                         callback);
@@ -467,16 +520,16 @@ var global = function() {
                             "<div class='errorVariableText'><em>" + "Error " + jqXHR.status + ": " + errorThrown + "</em></div>" +
                             "<div class='errorStaticText'>Try to log in again!</div>",
                             "Again",
-                            function() {
+                            function () {
                                 login(username, password, callback);
                             },
                             "Logout",
-                            function() {
+                            function () {
                                 location.reload();
                             },
                             1,
                             (global.demoEntry) ? "Anonymous login" : undefined,
-                            function() {
+                            function () {
                                 login('agnos.demo',
                                         'zolikaokos',
                                         callback);
@@ -484,7 +537,7 @@ var global = function() {
                     );
                 }
             },
-            complete: function() {
+            complete: function () {
                 // Esetleges homokóra letörlése.
                 clearTimeout(progressCounter);
                 progressDiv.style("z-index", -1);
@@ -502,9 +555,9 @@ var global = function() {
      * @param {Boolean} isDeleteDialogRequired Sikeres letöltés után törölje-e a dialógusablakot?
      * @returns {undefined}
      */
-    var get = function(url, data, callback, isDeleteDialogRequired) {
+    var get = function (url, data, callback, isDeleteDialogRequired) {
         var progressDiv = d3.select("#progressDiv");
-        var progressCounter = setTimeout(function() {
+        var progressCounter = setTimeout(function () {
             progressDiv.style("z-index", 1000);
         }, 200);
 
@@ -512,17 +565,17 @@ var global = function() {
             url: url,
             data: data,
             timeout: 5000,
-            beforeSend: function(xhr) {
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', 'Basic ' + btoa(global.secretUsername + ':' + global.secretToken));
             },
-            success: function(result, status) { // Sikeres letöltés esetén.
+            success: function (result, status) { // Sikeres letöltés esetén.
                 // Esetleges hibaüzenet levétele.
                 if (isDeleteDialogRequired === undefined || isDeleteDialogRequired) {
                     setDialog();
                 }
                 callback(result, status);
             },
-            error: function(jqXHR, textStatus, errorThrown) { // Hálózati, vagy autentikációs hiba esetén.
+            error: function (jqXHR, textStatus, errorThrown) { // Hálózati, vagy autentikációs hiba esetén.
                 $(':focus').blur();
                 // Esetleges homokóra letörlése.
                 clearTimeout(progressCounter);
@@ -533,23 +586,23 @@ var global = function() {
                             "<div class='errorStaticText'>Username:</div><div><input id='loginName' type='text' name='username'></div>" +
                             "<div class='errorStaticText'>Password:</div><div><input id='loginPassword' type='password' name='password'></div>",
                             "Login",
-                            function() {
+                            function () {
                                 login($('#loginName').val(),
                                         $('#loginPassword').val(),
-                                        function() {
+                                        function () {
                                             get(url, data, callback, isDeleteDialogRequired);
                                         });
                             },
                             "Quit",
-                            function() {
+                            function () {
                                 location.reload();
                             },
                             1,
                             (global.demoEntry) ? "Anonymous login" : undefined,
-                            function() {
+                            function () {
                                 login('agnos.demo',
                                         'zolikaokos',
-                                        function() {
+                                        function () {
                                             get(url, data, callback, isDeleteDialogRequired);
                                         });
                             }
@@ -563,15 +616,15 @@ var global = function() {
                             undefined,
                             undefined,
                             "Logout",
-                            function() {
+                            function () {
                                 location.reload();
                             },
                             2,
                             (global.demoEntry) ? "Anonymous login" : undefined,
-                            function() {
+                            function () {
                                 login('agnos.demo',
                                         'zolikaokos',
-                                        function() {
+                                        function () {
                                             get(url, data, callback, isDeleteDialogRequired);
                                         });
                             }
@@ -586,11 +639,11 @@ var global = function() {
                             "<div class='errorVariableText'><em>" + "Error " + jqXHR.status + ": " + errorThrown + "</em></div>" +
                             "<div class='errorStaticText'>Try to reload...</div>",
                             "Try again",
-                            function() {
+                            function () {
                                 get(url, data, callback);
                             },
                             "Logout",
-                            function() {
+                            function () {
                                 location.reload();
                             },
                             1
@@ -598,7 +651,7 @@ var global = function() {
                 }
 
             },
-            complete: function() {
+            complete: function () {
                 // Esetleges homokóra letörlése.
                 clearTimeout(progressCounter);
                 progressDiv.style("z-index", -1);
@@ -615,7 +668,7 @@ var global = function() {
      * @param {String} panelId Az animálandó panel azonosítója.
      * @returns {Number} Az animálás ideje (ms).
      */
-    var getAnimDuration = function(callerId, panelId) {
+    var getAnimDuration = function (callerId, panelId) {
         var animMode = 1; // 0: mindent animál, 1: csak láthatót animál, 2: csak saját magát
         var duration = 0;
         if (animMode === 0 || callerId === panelId || (animMode === 1 && isPanelVisible(panelId))) {
@@ -637,7 +690,7 @@ var global = function() {
      * @param {Number} sizeToCenterIn Ha centrálni kell, ekkora területen belül. 
      * @returns {undefined}
      */
-    var cleverCompress = function(renderedTexts, renderedParent, multiplier, maxRatio, isVertical, isCenter, sizeToCenterIn) {
+    var cleverCompress = function (renderedTexts, renderedParent, multiplier, maxRatio, isVertical, isCenter, sizeToCenterIn) {
         var maxTextWidth;
         // Meghatározzuk a szöveg maximális méretét pixelben.
         if (typeof renderedParent === "number") {
@@ -647,7 +700,7 @@ var global = function() {
         }
 
         // Egyesével elvégezzük a tömörítést.
-        renderedTexts.each(function() {
+        renderedTexts.each(function () {
             _cleverCompress(d3.select(this), maxTextWidth, maxRatio, isVertical, isCenter, sizeToCenterIn);
         });
     };
@@ -665,7 +718,7 @@ var global = function() {
      * @param {Number} r4 Balalsó lekerekítettség pixelben.
      * @returns {String} A path-ot definiáló karakterlánc.
      */
-    var rectanglePath = function(x, y, w, h, r1, r2, r3, r4) {
+    var rectanglePath = function (x, y, w, h, r1, r2, r3, r4) {
         var strPath = "M" + pathHelper(x + r1, y); //A
         strPath += "L" + pathHelper(x + w - r2, y) + "Q" + pathHelper(x + w, y) + pathHelper(x + w, y + r2); //B
         strPath += "L" + pathHelper(x + w, y + h - r3) + "Q" + pathHelper(x + w, y + h) + pathHelper(x + w - r3, y + h); //C
@@ -681,7 +734,7 @@ var global = function() {
      * @param {Number} n Kijelzendő szám.
      * @returns {String} A kiírandó sztring.
      */
-    var cleverRound3 = function(n) {
+    var cleverRound3 = function (n) {
         return (n !== undefined) ? ((isFinite(n)) ? (parseFloat(d3.format(".3s")(n)).toLocaleString(String.locale) + _(d3.format(".3s")(n).replace(/-*\d*\.*\d*/g, ''))) : _("inf")) : "???";
     };
 
@@ -691,7 +744,7 @@ var global = function() {
      * @param {Number} n Kijelzendő szám.
      * @returns {String} A kiírandó sztring.
      */
-    var cleverRound5 = function(n) {
+    var cleverRound5 = function (n) {
         return (n !== undefined) ? ((isFinite(n)) ? (parseFloat(d3.format(".4s")(n)).toLocaleString(String.locale) + _(d3.format(".4s")(n).replace(/-*\d*\.*\d*/g, ''))) : _("inf")) : "???";
     };
 
@@ -703,7 +756,7 @@ var global = function() {
      * @param {String} b
      * @returns {-1 ha a van előrébb, 1 ha b, 0 ha azonosak}
      */
-    var realCompare = function(a, b) {
+    var realCompare = function (a, b) {
         var minLen = Math.min(a.length, b.length);
         var i = 0;
         while (a.charAt(i) === b.charAt(i) && i < minLen) {
@@ -718,7 +771,7 @@ var global = function() {
      * @param {Integer} valueId Az érték sorszáma.
      * @returns {String} A hozzá tartozó szín, html kódolva.
      */
-    var colorValue = function(valueId) {
+    var colorValue = function (valueId) {
         return (isNaN(valueId)) ? colorNA : colors[(valueId) % 20];
     };
 
@@ -728,7 +781,7 @@ var global = function() {
      * @param {Integer} id A dimenzió azonosítója.
      * @returns {String} A hozzá tartozó szín, html kódolva.
      */
-    var color = function(id) {
+    var color = function (id) {
         return colors[(djb2Code(id) + 4) % 20];
     };
 
@@ -739,10 +792,10 @@ var global = function() {
      * @param {Function} callback A meghívandó induló függvény.
      * @returns {Global_L27.initGlobals}
      */
-    var initGlobals = function(callback) {
+    var initGlobals = function (callback) {
         var that = this;
         this.tooltip = new Tooltip();
-        get(global.url.superMeta, "", function(result, status) {
+        get(global.url.superMeta, "", function (result, status) {
             that.superMeta = result.reports;
             callback();
         });
@@ -754,8 +807,8 @@ var global = function() {
      * @param {Object} base Szülőpéldány.
      * @returns {Prototype} A gyerek osztály új prototípusa.
      */
-    var subclassOf = function(base) {
-        var _subclassOf = function() {
+    var subclassOf = function (base) {
+        var _subclassOf = function () {
         };
         _subclassOf.prototype = base.prototype;
         return new _subclassOf();
@@ -767,7 +820,7 @@ var global = function() {
      * @param {Integer} length A kívánt hosszúság. Ha undefined, 16 lesz.
      * @returns {String} A véletlen string.
      */
-    var randomString = function(length) {
+    var randomString = function (length) {
         length = length || 16;
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -785,7 +838,7 @@ var global = function() {
      * @param {String} lang Nyelvkód. Ha undefined, az aktuálist veszi.
      * @returns {undefined|Globalglobal.getFromArrayByLang.array}
      */
-    var getIndexOfLang = function(array, lang) {
+    var getIndexOfLang = function (array, lang) {
         var returnIndex = -1;
         var indexOfDefault = 0;
         if (lang === undefined) {
@@ -811,7 +864,7 @@ var global = function() {
      * @param {String} lang Nyelvkód. Ha undefined, az aktuálist veszi.
      * @returns {undefined|Globalglobal.getFromArrayByLang.array}
      */
-    var getFromArrayByLang = function(array, lang) {
+    var getFromArrayByLang = function (array, lang) {
         if (lang === undefined) {
             lang = String.locale;
         }
@@ -840,7 +893,7 @@ var global = function() {
      * @param {String} lang Nyelvkód. Ha undefined, az aktuálist veszi.
      * @returns {undefined|Globalglobal.getFromArrayByLang.array}
      */
-    var getFromArrayByLangArray = function(langArray, subArray, lang) {
+    var getFromArrayByLangArray = function (langArray, subArray, lang) {
         if (lang === undefined) {
             lang = String.locale;
         }
@@ -856,7 +909,7 @@ var global = function() {
      * @param {Object} value A keresett érték.
      * @returns {Object} A tömb első eleme, amelynek .property -je = value.
      */
-    var getFromArrayByProperty = function(array, property, value) {
+    var getFromArrayByProperty = function (array, property, value) {
         var returnIndex = global.positionInArrayByProperty(array, property, value);
         return (returnIndex === -1) ? undefined : array[returnIndex];
     };
@@ -869,7 +922,7 @@ var global = function() {
      * @param {Object} value A keresett érték.
      * @returns {Integer} A tömb első eleme, amelynek .property -je = value.
      */
-    var positionInArrayByProperty = function(array, property, value) {
+    var positionInArrayByProperty = function (array, property, value) {
         var returnIndex = -1;
         for (var i = 0, iMax = array.length; i < iMax; i++) {
             if (array[i][property] === value) {
@@ -887,7 +940,7 @@ var global = function() {
      * @param {String} property Az elemek propertyje.
      * @returns {Array} A propertykhez tartozó értékek tömbje.
      */
-    var getArrayFromObjectArrayByProperty = function(objectArray, property) {
+    var getArrayFromObjectArrayByProperty = function (objectArray, property) {
         var arr = [];
         for (var i = 0, iMax = objectArray.length; i < iMax; i++) {
             arr.push(objectArray[i][property]);
@@ -902,7 +955,7 @@ var global = function() {
      * @param {Object} value A keresett érték.
      * @returns {Integer} -1: nincs benne, különben: ennyiedik.
      */
-    var positionInArray = function(array, value) {
+    var positionInArray = function (array, value) {
         var position = -1;
         for (var i = 0, iMax = array.length; i < iMax; i++) {
             if (array[i] === value) {
@@ -921,7 +974,7 @@ var global = function() {
      * @param {Number} origY A nagyítás közepének y koordinátája.
      * @returns {String} A beállítandó style.
      */
-    var getStyleForScale = function(scaleRatio, origX, origY) {
+    var getStyleForScale = function (scaleRatio, origX, origY) {
         return {"-webkit-transform": "scale(" + scaleRatio + ")",
             "-moz-transform": "scale(" + scaleRatio + ")",
             "-ms-transform": "scale(" + scaleRatio + ")",
@@ -942,7 +995,7 @@ var global = function() {
      * @param {Number} max Maximum.
      * @returns {Boolean} True ha igen, false ha nem.
      */
-    var valueInRange = function(value, min, max) {
+    var valueInRange = function (value, min, max) {
         return (value < max) && (value >= min);
     };
 
@@ -955,10 +1008,10 @@ var global = function() {
      * @param {String} secondaryColor Másodlagos szín.
      * @returns {String} A legjobban olvasható írásszín.
      */
-    var readableColor = function(background, primaryColor, secondaryColor) {
+    var readableColor = function (background, primaryColor, secondaryColor) {
         var back = d3.lab(background);
-        var primary = (primaryColor) ? d3.lab(primaryColor) : d3.lab(writeOnDimColor);
-        var secondary = (secondaryColor) ? d3.lab(secondaryColor) : d3.lab(writeOnValColor);
+        var primary = (primaryColor) ? d3.lab(primaryColor) : d3.lab(writeOnValColor);
+        var secondary = (secondaryColor) ? d3.lab(secondaryColor) : d3.lab(writeOnValColor2);
         var dP = Math.pow((back.l - primary.l), 2) + Math.pow((back.a - primary.a), 2) + Math.pow((back.b - primary.b), 2);
         var dS = Math.pow((back.l - secondary.l), 2) + Math.pow((back.a - secondary.a), 2) + Math.pow((back.b - secondary.b), 2);
         return (dP > dS) ? primary.rgb() : secondary.rgb();
@@ -972,7 +1025,7 @@ var global = function() {
      * @param {Object} obj A felhasználó által adott értékeket tartalmazó objektum.
      * @returns {Object} A kombinált objektum.
      */
-    var combineObjects = function(defaultObj, obj) {
+    var combineObjects = function (defaultObj, obj) {
         var keys = Object.keys(defaultObj);
         var combined = [];
         for (var i = 0; i < keys.length; i++) {
@@ -992,7 +1045,7 @@ var global = function() {
      * @param {Boolean} isBack Ha true, akkor visszaállít.
      * @returns {String} Az átalakított sztring.
      */
-    var minifyInits = function(initString, isBack) {
+    var minifyInits = function (initString, isBack) {
 
         // Az oda-visszaalakító szótár. Vigyázni kell, nehogy valamelyik oldalon
         // valami más részhalmazát adjunk meg, mert a csere elbaszódik!
@@ -1049,7 +1102,7 @@ var global = function() {
      * @param {Number} x Az oszlop szélessége pixelben.
      * @returns {Number} Javasolt betűméret (px).
      */
-    var axisTextSize = function(x) {
+    var axisTextSize = function (x) {
         var size = Math.sin(Math.pow(Math.min(x, 80), 0.92) / 40) * 40;
         return Math.min(size, 32);
     };
@@ -1060,7 +1113,7 @@ var global = function() {
      * @param {Number} n Bejövő szám.
      * @returns {Number} n ha normális szám, 0 különben.
      */
-    var orZero = function(n) {
+    var orZero = function (n) {
         return isFinite(n) ? n : 0;
     };
 
@@ -1070,7 +1123,7 @@ var global = function() {
      * @param {Object} element A kérdéses html elem.
      * @returns {String} A tartalmazó panel Id-je, vagy null, ha ilyen nincs.
      */
-    var getContainerPanelId = function(element) {
+    var getContainerPanelId = function (element) {
         if (element === null) {
             return null;
         } else if (element.nodeName.toLowerCase() === 'div' && element.id.substring(0, 5) === 'panel') {
@@ -1087,10 +1140,10 @@ var global = function() {
      * Ha undefined, becsukja a help-et, ha null, az alapértelmezettet mutatja.
      * @returns {undefined}
      */
-    var mainToolbar_help = function(item) {
+    var mainToolbar_help = function (item) {
         if (item === undefined) {
             document.getElementById("helpMask").style.opacity = 0;
-            setTimeout(function() {
+            setTimeout(function () {
                 document.getElementById("helpMask").style.display = "none";
             }, 100);
         } else if (item === null) {
@@ -1099,7 +1152,7 @@ var global = function() {
             d3.selectAll(".helpContent .helpStart").style("display", null);
             d3.selectAll("#helpControl span").classed("activeHelp", false);
             d3.selectAll("#helpControl .startItem").classed("activeHelp", true);
-            setTimeout(function() {
+            setTimeout(function () {
                 document.getElementById("helpMask").style.opacity = 1;
             }, 5);
         } else {
@@ -1118,7 +1171,7 @@ var global = function() {
      * @param {Integer} direction 1: 1-el több panel, -1: 1-el kevesebb.
      * @returns {undefined}
      */
-    var mainToolbar_magnify = function(direction) {
+    var mainToolbar_magnify = function (direction) {
         global.mediators[0].publish("magnify", direction);
         global.getConfig2();
     };
@@ -1128,7 +1181,7 @@ var global = function() {
      * 
      * @returns {undefined}
      */
-    var mainToolbar_closeSide = function() {
+    var mainToolbar_closeSide = function () {
         d3.select("#progressDiv").style("z-index", -1);
         global.mediators[0].publish("killside", 0);
         global.mediators[1].publish("killside", 1);
@@ -1140,7 +1193,7 @@ var global = function() {
      * 
      * @returns {undefined}
      */
-    var mainToolbar_switchSide = function() {
+    var mainToolbar_switchSide = function () {
         global.mediators[0].publish("changepanels");
         global.getConfig2();
     };
@@ -1151,7 +1204,7 @@ var global = function() {
      * @param {String} panelType A létrehozandó panel típusa.
      * @returns {undefined}
      */
-    var mainToolbar_createNewPanel = function(panelType) {
+    var mainToolbar_createNewPanel = function (panelType) {
         global.mediators[0].publish('addPanel', panelType);
         global.mediators[1].publish('addPanel', panelType);
     };
@@ -1162,11 +1215,11 @@ var global = function() {
      * @param {Object} e A ráklikkelés esemény.
      * @returns {undefined}
      */
-    var mainToolbar_killCursor = function(e) {
+    var mainToolbar_killCursor = function (e) {
         e.stopPropagation();
         d3.selectAll("svg > *").style("pointer-events", "none");
         d3.select("body").style('cursor', 'crosshair');
-        d3.select("body").on('click', function() {
+        d3.select("body").on('click', function () {
             var event = d3.event;
             event.stopPropagation();
             d3.select("body").style('cursor', 'default');
@@ -1184,7 +1237,7 @@ var global = function() {
      * 
      * @returns {undefined}
      */
-    var mainToolbar_save = function() {
+    var mainToolbar_save = function () {
         global.mediators[0].publish('save');
         global.mediators[1].publish('save');
     };
@@ -1194,7 +1247,7 @@ var global = function() {
      * 
      * @returns {undefined}
      */
-    var mainToolbar_saveAllImages = function() {
+    var mainToolbar_saveAllImages = function () {
         var side = d3.selectAll("#container1.activeSide").nodes().length; // Aktív oldal id-je, 0 vagy 1. Csak akkor ételmes, ha 1 aktív oldal van.
         var today = new Date();
         var todayString = today.toISOString().slice(0, 10) + "_" + today.toTimeString().slice(0, 8).split(":").join("-");
@@ -1202,14 +1255,14 @@ var global = function() {
                 + "_" + global.convertFileFriendly(global.facts[side].localMeta.caption)
                 + "_" + todayString
                 + "_P";
-        d3.selectAll(".activeSide div.panel > svg").each(function(d, i) {
+        d3.selectAll(".activeSide div.panel > svg").each(function (d, i) {
             var width = d3.select(this).attr("width");
             var height = d3.select(this).attr("height");
             saveSvgAsPng(this, filename + (i + 1), 2, width, height, 0, 0);
         });
     };
 
-    var mainToolbar_setLanguage = function(lang) {
+    var mainToolbar_setLanguage = function (lang) {
         d3.select(".languageSwitch > ul")
                 .style("display", "none")
                 .transition().delay(500)
@@ -1222,7 +1275,7 @@ var global = function() {
      * 
      * @returns {undefined}
      */
-    var mainToolbar_refreshState = function() {
+    var mainToolbar_refreshState = function () {
         var numberOfActiveSides = d3.selectAll(".container.activeSide").nodes().length; // Hány aktív oldal van? (2 ha osztottkijelzős üzemmód, 1 ha nem.)
 
         // Alap láthatósági beállítás: ha osztottkijelzős a mód, akkor inaktívak a lokálisra ható gombok.
@@ -1294,11 +1347,11 @@ var global = function() {
      * @param {Integer} enterFunctionNumber Az enter melyik gombklikkelést hajtsa végre? (1: bal, 2: jobb, undefined: semmit se)
      * @returns {undefined}
      */
-    var setDialog = function(title, body, leftButtonLabel, leftButtonFunction, rightButtonLabel, rightButtonFunction, enterFunctionNumber, extraButtonLabel, extraButtonFunction) {
+    var setDialog = function (title, body, leftButtonLabel, leftButtonFunction, rightButtonLabel, rightButtonFunction, enterFunctionNumber, extraButtonLabel, extraButtonFunction) {
         clearTimeout(dialogTimeoutVar);
         var dialogMask = d3.select("#dialogMask");
         if (enterFunctionNumber) {
-            dialogMask.on("keydown", function() {
+            dialogMask.on("keydown", function () {
                 if (d3.event && d3.event.keyCode === 13) {
                     if (enterFunctionNumber === 1 && leftButtonFunction) {
                         leftButtonFunction();
@@ -1317,7 +1370,7 @@ var global = function() {
         if (title === undefined) { // Ha üres a cím, eltüntetjük a panelt.
             if (dialogMask.style("display") !== "none") {
                 dialogMask.style("opacity", 0);
-                dialogTimeoutVar = setTimeout(function() {
+                dialogTimeoutVar = setTimeout(function () {
                     dialogMask.style("display", "none");
                 }, 200);
             }
@@ -1355,7 +1408,7 @@ var global = function() {
             rightButton.nodes()[0].focus();
             rightButton.nodes()[0].blur();
             dialogMask.style("display", "block");
-            setTimeout(function() {
+            setTimeout(function () {
                 dialogMask.style("opacity", 1);
                 dialogMask.node().focus();
             }, 50);
@@ -1369,48 +1422,19 @@ var global = function() {
     {
         var writeOnDimColor = varsFromCSS.writeOnDimColor;
         var writeOnValColor = varsFromCSS.writeOnValColor;
+        var writeOnValColor2 = varsFromCSS.writeOnValColor2;
     }
 
 //////////////////////////////////////////////////
 // Globálisan használt változók.
 //////////////////////////////////////////////////
 
+    var changeCSSInProgress = false;
+
     {
         // Az értékek megjelenését színező színpaletta.
         var colorNA = 'grey';
-        var colors = [
-            '#40bddf',
-            '#bad642',
-            '#8c8014',
-            '#22ada6',
-            '#85c222',
-            '#faeb4c',
-            '#00a6d3',
-            '#9eb060',
-            '#43b57c',
-            '#d4cc4c',
-            '#3db8a3',
-            '#80d4e9',
-            '#9ccf61',
-            '#bfe8f6',
-            '#f7e306',
-            '#b8bf5a',
-            '#badb8e',
-            '#c2b211',
-            '#7d9c53',
-            '#0885a4',
-            '#fcf288',
-            '#7dc772'];
-        // A CSS-ből kiolvasott értékek.
-        var mapBorder = parseInt(varsFromCSS.elementBorderSize);
-        var rectRounding = parseInt(varsFromCSS.rounding);
-        var panelWidth = parseInt(varsFromCSS.panelWidth);
-        var panelMargin = parseInt(varsFromCSS.panelMargin);
-        var panelHeight = parseInt(varsFromCSS.panelHeight);
-        var panelBackgroundColor = varsFromCSS.panelBackgroundColor;
-        var axisTextOpacity = varsFromCSS.axisTextOpacity;
-        var fontSizeSmall = parseInt(varsFromCSS.fontSizeSmall);
-        var mainToolbarHeight = parseInt(varsFromCSS.mainToolbarHeight);
+        var colors = [];
 
         // Húzd-és-ejtsd működését vezérlő ojektum.
         var dragDropManager = {
@@ -1421,7 +1445,7 @@ var global = function() {
             targetPanelId: null, // A dobás célpontpanelének ID-je.
             targetSide: null, // A dobás célpontpaneljének oldala (0 v 1).
             targetId: null, // A dobás által megváltoztatandó objektum ID-je.
-            draggedMatchesTarget: function() {
+            draggedMatchesTarget: function () {
                 return (this.draggedSide === this.targetSide);
             }
         };
@@ -1446,6 +1470,50 @@ var global = function() {
 
     }
 
+    var initValuesFromCss = function () {
+
+        // Az értékek megjelenését színező színpaletta.
+        global.colorNA = varsFromCSS.valClorNA; // A "nem szám", ill "nem definiált" érték színezési színe.
+        for (var i = 0; i < 20; i++) {
+            colors[i] = varsFromCSS["valColor" + (i + 1)];
+        }
+
+        // A CSS-ből kiolvasott értékek.
+        global.mapBorder = parseInt(varsFromCSS.elementBorderSize); // A térképi elemek határvonal-vastagsága.
+        global.rectRounding = parseInt(varsFromCSS.rounding);  // A téglalapi elemek sarkának lekerekítettsége.
+        global.panelWidth = parseInt(varsFromCSS.panelWidth); // Panelek szélessége.
+        global.panelMargin = parseInt(varsFromCSS.panelMargin); // Panelek margója.
+        global.panelHeight = parseInt(varsFromCSS.panelHeight); // Panelek magassága.
+        global.panelBackgroundColor = varsFromCSS.panelBackgroundColor; // Panelek háttérszíne.
+        global.axisTextOpacity = varsFromCSS.axisTextOpacity; // Az oszlopdiagramok tengelyszövegének átlátszósága.
+        global.fontSizeSmall = parseInt(varsFromCSS.fontSizeSmall); // A legkisebb betűméret.
+        global.mainToolbarHeight = parseInt(varsFromCSS.mainToolbarHeight); // A képernyő tetején levő toolbar magassága.
+
+        // Csak lokálisan kell
+        writeOnDimColor = varsFromCSS.writeOnDimColor;
+        writeOnValColor = varsFromCSS.writeOnValColor;
+        writeOnValColor2 = varsFromCSS.writeOnValColor2;
+
+        {
+            var outer = document.createElement("div");
+            outer.style.visibility = "hidden";
+            outer.style.width = "100px";
+            outer.style.msOverflowStyle = "scrollbar";
+            document.body.appendChild(outer);
+            var widthNoScroll = outer.offsetWidth;
+            outer.style.overflow = "scroll";
+            // add innerdiv
+            var inner = document.createElement("div");
+            inner.style.width = "100%";
+            outer.appendChild(inner);
+            var widthWithScroll = inner.offsetWidth;
+            // remove divs
+            outer.parentNode.removeChild(outer);
+            scrollBarSize = widthNoScroll - widthWithScroll;
+        }
+
+    };
+
 //////////////////////////////////////////////////
 // A létrejövő, globálisan elérhető objektum
 //////////////////////////////////////////////////
@@ -1459,30 +1527,22 @@ var global = function() {
         baseLevels: [[], []], // A két oldal aktuális lefúrási szintjeit tartalmazó tömb.
         superMeta: undefined, // SuperMeta: az összes riport adatait tartalmazó leírás.
         scrollbarWidth: scrollBarSize, // Scrollbarok szélessége.
-        mapBorder: mapBorder, // A térképi elemek határvonal-vastagsága.
-        fontSizeSmall: fontSizeSmall, // A legkisebb betűméret.
-        panelBackgroundColor: panelBackgroundColor, // Panelek háttérszíne.
-        panelWidth: panelWidth, // Panelek szélessége.
-        panelHeight: panelHeight, // Panelek magassága.
-        panelMargin: panelMargin, // Panelek margója.
-        mainToolbarHeight: mainToolbarHeight, // A képernyő tetején levő toolbar magassága.
         selfDuration: 800, // A fő animációs időhossz (ms).
         legendOffsetX: 20, // A jelkulcs vízszintes pozicionálása.
         legendOffsetY: 15, // A jelkulcs függőleges pozicionálása.
         panelTitleHeight: 30, // A panelek fejlécének magassága.
         numberOffset: 35, // Ha a panel bal oldalán számkijelzés van a tengelyen, ennyi pixelt foglal.
         legendHeight: 20, // Jelkulcs magassága.
-        rectRounding: rectRounding, // A téglalapi elemek sarkának lekerekítettsége.
         scaleRatio: undefined, // A képernyő svg elemeire vonatkozó nagyítás szorzója.
-        colorNA: colorNA, // A "nem szám", ill "nem definiált" érték színezési színe.
-        axisTextOpacity: axisTextOpacity, // Az oszlopdiagramok tengelyszövegének átlátszósága.
         dragDropManager: dragDropManager, // Húzd-és-ejtsd működését vezérlő ojektum.
         tooltip: undefined, // Épp aktuális tooltip törzse, html.
         secretToken: 'zzz', // Autentikáció után kapott token.
         secretUsername: undefined, // Sikeres autentikáció user-neve.
         maxEntriesIn1D: 150,
-        maxEntriesIn2D: 5000,        
+        maxEntriesIn2D: 5000,
         // Globálisan elérendő függvények.
+        changeCSSInProgress: changeCSSInProgress,
+        changeCSS: changeCSS, // Css-t vált
         tagForLocalization: tagForLocalization, // Nyelvváltoztatás előtt a szövegeket az 'origText' attrib-ba írja.
         convertFileFriendly: convertFileFriendly, // Átalakítja egy sztring filenévben nem szívesen látott karaktereit.
         setCookie: setCookie, // Beállít egy cookie-t.
@@ -1528,13 +1588,14 @@ var global = function() {
         rectanglePath: rectanglePath, // Egy SVG téglalapot kirajzoló path-t generál, opcionálisan lekerekített sarkokkal.
         colorValue: colorValue, // Megadja egy érték kijelzésének színét.
         color: color, // Megadja egy dimenzióelem kijelzésének színét.
-        randomString: randomString // Adott hosszúságú véletlen stringet generál.
+        randomString: randomString, // Adott hosszúságú véletlen stringet generál.
+        initValuesFromCss: initValuesFromCss
     };
 
 }();
 
+global.initValuesFromCss();
 global.secretToken = global.getCookie("token");
-console.log('token', global.secretToken)
+
 global.secretUsername = global.getCookie("user");
 
-console.log('token', global.secretToken, 'user', global.secretUsername);

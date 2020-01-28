@@ -1,0 +1,1658 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 7, 2017, 3:16:49 PM
+    Author     : ruzsaz
+*/
+
+/* 
+    Document   : frame
+    Created on : 2014.01.29., 16:03:26
+    Author     : ruzsaz
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* A toolbar magassága */
+@mainToolbarHeight: 32px; // Túl ronda ha elállítod
+@helpControlHeight: @mainToolbarHeight;
+
+/* A háttérszín */
+@baseBackgroundColor: #fff;
+
+/* A panel, és az arra írás színe */
+@panelWidth: 600px; // Nem állítható, csak egyszerre
+@panelHeight: 400px; // Nem állítható, csak egyszerre
+@panelMargin: 6px; // Nem állítható, csak egyszerre
+@panelBackgroundColor: #fff;
+@panelWriteColor: #000;
+@panelWriteValueColor: darkblue;     // Pl. a piechart értéke
+
+
+@borderSize: 1px;
+@panelBorder: @borderSize solid #aaa;
+@panelShadow: 0px 0px 0px @borderSize #aaa, 2px 5px 10px 2px #aaa;
+@dimValShadow: 3px 3px 9px rgba(0,0,0,0.75);
+
+/* A dimenziók színei */
+@oddColor: #ccc;
+@evenColor: #aaa;
+@avgColor: #bbb; // 2d táblánál számít, az odd row - even column metszeténél
+@writeOnDimColor: @panelWriteColor;
+
+/* Értékek színei */
+@valWriteColor: @panelWriteColor;
+@valWriteColor2: white; // Más szín, ha az előző nem lenne olvasható
+
+@highlightColor: #ffe;
+@dimHighlightColor: #ffe;
+
+@neutralGrey: #bbb;
+@multiValuesColor: @neutralGrey;
+
+/* A dimenzióelemek jelölésére szolgáló színpaletta */
+@valColors: #ff9090,#ffcf90,#8aafcc,#75d075,#ffa6a6,#b89ffe,#7c557c,#679667,#b87e7e,#ffd9a6,#cd86cd,#93e393,#ffb8b8,#9b6927,#691a69,#1f7e1f,#9b2727,#ffe0b8,#cd94cd,#a3e3a3,#576b7b,#658cab;
+
+@valColorNA: @neutralGrey;
+
+/* Fejléc színei */
+@middleGrey0: #bbb;
+@middleGrey: #aaa;
+@middleGrey1: #999;
+
+@mainToolbarBackgroundColor: #aaa;
+@helpBackgroundColor: @panelBackgroundColor;
+@mainToolbarShadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0,0,0,0.75);
+@helpControlBackgroundGradient: top, @middleGrey0 0%, @middleGrey 30px, @middleGrey1 100%;
+@topTenColor: #eee;
+
+@mainToolbarActiveColor: #444;
+@mainToolbarInactiveColor: #bbb;
+@mainToolbarHoverColor: #ffe;
+
+@firstChildGradient: top, @middleGrey0 0%, @middleGrey 50%;
+@lastChildGradient: top, @middleGrey 50%, @middleGrey1 100%;
+
+
+/* Elemek körüli határ */
+@elementBorderSize: 1px;
+@elementBorderColor: #555;
+
+/* A panelváltó és becsukógomb szélessége */
+@stripeWidth: 8px;
+
+@switchColor1: #ff97B2;
+@switchColor: #ff9090;
+@switchColor0: #ffCAE5;
+@switchGradient: top, @switchColor0 0%, @switchColor1 100%;
+
+@closeColor1: #95AB35;
+@closeColor: #ffcf90;
+@closeColor0: #C8DE68;
+@closeGradient: top, @closeColor0 0%, @closeColor1 100%;
+
+@scrollbarColor: @closeColor;
+
+@rounding: 0px;
+@scrollbarRounding: 0px;
+@scrollbarWidth: 12px;
+
+@resizedLabelStroke: #000; // ???
+@axisTextColor: #000; // ????
+
+@axisTextOpacity: 0.4;
+
+@fontSizeHuge: 20px;
+@fontSizeBig: 16px;
+@fontSizeNormal: 16px;
+@fontSizeSmall: 12px;
+
+@lineSymbolStroke: @elementBorderColor;
+
+/* A css-es animáció ideje */
+@animDurationText: 0.1s;
+@animDurationHover: 0.0s;
+@appearDuration: 0.2s;
+
+/* Ennyi bejegyzés lehet a legend-ben. */
+@maximalLegendElement: 150;
+
+@tooltipTextColor: #444;
+@tooltipValueColor: #844;
+@tooltipBackgroundColor: #eee;
+
+
+#less {
+    .panelWidth {width: @panelWidth;}
+    .panelHeight {width: @panelHeight;}
+    .panelMargin {width: @panelMargin;}
+    .elementBorderSize { width: @elementBorderSize; }
+    .rounding { width: @rounding; }
+    .writeOnDimColor { color: @writeOnDimColor;}
+    .writeOnValColor { color: @valWriteColor;}
+    .writeOnValColor2 { color: @valWriteColor2;}
+    .highlightColor {color: @highlightColor;}
+    .dimHighlightColor {color: @dimHighlightColor;}
+    .panelWriteColor {color: @panelWriteColor;}
+    .panelBackgroundColor {color: @panelBackgroundColor;}
+    .switchColor {color: @switchColor;}
+    .oddColor {color: @oddColor;}
+    .evenColor {color: @evenColor;}
+    .stripeWidth {width: @stripeWidth;}
+    .axisTextOpacity {opacity: @axisTextOpacity;}
+    .fontSizeSmall { width:@fontSizeSmall;}
+    .mainToolbarHeight { width: @mainToolbarHeight;}
+    .scrollbarWidth { width: @scrollbarWidth;}
+
+    .valColorNA {color: @valColorNA;}
+    .valColor-loop (@i) when (@i > 0) {
+        .valColor@{i} {color: extract(@valColors, @i);}                    
+        .valColor-loop(@i - 1);
+    }
+    .valColor-loop (20);
+}
+
+* {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-family: arial, sans-serif;
+}
+
+/* Safarihoz bugfix */
+input[type=text], input[type=password] {
+    -moz-user-select: -moz-text !important;
+    -khtml-user-select: text !important;
+    -webkit-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+
+root { 
+    display: block;
+}
+
+body {	
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    background: @baseBackgroundColor !important;
+    color: #ffffff;
+}
+
+svg {
+    overflow: hidden;
+}
+
+#svgDefs {
+    height: 0px;
+}
+
+#topdiv {
+    width: 100%;
+    overflow: hidden;
+}
+
+#progressDiv {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    top: 0px;
+    background: rgba(0, 0, 0, 0);
+    color: white;
+    z-index: -1;
+    opacity: 0;
+    font-size: 100px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 100px;
+    cursor: progress;
+}
+
+/* container */
+.container {
+    position: absolute;
+}
+
+.container.dragging {
+    cursor: move;
+}
+
+/* container */
+#scrollPaneP0, #scrollPaneP1 {
+    position: absolute;
+    height: calc(~"100% - " @mainToolbarHeight);
+    top: @mainToolbarHeight;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* container */
+#scrollPaneP0 {
+    width: 100%;
+    left: 0px;
+}
+
+/* container */
+#scrollPaneP1 {
+    width: 0%;
+    right: 0px;
+}
+
+/* container */
+#cutter0, #cutter1 {
+    position: relative;
+    height: calc(~"100vh - " @mainToolbarHeight);
+    overflow: hidden;
+}
+
+.panel {
+    box-shadow: @panelShadow;
+    border-radius: @rounding;
+    padding: 0px;
+    float: left;
+    width: @panelWidth;
+    height: @panelHeight;
+    margin: @panelMargin;
+    position: relative;	
+}
+
+.baseDiv:before, .baseDiv:after {
+    content: " ";
+    display: table;
+}
+
+.baseDiv:after {
+    clear: both;
+}
+
+.halfHead:not(.vertical) {
+    width: 50%;
+    float: left;
+}
+
+.halfHead.vertical {
+    width: 100%;
+    float: left;
+}
+
+.buttonBaseDiv {
+    position: absolute;
+}
+
+.tableScrollPane, .mainTitle {
+    margin: 8px;
+    padding: 0px 8px 5px 8px;
+}
+
+.mainTitle {
+    color: @panelWriteColor;
+    text-align: center;
+    font-size: @fontSizeHuge;
+    padding-top: 16px;
+    padding-bottom: 0px;
+}
+
+.panelMask {
+    background: @panelBackgroundColor;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    opacity: 0;
+}
+
+/* Ez azért kell, hogy az elmentett panel-képen is ott legyen a háttér */
+.background rect {
+    opacity: 0;
+    /*	opacity: 1;
+        rx: @rounding;
+        fill: @panelBackgroundColor;*/
+}
+
+/* Ez azért kell, hogy az elmentett panel-képen is ott legyen a háttér */
+.backgroundForSave {
+    opacity: 1;
+    rx: @rounding;
+    fill: @panelBackgroundColor;
+}
+
+/* Panel */
+.panic rect {
+    fill: @panelBackgroundColor;
+}
+
+/* Panel */
+.panic text {
+    fill: @valWriteColor;
+}
+
+.panel.double {
+    width: 600px;
+    overflow: hidden;
+    position: relative;
+    height: auto;
+    background: @panelBackgroundColor;
+}
+
+.label{
+    fill: @writeOnDimColor;
+    font-size: @fontSizeSmall;
+    font-weight: bold;
+}
+
+div.tooltip {   
+    position: absolute;           
+    text-align: center;
+    color: @tooltipTextColor;
+    min-width: 30px;                  
+    min-height: 8px;
+    max-width: 45vw;
+    padding: 6px 12px;             
+    background: @tooltipBackgroundColor;   
+    border: 0px;      
+    border-radius: @rounding;           
+    pointer-events: none;
+    font-size: @fontSizeNormal;
+    z-index: 500;
+    text-align: left;
+}
+
+div.tooltip em {
+    font-size: @fontSizeBig;
+}
+
+div.tooltip ul {
+    list-style-position: inside; 
+    padding: 0px;
+    margin: 0px;
+}
+
+div.tooltip li {
+    padding-left: 10px; 
+}
+
+div.tooltip h4 {
+    margin: 2px 0px; 
+}
+
+.bordered {
+    stroke-width: @elementBorderSize;
+    stroke: @elementBorderColor;
+}
+
+.axis path, .axis line {
+    fill: none;
+    stroke: @panelWriteColor;
+    stroke-width: 2;
+}
+
+/* Panel_Pie */
+.pieTicks {
+    stroke: @panelWriteColor;
+}
+
+/* Panel_Pie */
+.pieTicks, .gPieTick {
+    opacity: 0;
+}
+
+/* Panel_Map */
+.mapHolder.water path.Polygon {
+    stroke: #2c748c;
+    stroke-width: 0.05;
+    fill: #2c748c;
+}
+
+/* Panel_Map */
+.mapHolder.water path.LineString {
+    stroke: #2c748c;
+    stroke-width: 0.3;
+    fill: none;
+}
+
+/* Panel_Map */
+.subunit {
+    stroke: @elementBorderColor;
+}
+
+/* Panel_Map */
+mask path {
+    fill: white;
+}
+
+/* Panel_Map */
+.gPoiLegend rect {
+    opacity: 0.6;
+    fill: @baseBackgroundColor;
+}
+
+/* Panel_Map */
+.poiLegend rect {
+    opacity: 0;
+}
+
+/* Panel_Map */
+.poiLegend:not(.inactive) text {
+    fill: @panelWriteColor;
+}
+
+/* Panel_Map */
+.poiLegend.inactive path, .poiLegend.inactive text {
+    fill: @middleGrey1;
+}
+
+/* Panel_Map */
+.gPoi.inactive {
+    visibility: hidden;
+}
+
+/* Panel_Map */
+.gPoi.opaque, .mapHolder.labels.opaque {
+    opacity: 0.1;
+}
+
+.gPoi.noText text {
+    display: none;
+    opacity: 0;
+}
+
+.gPoi text {
+    text-shadow: 0px 0px 3px @panelWriteColor;
+}
+
+.units {
+    font-size: @fontSizeSmall;
+    fill: @panelWriteColor;	
+}
+
+.axisY text {
+    font-size: @fontSizeSmall;
+    font-weight: bold;
+    fill: @panelWriteColor;
+}
+
+/* Panel_Table2D, Panel_Table1D */
+.svgRowHeadLabel {
+    font-size: @fontSizeSmall;
+    fill: @panelWriteColor;
+    text-anchor: beginning;
+}
+
+/* Panel_Table2D, Panel_Table1D */
+.svgTableCell, .svgColumnHeadLabel{
+    font-size: @fontSizeSmall;
+    fill: @panelWriteColor;
+    text-anchor: middle;
+}
+
+/* Panel_Table2D */
+.svgTableHolder rect {
+    stroke-width: 1;
+    stroke: @panelBackgroundColor;
+}
+
+/* Panel_Table2D */
+.alterColored[parity="0"] > .backgroundRect {
+    fill: @evenColor;
+}
+
+/* Panel_Table2D */
+.alterColored[parity="1"] > .backgroundRect {
+    fill: @oddColor;
+}
+
+/* Panel_Table2D */
+.alterColored[parity="1"] > .alterColored[parity="0"] > .backgroundRect, .alterColored[parity="0"] > .alterColored[parity="1"] > .backgroundRect {
+    fill: @avgColor;
+}
+
+/* Panel_Table1D */
+.svgColumnHead.showValue text, .svgTableCell.showValue text,  {
+    fill: @valWriteColor;
+}
+
+/* Panel_BarLine */
+.avg_group text {
+    font-size: @fontSizeSmall;
+    font-style: italic;
+}
+
+.value {
+    font-size: @fontSizeSmall;
+    fill: @panelWriteValueColor;
+}
+
+.legend {
+    font-size: @fontSizeSmall;
+}
+
+.titleText {
+    font-size: @fontSizeHuge;
+    font-weight: bold;
+    fill: @valWriteColor;
+}
+
+/* Panel_BarLine */ 
+.lineChart {
+    fill: none;
+    stroke-width: 3;
+}
+
+/* Panel_BarLine */ 
+.lineChartLegend {
+    stroke-width: 3;
+}
+
+/* Panel_BarLine */ 
+.top_10_holder {
+    fill: @topTenColor;
+}
+
+/* universal */
+.noEvents {
+    pointer-events: none;
+}
+
+/* Panel_BarLine */ 
+.lineSymbol {
+    stroke-width: @borderSize;
+    stroke: @lineSymbolStroke;
+}
+
+/* Panel_BarLine */ 
+.shadow {
+    fill: @panelBackgroundColor;
+    stroke: @panelBackgroundColor;
+}
+
+.shadowedLabel {
+
+}
+
+.divTableBase {
+    margin: 0px 4px 16px;
+    position: relative;
+}
+
+.divTableBase.HeadPanel_Browser {
+    margin-bottom: 8px;
+}
+
+/* HeadPanel */
+.halfHead .table {
+    color: @writeOnDimColor;
+}
+
+/* HeadPanel */
+.table {
+    display: table;
+    color: @writeOnDimColor;
+    border-spacing: 0px 8px;
+    width: 200%;
+}
+
+/* HeadPanel */
+.tableHolder {
+    margin: 10px;
+}
+
+/* HeadPanel */
+.tableScrollPane {
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    max-height: 500px;
+}
+
+/* HeadPanel */
+.title {
+    display: table-caption;
+    text-align: center;
+    font-weight: bold;
+    font-size: larger;
+}
+
+/* HeadPanel */
+.row, .heading {
+    display: table-row;
+}
+
+/* HeadPanel */
+.cell {
+    display: table-cell;
+    font-size: @fontSizeNormal;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    line-height: 20px;
+    z-index: 2;
+    position: relative;
+}
+
+.dimTable .cell:nth-child(1), .dimTable .cell:nth-child(2) {
+    width: 25%;
+    pointer-events: none;
+}
+
+.dimTable .tableText0, .dimTable .tableText1, .dimTable .backgroundCell {
+    color: @writeOnDimColor;
+}
+
+.valTable .tableText0, .valTable .tableText1, .valTable .tableText2, .valTable .backgroundCell {
+    color: @valWriteColor;
+} 
+
+.heading .cell {
+    font-size: @fontSizeBig;
+    font-weight: bold;
+}
+
+.valTable .realText {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.valTable .dummyText {
+    visibility: hidden;
+    height: 0px;
+    overflow: hidden;
+    display: block;
+    white-space: normal;
+}
+
+#headPanelP0 .row .cell text:not(.spacer), #headPanelP1 .row .cell text:not(.spacer) {
+    /* position: absolute; A legújabb próbálkozás szerint ez nem kell */
+    max-width: 90%;
+    /* white-space: nowrap; A legújabb próbálkozás szerint ez nem kell */
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+#headPanelP0 .halfHead .row .cell text:not(.spacer), #headPanelP1 .halfHead .row .cell text:not(.spacer) {
+    position: absolute;
+    white-space: nowrap;
+}
+
+#headPanelP0 text.spacer, #headPanelP1 text.spacer {
+    height: 0px;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.cell:first-child {
+    padding-left: 15px;
+}
+
+.cell {
+    padding-right: 15px;
+}
+
+/* HeadPanel */
+.backgroundCell {
+    width: 50%;
+    -webkit-transform: translate(-100%);
+    -moz-transform: translate(-100%);
+    -ms-transform: translate(-100%);
+    -o-transform: translate(-100%);
+    transform: translate(-100%);
+    z-index: 1;
+}
+
+/* HeadPanel */
+.alterColored[parity="0"] .backgroundCell {
+    background: @evenColor;
+}
+
+/* HeadPanel */
+.alterColored[parity="1"] .backgroundCell {
+    background: @oddColor;
+}
+
+.row .backgroundCell {
+    border-radius: @rounding;
+    border: @elementBorderSize solid;
+    box-shadow: @dimValShadow;
+    -webkit-box-shadow: @dimValShadow;
+    -moz-box-shadow: @dimValShadow;
+}
+
+/* HeadPanel */
+.alterColored[parity="hidden"] {
+    display: none;
+}
+
+/* A legújabb próbálkozás szerint ez nem kell
+.reportsTable .cell:nth-child(1) {
+        overflow-wrap: break-word;
+        max-width: 10%;
+        width: 10%;
+}
+
+.reportsTable .cell:nth-child(2) {
+        overflow-wrap: break-word;
+        max-width: 30%;
+}
+
+.reportsTable .cell:nth-child(3) {
+        overflow-wrap: break-word;
+        max-width: 5%;
+        width: 5%;
+}
+
+.reportsTable .cell:nth-child(4) {
+        overflow-wrap: break-word;
+        max-width: 5%;
+        width: 5%;
+} */
+
+.reportsTable .cell:nth-child(5) {
+    overflow-wrap: break-word;
+    max-width: 50%;
+    width: 50%;
+}
+
+.hoverable:hover text {
+    color: @highlightColor;
+}
+
+.hoverable text {
+    transition: color @animDurationText linear;
+    -webkit-transition: color @animDurationText linear;
+    -moz-transition: color @animDurationText linear;
+    -ms-transition: color @animDurationText linear;
+    -o-transition: color @animDurationText linear;
+}
+
+/* Cointainer, drag réteg */
+.dragCircle {
+    background: lightGrey;
+    border-radius: @rounding;
+    border: @panelBorder;
+    z-index: 900;
+    position: absolute;
+    display: none;
+    visibility: hidden;
+    margin-left:-25px;
+    margin-top:-15px;
+    padding-right: 15px;
+    padding-left: 15px;
+    line-height: 30px;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: @fontSizeNormal;
+    pointer-events: none;
+    color: red;
+}
+
+.button {
+    display: inline-block;
+    color: #ffffff;
+    background-color: #FFAD33;
+    border: 1px solid #FFAD33;
+    font-weight: bold;
+    font-size: 11px;
+    text-align: center;
+    padding: 10px;
+    padding-top: 1px;
+    padding-bottom: 2px;
+    text-decoration: none;
+    margin-left: 1px;
+    border-radius: 5px;
+    white-space: nowrap;
+    cursor: default;
+}
+
+
+.titleRect {
+    stroke-width: @borderSize;
+    opacity: 0;
+    fill: @multiValuesColor;
+}
+
+.titleButton0:hover ~ .titleText0, .titleButton1:hover ~ .titleText1 {
+    fill: @highlightColor;
+}
+
+.titleText {
+    dy: 0.35em;
+    text-anchor: middle;
+    pointer-events: none;
+    opacity: 0;
+    transition: fill @animDurationText linear;
+    -webkit-transition: fill @animDurationText linear;
+    -moz-transition: fill @animDurationText linear;
+    -ms-transition: fill @animDurationText linear;
+    -o-transition: fill @animDurationText linear;
+}
+
+
+
+body {
+    -ms-scrollbar-face-color: @scrollbarColor;
+    -ms-scrollbar-track-color: @baseBackgroundColor;
+    -ms-scrollbar-arrow-color: @scrollbarColor;
+    -ms-scrollbar-shadow-color: @scrollbarColor;
+}
+
+::-webkit-scrollbar {
+    width: @scrollbarWidth;
+    height: @scrollbarWidth;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-border-radius: @scrollbarRounding;
+    border-radius: @scrollbarRounding;
+    background: @baseBackgroundColor;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: @scrollbarRounding;
+    border-radius: @scrollbarRounding;
+    background: @scrollbarColor;
+    box-shadow: inset 0 0 1px rgba(0,0,0,0.5); 
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0.5); 
+    -moz-box-shadow: inset 0 0 1px rgba(0,0,0,0.5); 
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+    background: @scrollbarColor; 
+}
+
+
+p {
+    margin: 20px 0 0;
+}
+
+p:first-child {
+    margin-top: 0;
+}
+
+input[type=text] {
+    margin: 16px 16px;
+}
+
+p.submit {
+    text-align: right;
+}
+
+:-moz-placeholder {
+    color: #c9c9c9 !important;
+    font-size: @fontSizeBig;
+}
+
+::-webkit-input-placeholder {
+    color: #ccc;
+    font-size: @fontSizeBig;
+}
+
+input {
+    font-size: @fontSizeBig;
+}
+
+input[type=text], input[type=password] {
+    width: 278px;
+    padding: 0 10px;
+    height: 34px;
+    color: @panelBackgroundColor;
+    background: @panelWriteColor;
+    border: @panelBorder;
+    border-radius: @rounding;
+    -moz-outline-radius: 3px;
+}
+
+input[type=text], input[type=password], input[type=submit], button, textarea {
+    transition: opacity @animDurationHover linear, background @animDurationHover linear, box-shadow @animDurationHover linear, -webkit-box-shadow @animDurationHover linear, -moz-box-shadow @animDurationHover linear;
+    -webkit-transition: opacity @animDurationHover linear, background @animDurationHover linear, box-shadow @animDurationHover linear, -webkit-box-shadow @animDurationHover linear, -moz-box-shadow @animDurationHover linear;
+    -moz-transition: opacity @animDurationHover linear, background @animDurationHover linear, box-shadow @animDurationHover linear, -webkit-box-shadow @animDurationHover linear, -moz-box-shadow @animDurationHover linear;
+    -ms-transition: opacity @animDurationHover linear, background @animDurationHover linear, box-shadow @animDurationHover linear, -webkit-box-shadow @animDurationHover linear, -moz-box-shadow @animDurationHover linear;
+    -o-transition: opacity @animDurationHover linear, background @animDurationHover linear, box-shadow @animDurationHover linear, -webkit-box-shadow @animDurationHover linear, -moz-box-shadow @animDurationHover linear;
+}
+
+input[type=text]:focus, input[type=password]:focus, input[type=submit]:focus, button:focus, textarea:focus {
+    background: @panelWriteColor;
+    border-radius: @rounding;
+    -moz-outline-radius: 3px;
+    outline: none;
+    box-shadow: 0 0 10px @highlightColor;
+    -webkit-box-shadow: 0 0 10px @highlightColor;
+    -moz-box-shadow: 0 0 10px @highlightColor;
+}
+
+input[type=submit], button {
+    margin-right: 5px;
+    padding: 0 18px;
+    height: 29px;
+    font-size: @fontSizeNormal;
+    color: @writeOnDimColor;
+    background: @oddColor;
+    border: @borderSize solid;
+    border-radius: @rounding;
+}
+
+/* universal */
+text {
+    cursor: default;
+}
+
+
+/* universal */
+.darkenable, .controlled {
+    transition: opacity @animDurationHover linear;
+    -webkit-transition: opacity @animDurationHover linear;
+    -moz-transition: opacity @animDurationHover linear;
+    -ms-transition: opacity @animDurationHover linear;
+    -o-transition: opacity @animDurationHover linear;
+}
+
+/* universal */
+.darkenable:hover{
+    opacity: 0.7;
+}
+
+
+/* Panel_BarLine, Bar2Panel, HoritzontalBarPanel */
+.generate-legend(@n, @i: 0) when (@i =< @n) {
+    .legendControl@{i}.triggered ~ * .controlled:not(.controlled@{i}) {
+        opacity: 0.1;
+    }	
+    .generate-legend(@n, (@i + 1));
+}
+.generate-legend(@maximalLegendElement);
+
+/* DragDrop */
+.hoveredDropTarget {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 2000ms linear;
+    -webkit-transition: opacity 2000ms linear;
+    -moz-transition: opacity 2000ms linear;
+    -ms-transition: opacity 2000ms linear;
+    -o-transition: opacity 2000ms linear;	
+}
+
+/* HeadPanel */
+#mainToolbar {
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    z-index: 100;
+}
+
+#mainToolbar * {
+    overflow-x: visible;
+    overflow-y: visible;
+    z-index: 100;	
+    transition: visibility @animDurationText linear, color @animDurationText linear, opacity @animDurationText linear, fill @animDurationText linear, stroke @animDurationText linear;
+    -webkit-transition: visibility @animDurationText linear, color @animDurationText linear, opacity @animDurationText linear, fill @animDurationText linear, stroke @animDurationText linear;
+    -moz-transition: visibility @animDurationText linear, color @animDurationText linear, opacity @animDurationText linear, fill @animDurationText linear, stroke @animDurationText linear;
+    -ms-transition: visibility @animDurationText linear, color @animDurationText linear, opacity @animDurationText linear, fill @animDurationText linear, stroke @animDurationText linear;
+    -o-transition: visibility @animDurationText linear, color @animDurationText linear, opacity @animDurationText linear, fill @animDurationText linear, stroke @animDurationText linear;
+}
+
+
+/* mainToolbar */
+#mainToolbar nav ul ul {
+    padding: 0;
+    top: 100%;
+    border-radius: @rounding;
+    display: block;
+    opacity: 0;
+    position : absolute;
+    visibility: hidden;
+    box-shadow: @mainToolbarShadow;
+    -webkit-box-shadow: @mainToolbarShadow;
+    -moz-box-shadow: @mainToolbarShadow;
+}
+
+
+#mainToolbar nav ul {
+    background: @mainToolbarBackgroundColor; 
+    padding: 0 20px;
+    margin-top: 0px;
+}
+
+#mainToolbar > nav > ul {
+    height: @mainToolbarHeight;
+    width: 100vw;
+    padding: 0px;
+    border-bottom-left-radius: @rounding;
+    border-bottom-right-radius: @rounding;
+}
+
+#mainToolbar nav ul li {
+    float: left;
+    min-width: 60px;
+    max-width: 160px;
+    width: 7%;
+    position: relative;
+    display : inline-block;
+}
+
+#mainToolbar nav ul li:hover > ul {
+    display: block;
+    opacity: 1;
+    pointer-events: all;
+    visibility: visible;
+}
+
+#mainToolbar > nav > ul > li#mainPlusButton, svg.plusButtonHelp {
+    min-width: 32px;
+    max-width: 44px;
+    width: 5%;
+    border-bottom-left-radius: @rounding;
+    background: @switchColor; 
+}
+
+#mainToolbar > nav > ul > li#mainMinusButton, svg.minusButtonHelp {
+    min-width: 32px;
+    max-width: 44px;
+    width: 5%;
+    background: @closeColor;
+}
+
+#mainToolbar > nav > ul > li#mainCloseButton, svg.closeButtonHelp {
+    float: right;
+    min-width: 32px;
+    max-width: 44px;
+    width: 5%;
+    border-bottom-right-radius: @rounding;
+    background: @switchColor; 
+}
+
+#mainToolbar > nav > ul > li#mainSwitchButton, svg.switchButtonHelp {
+    float: right;
+    min-width: 32px;
+    max-width: 44px;
+    width: 5%;
+    background: @closeColor;
+}
+
+#mainToolbar > nav > ul > li.languageSwitch, #mainToolbar > nav > ul > li.cssSwitch {
+    float: right;
+}
+
+#mainToolbar > nav > ul {
+    height: @mainToolbarHeight;
+    width: 100vw;
+    padding: 0px;
+    border-bottom-left-radius: @rounding;
+    border-bottom-right-radius: @rounding;
+}
+
+#mainToolbar nav ul li > span {
+    width: 100%;
+}
+
+/* Ha nincs fölémenve, akkor maradjon alapszínű. */
+#mainToolbar nav ul li:not(:hover) > span > svg > * , #mainToolbar nav ul li:hover:not(.inactive) > span:not(:hover) > svg > *, .helpContent svg * {
+    stroke: @mainToolbarActiveColor;
+}
+
+/* Egy nem inaktív ikon fölé menve váltson aktív színre. */
+#mainToolbar nav ul li:hover:not(.inactive) > span:hover > svg > * {
+    stroke: @mainToolbarHoverColor;
+}
+
+/* Az ikonok svg-rajzolási stílusa. */
+#mainToolbar svg *, .helpContent svg * {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    fill: none;
+}
+
+#icon_flag *, #icon_flag * {
+    stroke-width: 1.6;
+}
+
+/* Inaktív ikon szín és viselkedés-megadása. */
+#mainToolbar nav ul li.inactive > span {
+    stroke: @mainToolbarActiveColor;
+    opacity: 0.2;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Ha inaktív az új panel gomb, akkor a lenyíló menű legyen a képernyőn kívül. */
+#mainToolbar nav ul li.inactive > ul {
+    position: fixed;
+    left: -500px;
+}
+
+#mainToolbar nav ul li span {
+    display: block;
+    color: @mainToolbarActiveColor;
+    text-decoration: none;
+    text-align: center;
+    height: @mainToolbarHeight;
+    line-height: @mainToolbarHeight;
+    margin: auto;
+}
+
+#mainToolbar nav ul ul li {
+    background: @middleGrey;
+    float: none; 
+    border-top: 1px solid @middleGrey0;
+    border-bottom: 1px solid @middleGrey1;
+    position: relative;
+    width: 180px;
+    display: flex;
+}
+
+#mainToolbar nav ul .languageSwitch ul li {
+    /*    width: 6em;*/
+}
+
+#mainToolbar nav ul .languageSwitch .hidden {
+    /*	width: 6em;
+        left: 2em;*/
+}
+
+/* Ha nincs fölémenve, akkor maradjon alapszínű. */
+#mainToolbar nav ul li.switch li:not(:hover) text , #mainToolbar nav ul li.switch li:hover:not(.inactive) > span:not(:hover) {
+    stroke-width: .5;
+    fill: @mainToolbarActiveColor;
+    color: @mainToolbarActiveColor;
+}
+
+/* Egy nem inaktív ikon fölé menve váltson aktív színre. */
+#mainToolbar nav ul li.switch li:hover:not(.inactive) > span {
+    stroke-width: .5;
+    fill: @mainToolbarHoverColor;
+    color: @mainToolbarHoverColor;
+}
+
+#mainToolbar nav ul li.switch span {
+    margin: 0px;
+    font-size: larger;
+}
+
+#mainToolbar nav ul ul li:first-child {
+    background: @firstChildGradient;
+    background: linear-gradient(@firstChildGradient);
+    background: -moz-linear-gradient(@firstChildGradient);
+    background: -webkit-linear-gradient(@firstChildGradient);
+    background: -ms-linear-gradient(@firstChildGradient);
+    background: -o-linear-gradient(@firstChildGradient);
+    border-top-left-radius: @rounding;
+    border-top-right-radius: @rounding;
+}
+
+#mainToolbar nav ul ul li:last-child {
+    background: @lastChildGradient;
+    background: linear-gradient(@lastChildGradient);
+    background: -moz-linear-gradient(@lastChildGradient);
+    background: -webkit-linear-gradient(@lastChildGradient);
+    background: -ms-linear-gradient(@lastChildGradient);
+    background: -o-linear-gradient(@lastChildGradient);	
+    border-bottom-left-radius: @rounding;
+    border-bottom-right-radius: @rounding;
+}
+
+#mainToolbar nav ul ul li span {
+    padding: 9px 0px;
+    height: 32px;
+    line-height: 32px;
+    color: @mainToolbarActiveColor;
+    border-left: 1px solid @middleGrey0;
+    border-right: 1px solid @middleGrey1;
+    width: 50%;
+}	
+
+#mainToolbar nav ul ul li span:only-child {
+    width: 100%;
+}
+
+
+#mainToolbar nav ul ul li span:first-child {
+    border-left: none;
+}
+
+#mainToolbar nav ul ul li span:last-child {
+    border-right: none;
+}
+
+#mainToolbar span, #mainToolbar svg text {
+    cursor: pointer;
+}
+
+#mainToolbar nav ul ul ul {
+    position: absolute; left: 100%; top:0;
+}
+
+#mainToolbar #toolbarShadow {
+    position: absolute;
+    top: 0px;
+    width: 100vw;
+    height: @mainToolbarHeight;
+    backround: rgba(0,0,0,0);
+    box-shadow: @mainToolbarShadow;
+    -webkit-box-shadow: @mainToolbarShadow;
+    -moz-box-shadow: @mainToolbarShadow;
+}
+
+#mainToolbar nav li.newpanel, #mainToolbar nav li.switch {
+    z-index: 101;
+}
+
+/* Nagyító-fül. */
+.magnifyPanelButton:not(:hover) > g {
+    stroke: @mainToolbarActiveColor;
+}
+
+/* Nagyító-fül, ha fölötte van az egér */
+.magnifyPanelButton:hover > g {
+    stroke: @mainToolbarHoverColor;
+}
+
+.magnifyPanelButton * {
+    stroke-width: 2;
+    stroke-linecap : round;
+    fill: red;
+    fill-opacity: 0;
+    transition: stroke @animDurationText linear;
+    -webkit-transition: stroke @animDurationText linear;
+    -moz-transition: stroke @animDurationText linear;
+    -ms-transition: stroke @animDurationText linear;
+    -o-transition: stroke @animDurationText linear;
+}
+
+.svgScrollbarG {
+    opacity: 0;
+}
+
+.svgScrollbarTrack {
+    fill: @baseBackgroundColor;
+    box-shadow: 0px 0px 0px 1px #343434;
+    -webkit-box-shadow: 0px 0px 0px 1px #343434;
+    -moz-box-shadow: 0px 0px 0px 1px #343434;
+}
+
+.svgScrollbarThumb {
+    fill: @multiValuesColor;
+}
+
+.svgScrollbar::-webkit-scrollbar-track {
+    box-shadow: 0px 0px 0px 1px #343434;
+    -webkit-box-shadow: 0px 0px 0px 1px #343434;
+    -moz-box-shadow: 0px 0px 0px 1px #343434;
+}
+
+/* Help oldal */
+#helpMask, #dialogMask {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    background: @baseBackgroundColor;
+    opacity: 0;
+    z-index: 150;
+    transition: opacity @appearDuration linear;
+    -webkit-transition: opacity appearDuration linear;
+    -moz-transition: opacity appearDuration linear;
+    -ms-transition: opacity appearDuration linear;
+    -o-transition: opacity appearDuration linear;	
+}
+
+.helpStart h3 {
+    margin-bottom: 0px;
+}
+
+#dialogPanel {
+    left: 50vw;
+    top: 50vh;
+    overflow: hidden;
+    position: relative;
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    padding: 20px 20px 20px;
+    width: 310px;
+    min-height: 208px;
+    border-radius: @rounding;
+    background: @panelBackgroundColor;
+}
+
+#dialogPanel h1 {
+    margin: -20px -20px 21px;
+    height: 40px;
+    line-height: 40px;
+    font-size: @fontSizeBig;
+    color: @panelWriteColor;
+    fill: @panelWriteColor;
+    stroke-width: 0px;
+    text-align: center;
+    background: @oddColor;
+    border-radius: @rounding @rounding 0 0;
+}
+
+#dialogMask {
+    z-index: 150;
+    background: rgba(0,0,0,0.9);
+}
+
+#dialogMessage {
+    margin: 5px;
+    min-height: 102px;
+}
+
+#dialogPanel button {
+    width: 137px;
+    margin-bottom: 5px;
+}
+
+#dialogPanel button.hidden {
+    opacity: 0;
+}
+
+#dialogPanel #dialogFirstButton {
+    float: left;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+
+#dialogPanel #dialogSecondButton {
+    float: right;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+#dialogPanel #dialogExtraButton {	
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 15px;    
+    width: 299px;
+}
+
+#dialogPanel #dialogExtraButton.hidden {
+    display: none;
+}
+
+
+#dialogPanel .errorStaticText, #dialogPanel .saveStaticText {
+    text-align: justify;
+}
+
+#dialogPanel .errorVariableText {
+    text-align: center;
+    padding: 15px 0px;
+}
+
+#dialogPanel .saveVariableText {
+    margin: 10px 10px 15px 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+#dialogPanel .saveTextAreaHolder {
+    overflow: hidden;
+    margin: 10px 10px 15px 10px;
+}
+
+#dialogPanel #saveTextArea {
+    resize: none;
+    overflow: hidden;
+    margin: 10px 10px 15px 10px;
+    width: 272px;
+    background-color: @panelWriteColor;
+    border: 4px solid @panelWriteColor;
+    border-radius: @rounding;
+    padding: 0px;
+    outline: none;
+}
+
+#dialogPanel #saveTextArea::selection {
+    background: @neutralGrey;
+}
+
+#dialogPanel #saveTextArea::-moz-selection {
+    background: @neutralGrey;
+}
+
+#dialogPanel input#loginName {
+    margin: 4px 0px 18px 0px !important;
+}
+
+#dialogPanel input#loginPassword {
+    margin: 4px 0px 0px 0px !important;
+}
+
+#dialogButtonHolder {
+    margin-top: 26px;
+}
+
+#helpPanel {
+    display: block;
+    position: absolute;
+    z-index: 150;
+    width: calc(~"100% - 2 * " @panelMargin);
+    height: calc(~"100% - 2 * " @panelMargin);
+    opacity: 1;
+    top: 0px;
+    overflow: hidden;
+    margin: @panelMargin;
+    border-radius: @rounding;
+}
+
+#helpScrollPane {
+    position: relative;
+    overflow: auto;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    margin-left: 8px;
+    margin-right: 8px;
+    padding-left: 16px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+    height: calc(~"100% - 32px");
+}
+
+.helpContent p, .helpContent div.p {
+    margin: 20px 0 0;
+}
+
+.helpContent ul {
+    margin: 0px;
+    padding: 0px 40px;
+}
+
+.helpContent li {
+    margin: 0.3em;
+}
+
+.helpContent h4 {
+    font-style: italic;
+}
+
+.helpContent {
+    text-align: justify;
+}
+
+.helpContent .example {
+    margin: 20px 40px 0px 40px;
+    max-width: 60vw;
+    width: calc(~"100% - 120px");
+    font-weight: normal;
+    font-style: italic;
+    display: inline-block;
+    padding: 10px 20px;
+    color: @mainToolbarActiveColor;
+    background:@helpBackgroundColor;
+    background: linear-gradient(@helpControlBackgroundGradient);  
+    background: -moz-linear-gradient(@helpControlBackgroundGradient); 
+    background: -webkit-linear-gradient(@helpControlBackgroundGradient); 
+    background: -o-linear-gradient(@helpControlBackgroundGradient); 
+    background: -ms-linear-gradient(@helpControlBackgroundGradient); 
+    border: @panelBorder;
+    border-radius: @rounding;
+}
+
+.helpContent .indent {
+    padding-left: 20px;
+}
+
+.tooltip em {
+    color: @tooltipValueColor;
+}
+
+.helpContent.h3, .helpContent.h4 {
+    margin: 0px;
+    color: #ffffff;
+}
+
+#helpControl {
+    white-space: nowrap;
+    overflow: auto;
+    background: @helpBackgroundColor; 
+    background: linear-gradient(@helpControlBackgroundGradient);  
+    background: -moz-linear-gradient(@helpControlBackgroundGradient); 
+    background: -webkit-linear-gradient(@helpControlBackgroundGradient); 
+    background: -o-linear-gradient(@helpControlBackgroundGradient);  
+    background: -ms-linear-gradient(@helpControlBackgroundGradient);  
+    box-shadow: 3px 3px 9px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 3px 3px 9px rgba(0,0,0,0.75);
+    -moz-box-shadow: 3px 3px 9px rgba(0,0,0,0.75);
+    padding-top: 16px;
+    padding-bottom: 16px;
+    height: calc(~"100% - 32px");
+    float: left;
+}
+
+#helpControl * {
+    transition: color @animDurationText linear, opacity @animDurationText linear;
+    -webkit-transition: color @animDurationText linear, opacity @animDurationText linear;
+    -moz-transition: color @animDurationText linear, opacity @animDurationText linear;
+    -ms-transition: color @animDurationText linear, opacity @animDurationText linear;
+    -o-transition: color @animDurationText linear, opacity @animDurationText linear;
+}
+
+#helpControl nav {
+    height: 100%;
+    min-height: calc(~"15 * " @helpControlHeight); /* 30*help-elemszám px */
+}
+
+#helpControl nav ul {
+    margin: 0px;
+    height: 100%;
+    position: relative;
+    padding: 0px;
+}
+
+
+#helpControl > nav > ul > li:last-child {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+#helpControl nav li {
+    padding: 0 0px;
+    list-style: none;
+}
+
+#helpControl nav span {
+    display: block;
+    color: @mainToolbarActiveColor;
+    height: @helpControlHeight;
+    line-height: @helpControlHeight;
+    padding-left: calc(~"24px - " @stripeWidth);
+    padding-right: 16px;
+    cursor: pointer;
+    border-left: rgba(0,0,0,0) @stripeWidth solid;
+}
+
+#helpControl nav ul ul li span {
+    padding-left: 32px;
+}
+
+#helpControl nav span:hover {
+    color: @mainToolbarHoverColor;
+}
+
+#helpControl nav span.activeHelp {
+    border-left-color: @switchColor;
+}
+
+.helpContent img {
+    float: left;
+    margin-right: 20px;
+}
+
+.helpToolbar svg {
+    vertical-align: middle;
+    margin-right: 1em;
+}
+
+.helpToolbar ul {
+    list-style-type: none;
+    padding-left: 100px;
+    padding-right: 44px;
+}
+
+.helpToolbar ul li {
+    margin-top: 2em;
+    margin-bottom: 1em;
+}
+
+.helpToolbar ul li svg:not([class]) {
+    background: @helpBackgroundColor; 
+}
+
+.helpToolbar ul li svg {
+    float: none;
+    margin-top: -7px;
+    left: 60px;
+    width: 44px;
+    position: absolute;
+    box-shadow: 3px 3px 9px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 3px 3px 9px rgba(0,0,0,0.75);
+    -moz-box-shadow: 3px 3px 9px rgba(0,0,0,0.75);
+
+}
+
+.helpContent .inlineSvgHolder svg {
+    display: block;
+    margin: auto;
+    position: relative;
+    top: 3px;
+}
+
+.helpContent .inlineSvgHolder {
+    margin: 0px 5px;
+    border-top: 1px solid #999999;
+    border-left: 1px solid #999999;
+    border-bottom: 1px solid #6d6d6d;
+    border-right: 1px solid #6d6d6d;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: @rounding;
+    background: @helpBackgroundColor; 
+    width: 63px;
+    height: 38px;
+    box-shadow: 3px 3px 9px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 3px 3px 9px rgba(0,0,0,0.75);
+    -moz-box-shadow: 3px 3px 9px rgba(0,0,0,0.75);
+}
+
+.helpContent .helpAbout > .changelog > span, .helpContent div.helpInnerHTML {
+    display: block;
+    margin-left: 40px;
+    margin-bottom: 1ex;
+}
+
+.helpContent .helpAbout > .changelog > span > span {
+    font-weight: bold;
+}

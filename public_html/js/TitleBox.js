@@ -1,4 +1,4 @@
-/* global d3 */
+/* global d3, global */
 
 'use strict';
 
@@ -12,55 +12,55 @@
  * @returns {TitleBox}
  */
 function TitleBox(parentSVG, panelId, mediator, magLevel) {
-	var that = this;
+    var that = this;
 
-	this.panelId = panelId;		// Panel id-je.
-	this.mediator = mediator;	// A panel mediátora, ezen át kommunikál a fejléc a panellel.
-	this.currentId;				// Épp kijelzett mutató id-je, tömb ha többet mutat.
-	this.currentRatio;			// Éppen hányadost jelez-e?
+    this.panelId = panelId;		// Panel id-je.
+    this.mediator = mediator;	// A panel mediátora, ezen át kommunikál a fejléc a panellel.
+    this.currentId;				// Épp kijelzett mutató id-je, tömb ha többet mutat.
+    this.currentRatio;			// Éppen hányadost jelez-e?
     this.currentText;           // A teljes kijelzett szöveg.
     this.magLevel = magLevel || 1; // A panel nagyításának mértéke
     this.titleBoxWidth = global.panelWidth * that.magLevel - 2 * global.legendOffsetX; // Fejléc szélessége
 
-	// Fejlécet tartalmazó konténer.
-	this.gContainer = parentSVG.append("svg:g")
-			.attr("class", "title_group visibleInPanic listener droptarget droptarget1");
+    // Fejlécet tartalmazó konténer.
+    this.gContainer = parentSVG.append("svg:g")
+            .attr("class", "title_group visibleInPanic listener droptarget droptarget1");
 
-	// A fejléc háttér-téglalapja.
-	that.gContainer.append("svg:rect")
-			.attr("class", "titleRect bordered")
-			.attr("filter", "url(#dropshadow)")
-			.attr("width", that.titleBoxWidth)
-			.attr("height", global.panelTitleHeight)
-			.attr("rx", global.rectRounding)
-			.attr("x", global.legendOffsetX)
-			.attr("y", global.legendOffsetY);
+    // A fejléc háttér-téglalapja.
+    that.gContainer.append("svg:rect")
+            .attr("class", "titleRect bordered")
+            .attr("filter", "url(#dropshadow)")
+            .attr("width", that.titleBoxWidth)
+            .attr("height", global.panelTitleHeight)
+            .attr("rx", global.rectRounding)
+            .attr("x", global.legendOffsetX)
+            .attr("y", global.legendOffsetY);
 
-	// A bal oldali láthatatlan értékváltó fejléc-gomb.
-	that.gContainer.append("svg:rect")
-			.attr("class", "titleButton0 listener")
-			.attr("width", that.titleBoxWidth * that.titleSplitRatio)
-			.attr("height", global.panelTitleHeight)
-			.attr("rx", global.rectRounding)
-			.attr("x", global.legendOffsetX)
-			.attr("y", global.legendOffsetY)
-			.attr("opacity", 0)
-			.on("click", function() {
-				that.mediator.publish("changeValue", that.panelId, -1, undefined);
-			});
+    // A bal oldali láthatatlan értékváltó fejléc-gomb.
+    that.gContainer.append("svg:rect")
+            .attr("class", "titleButton0 listener")
+            .attr("width", that.titleBoxWidth * that.titleSplitRatio)
+            .attr("height", global.panelTitleHeight)
+            .attr("rx", global.rectRounding)
+            .attr("x", global.legendOffsetX)
+            .attr("y", global.legendOffsetY)
+            .attr("opacity", 0)
+            .on("click", function () {
+                that.mediator.publish("changeValue", that.panelId, -1, undefined);
+            });
 
-	// A jobb oldali láthatatlan hányadosváltó fejléc-gomb.
-	that.gContainer.append("svg:rect")
-			.attr("class", "titleButton1 listener")
-			.attr("width", that.titleBoxWidth * (1 - that.titleSplitRatio))
-			.attr("height", global.panelTitleHeight)
-			.attr("rx", global.rectRounding)
-			.attr("x", global.legendOffsetX + that.titleBoxWidth * that.titleSplitRatio)
-			.attr("y", global.legendOffsetY)
-			.attr("opacity", 0)
-			.on("click", function() {
-				that.mediator.publish("changeValue", that.panelId, undefined, -1);
-			});
+    // A jobb oldali láthatatlan hányadosváltó fejléc-gomb.
+    that.gContainer.append("svg:rect")
+            .attr("class", "titleButton1 listener")
+            .attr("width", that.titleBoxWidth * (1 - that.titleSplitRatio))
+            .attr("height", global.panelTitleHeight)
+            .attr("rx", global.rectRounding)
+            .attr("x", global.legendOffsetX + that.titleBoxWidth * that.titleSplitRatio)
+            .attr("y", global.legendOffsetY)
+            .attr("opacity", 0)
+            .on("click", function () {
+                that.mediator.publish("changeValue", that.panelId, undefined, -1);
+            });
 
 }
 
@@ -78,67 +78,68 @@ TitleBox.prototype.titleSplitRatio = 0.6;
  * @param {Number} tweenDuration Animáció időtartama.
  * @returns {undefined}
  */
-TitleBox.prototype.update = function(idA, nameA, szUnitA, ratioUnitA, isRatio, tweenDuration) {
-	var that = this;
+TitleBox.prototype.update = function (idA, nameA, szUnitA, ratioUnitA, isRatio, tweenDuration) {
+    var that = this;
 
-	var id, name, szUnit, ratioUnit;	// A kijelzésre kerülő értékek.
-    var trans =  d3.transition().duration(tweenDuration);
+    var id, name, szUnit, ratioUnit;	// A kijelzésre kerülő értékek.
+    var trans = d3.transition().duration(tweenDuration);
 
-	// Ha tömböket kaptunk, összefűzzük őket.
-	if (idA instanceof Array) {
-		id = idA;
-		name = nameA.join(" - ");
-		szUnit = (d3.min(szUnitA) === d3.max(szUnitA)) ? szUnitA[0] : szUnitA.join(" - ");
-		ratioUnit = (d3.min(ratioUnitA) === d3.max(ratioUnitA)) ? ratioUnitA[0] : ratioUnitA.join(" - ");
-	} else { // Ha nem, akkor csak átmásoljuk.
-		id = idA;
-		name = nameA;
-		szUnit = szUnitA;
-		ratioUnit = ratioUnitA;
-	}
+    // Ha tömböket kaptunk, összefűzzük őket.
+    if (idA instanceof Array) {
+        id = idA;
+        name = nameA.join(" - ");
+        szUnit = (d3.min(szUnitA) === d3.max(szUnitA)) ? szUnitA[0] : szUnitA.join(" - ");
+        ratioUnit = (d3.min(ratioUnitA) === d3.max(ratioUnitA)) ? ratioUnitA[0] : ratioUnitA.join(" - ");
+    } else { // Ha nem, akkor csak átmásoljuk.
+        id = idA;
+        name = nameA;
+        szUnit = szUnitA;
+        ratioUnit = ratioUnitA;
+    }
 
-	// Csak akkor update-olunk, ha változott valami.
-	if (that.currentId !== id || that.currentRatio !== isRatio || that.currentText !== name + ratioUnit + szUnit) {
-		that.currentId = id;
-		that.currentRatio = isRatio;
+    // Csak akkor update-olunk, ha változott valami.
+    if (that.currentId !== id || that.currentRatio !== isRatio || that.currentText !== name + ratioUnit + szUnit || global.changeCSSInProgress) {
+        that.currentId = id;
+        that.currentRatio = isRatio;
         that.currentText = name + ratioUnit + szUnit;
 
-		// Háttérszín vagy gradiens beállítása.
-		that.gContainer.selectAll(".titleRect")
-				.transition(trans)
-				.style("fill", (id instanceof Array) ? null : global.colorValue(id))
-				.style("opacity", 1);
+        // Háttérszín vagy gradiens beállítása.
+        that.gContainer.selectAll(".titleRect")
+                .attr("rx", global.rectRounding)
+                .transition(trans)
+                .style("fill", (id instanceof Array) ? null : global.colorValue(id))
+                .style("opacity", 1);
 
-		// Régi szövegek letörlése.
-		that.gContainer.selectAll(".titleText")
-				.transition(trans)
-				.style("opacity", 0)
-				.remove();
+        // Régi szövegek letörlése.
+        that.gContainer.selectAll(".titleText")
+                .transition(trans)
+                .style("opacity", 0)
+                .remove();
 
-		// Új szöveg az értéknévnek.
-		var valNameLabel = that.gContainer.append("svg:text")
-				.attr("class", (id instanceof Array) ? "titleText" : "titleText titleText0")
-				.attr("x", global.legendOffsetX + that.titleBoxWidth * that.titleSplitRatio / 2)
-				.attr("y", global.legendOffsetY + 15)
-				.attr("dy", ".35em")
-				.attr("dx", "-.15em")
-				.text(name)
-				.transition(trans)
-				.style("opacity", 1);
+        // Új szöveg az értéknévnek.
+        var valNameLabel = that.gContainer.append("svg:text")
+                .attr("class", (id instanceof Array) ? "titleText" : "titleText titleText0")
+                .attr("x", global.legendOffsetX + that.titleBoxWidth * that.titleSplitRatio / 2)
+                .attr("y", global.legendOffsetY + 15)
+                .attr("dy", ".35em")
+                .attr("dx", "-.15em")
+                .text(name)
+                .transition(trans)
+                .style("opacity", 1);
 
-		// Új szöveg a mértékegységnek.
-		var valUnitLabel = that.gContainer.append("svg:text")
-				.attr("class", "titleText titleText1")
-				.attr("x", global.legendOffsetX + that.titleBoxWidth * (that.titleSplitRatio + 1) / 2)
-				.attr("y", global.legendOffsetY + 15)
-				.attr("dy", ".35em")
-				.attr("dx", ".15em")
-				.text((isRatio) ? ratioUnit : szUnit)
-				.transition(trans)
-				.style("opacity", 1);
+        // Új szöveg a mértékegységnek.
+        var valUnitLabel = that.gContainer.append("svg:text")
+                .attr("class", "titleText titleText1")
+                .attr("x", global.legendOffsetX + that.titleBoxWidth * (that.titleSplitRatio + 1) / 2)
+                .attr("y", global.legendOffsetY + 15)
+                .attr("dy", ".35em")
+                .attr("dx", ".15em")
+                .text((isRatio) ? ratioUnit : szUnit)
+                .transition(trans)
+                .style("opacity", 1);
 
-		// Szövegek összenyomása, hogy kiférjen.
-		global.cleverCompress(valNameLabel, that.gContainer.select(".titleRect"), that.titleSplitRatio - 0.07, undefined);
-		global.cleverCompress(valUnitLabel, that.gContainer.select(".titleRect"), 0.93 - that.titleSplitRatio, undefined);
-	}
+        // Szövegek összenyomása, hogy kiférjen.
+        global.cleverCompress(valNameLabel, that.gContainer.select(".titleRect"), that.titleSplitRatio - 0.07, undefined);
+        global.cleverCompress(valUnitLabel, that.gContainer.select(".titleRect"), 0.93 - that.titleSplitRatio, undefined);
+    }
 };

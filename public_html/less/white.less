@@ -1,0 +1,108 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 7, 2017, 3:16:49 PM
+    Author     : ruzsaz
+*/
+
+/* 
+    Document   : frame
+    Created on : 2014.01.29., 16:03:26
+    Author     : ruzsaz
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+@import (less) "_shared.less";
+
+@neutralGrey: #bbb;
+
+/* A háttérszín */
+@baseBackgroundColor: #fff;
+
+/* Párbeszédablakok háttere */
+@dialogMaskColor: rgba(200,200,200,1);
+@dialogBorder: @borderSize solid #444;
+
+/* A panel, és az arra írás színe */
+@panelBackgroundColor: #fff;
+@panelWriteColor: #000;
+@panelWriteValueColor: darkblue; // Ha értéket írunk, pl. a piechart értéke
+@topTenColor: #eee; // Top 10 felirat színe
+@axisTextOpacity: 0.4; // Az oszlopdiagramon a dimenziók szövege
+@magnifyPanelButtonColor: @middleGrey; // Panel nagyító fül
+@magnifyPanelButtonHoverColor: @mainToolbarActiveColor; // Panel nagyító fül
+
+/* Keretek */
+@borderSize: 1px; // Az elemek körül
+@dimValBorder: @borderSize solid black; // A dimenzió és érték elemek körül
+@panelBorderSize: @borderSize;  // A panelek körül (valójában az árnyékok között van megvalósítva)
+@panelBorderColor: #aaa;  // A panelek körül (valójában az árnyékok között van megvalósítva)
+@panelBorder: @borderSize solid #aaa; // A panelek körül
+
+/* Kerekítettség */
+@rounding: 0px;
+
+/* Árnyékok */
+@dimValShadow: 3px 3px 5px rgba(0,0,0,0.55); // A dimenziók, értékek körül a felső panelen
+@panelShadow: 0px 0px 0px @borderSize @panelBorderColor, 3px 3px 6px 2px #666; // A panelek körül
+
+/* A dimenziók válatakozó színei */
+@oddColor: #ccc;
+@evenColor: #aaa;
+@avgColor: #bbb; // 2d táblánál számít, az odd row - even column metszetnél
+@writeOnDimColor: @panelWriteColor; // A dimenzióra írás színe
+
+/* Az értékek jelölésére szolgáló színpaletta */
+@valColors: #ff9090,#ffcf90,#8aafcc,#75d075,#ffa6a6,#b89ffe,#7c557c,#679667,#b87e7e,#ffd9a6,#cd86cd,#93e393,#ffb8b8,#9b6927,#691a69,#1f7e1f,#9b2727,#ffe0b8,#cd94cd,#a3e3a3,#576b7b,#658cab;
+@valColorNA: @neutralGrey;
+@multiValuesColor: @neutralGrey; // Panelfejléc színe, ha egyszerre több érték jelenik meg
+@valWriteColor: @panelWriteColor; // Értékre írás színe
+@valWriteColor2: white; // Más szín, ha az előző nem lenne olvasható (pl. térkép)
+
+/* Elemek körüli határ */
+@elementBorderSize: 1px; // Diagramelemek közti határ
+@elementBorderColor: #555; // Diagramelemek közti határ
+@lineSymbolStroke: @elementBorderColor; // Jelölő keretszíne
+
+@highlightColor: #ffe;
+@dimHighlightColor: #ffe;
+
+/* Input mezők színezése */
+@inputBackgroundColor: @neutralGrey;
+@inputTextBorder: @borderSize solid #000;
+@inputTextColor: @panelWriteColor;
+@inputPlaceholderColor: #666;
+
+/* Fejléc színei, árnyékolása */
+@middleGrey0: #bbb;
+@middleGrey: #aaa;
+@middleGrey1: #999;
+@mainToolbarBackgroundColor: @middleGrey;
+@switchColor: #ff9090; // Panelváltó gomb színe
+@closeColor: #ffcf90; // Riportbecsokó gomb színe
+@mainToolbarShadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0,0,0,0.75);
+@mainToolbarActiveColor: #444; // Aktív ikon színe
+@mainToolbarInactiveColor: #bbb; // Inaktív ikon színe
+@mainToolbarHoverColor: #ffe; // Ikon hover-színe
+@firstChildGradient: top, @middleGrey0 0%, @middleGrey 50%; // Fejlécről lenyíló menuelem teteje
+@lastChildGradient: top, @middleGrey 50%, @middleGrey1 100%; // Fejlécről lenyíló menuelem alja
+
+/* Scrollbar */
+@scrollbarColor: @closeColor;
+@scrollbarWidth: 12px;
+@scrollbarRounding: 0px; // A sarkak kerekítettsége
+
+/* Help színezése */
+@helpBackgroundColor: @panelBackgroundColor;
+@helpControlBackgroundGradient: top, @middleGrey0 0%, @middleGrey 30px, @middleGrey1 100%;
+@stripeWidth: 8px; // Épp kiválasztott help-elem mutató szélessége
+
+/* Tooltip */
+@tooltipTextColor: #444;
+@tooltipValueColor: #844;
+@tooltipBackgroundColor: #eee;
+@tooltipBorder: @panelBorder;

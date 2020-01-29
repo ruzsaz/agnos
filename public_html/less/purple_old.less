@@ -1,0 +1,140 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 7, 2017, 3:16:49 PM
+    Author     : ruzsaz
+*/
+
+/* 
+    Document   : frame
+    Created on : 2014.01.29., 16:03:26
+    Author     : ruzsaz
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+@import (less) "_shared.less";
+
+/* A toolbar magassága */
+@mainToolbarHeight: 32px; // Túl ronda ha elállítod
+@helpControlHeight: @mainToolbarHeight;
+
+/* A háttérszín */
+@baseBackgroundColor: yellow;
+@dialogMaskColor: rgba(0,0,0,0.9);
+@dialogBorder: @panelBorder;
+
+
+/* A panel, és az arra írás színe */
+@panelWidth: 600px; // Nem állítható, csak egyszerre
+@panelHeight: 400px; // Nem állítható, csak egyszerre
+@panelMargin: 6px; // Nem állítható, csak egyszerre
+@panelBackgroundColor: white;
+@panelWriteColor: darkred;
+@panelWriteValueColor: darkblue;     // Pl. a piechart értéke
+
+
+@borderSize: 2px;
+@panelBorder: @borderSize solid darkgreen;
+@panelShadow: 0px 0px 0px @borderSize pink;
+@dimValShadow: 3px 3px 5px rgba(0,0,0,0.55);
+
+/* A dimenziók színei */
+@oddColor: #5f5;
+@evenColor: #69f;
+@avgColor: #ff6060;
+@writeOnDimColor: @panelWriteColor;
+
+/* Értékek színei */
+@valWriteColor: yellow;
+@valWriteColor2: black; // Más szín, ha az előző nem lenne olvasható
+
+
+@highlightColor: @panelWriteColor;
+@dimHighlightColor: black;
+
+@neutralGrey: #ffaaaa;
+@multiValuesColor: @neutralGrey;
+
+/* A dimenzióelemek jelölésére szolgáló színpaletta */
+@valColors: #40bddf,#bad642,#8c8014,#22ada6,#85c222,#faeb4c,#00a6d3,#9eb060,#43b57c,#d4cc4c,#3db8a3,#80d4e9,#9ccf61,#bfe8f6,#f7e306,#b8bf5a,#badb8e,#c2b211,#7d9c53,#0885a4,#fcf288,#7dc772;
+@valColorNA: grey;
+
+/* Input mezők színezése */
+@inputTextColor: @panelBackgroundColor;
+@inputBackgroundColor: @panelWriteColor;
+@inputPlaceholderColor: @oddColor;
+
+/* Fejléc színei */
+@middleGrey0: #ffa0a0;
+@middleGrey: #ff8888;
+@middleGrey1: #ff6d6d;
+
+@mainToolbarBackgroundColor: @middleGrey;
+@helpBackgroundColor: @middleGrey;
+@mainToolbarShadow: inset 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(0,0,0,0.75);
+@helpControlBackgroundGradient: top, @middleGrey0 0%, @middleGrey 30px, @middleGrey1 100%;
+@topTenColor: pink;
+
+@mainToolbarActiveColor: #00ffaa;
+@mainToolbarInactiveColor: #005533;
+@mainToolbarHoverColor: #88ffff;
+
+@firstChildGradient: top, @middleGrey0 0%, @middleGrey 50%;
+@lastChildGradient: top, @middleGrey 50%, @middleGrey1 100%;
+
+
+/* Elemek körüli határ */
+@elementBorderSize: 1px;
+@elementBorderColor: pink;
+
+/* A panelváltó és becsukógomb szélessége */
+@stripeWidth: 8px;
+
+@switchColor1: #ff97B2;
+@switchColor: #ffbddf;
+@switchColor0: #ffCAE5;
+@switchGradient: top, @switchColor0 0%, @switchColor1 100%;
+
+@closeColor1: #95AB35;
+@closeColor: #bad642;
+@closeColor0: #C8DE68;
+@closeGradient: top, @closeColor0 0%, @closeColor1 100%;
+
+@scrollbarColor: @switchColor;
+
+@rounding: 0px;
+@scrollbarRounding: 0px;
+@scrollbarWidth: 12px;
+
+@resizedLabelStroke: #000;
+@axisTextColor: #fff;
+
+@axisTextOpacity: 0.5;
+
+@fontSizeHuge: 20px;
+@fontSizeBig: 16px;
+@fontSizeNormal: 16px;
+@fontSizeSmall: 12px;
+
+@lineSymbolStroke: black;
+
+/* A css-es animáció ideje */
+@animDurationText: 0.1s;
+@animDurationHover: 0.0s;
+@appearDuration: 0.2s;
+
+/* Ennyi bejegyzés lehet a legend-ben. */
+@maximalLegendElement: 150;
+
+@tooltipTextColor: red;
+@tooltipValueColor: yellow;
+@tooltipBackgroundColor: darkblue;
+@tooltipBorder: @panelBorder;
+
+/* Panel nagyító fül */
+@magnifyPanelButtonColor: @mainToolbarActiveColor;
+@magnifyPanelButtonHoverColor: @mainToolbarHoverColor;

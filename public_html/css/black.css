@@ -14,17 +14,34 @@ and open the template in the editor.
     Description:
         Purpose of the stylesheet follows.
 */
+/* 
+    Created on : Nov 7, 2017, 3:16:49 PM
+    Author     : ruzsaz
+*/
+/* 
+    Document   : frame
+    Created on : 2014.01.29., 16:03:26
+    Author     : ruzsaz
+    Description:
+        Purpose of the stylesheet follows.
+*/
 /* A toolbar magassága */
 /* A háttérszín */
 /* A panel, és az arra írás színe */
+/* Keretek */
+/* Kerekítettség */
+/* Árnyékok */
 /* A dimenziók színei */
 /* Értékek színei */
 /* A dimenzióelemek jelölésére szolgáló színpaletta */
+/* Input mezők színezése */
 /* Fejléc színei */
 /* Elemek körüli határ */
 /* A panelváltó és becsukógomb szélessége */
+/* Scrollbar színe */
 /* A css-es animáció ideje */
 /* Ennyi bejegyzés lehet a legend-ben. */
+/* Panel nagyító fül */
 #less .panelWidth {
   width: 600px;
 }
@@ -326,7 +343,7 @@ div.tooltip {
   max-width: 45vw;
   padding: 6px 12px;
   background: black;
-  border: 0px;
+  border: 0px solid white;
   border-radius: 10px;
   pointer-events: none;
   font-size: 16px;
@@ -638,7 +655,7 @@ mask path {
 }
 .row .backgroundCell {
   border-radius: 10px;
-  border: 0px solid;
+  border: 0px solid white;
   box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 3px 3px 9px rgba(0, 0, 0, 0.75);
@@ -787,7 +804,7 @@ p.submit {
   font-size: 16px;
 }
 ::-webkit-input-placeholder {
-  color: #ccc;
+  color: #555;
   font-size: 16px;
 }
 input {
@@ -820,9 +837,6 @@ input[type=password]:focus,
 input[type=submit]:focus,
 button:focus,
 textarea:focus {
-  background: white;
-  border-radius: 10px;
-  -moz-outline-radius: 3px;
   outline: none;
   box-shadow: 0 0 10px white;
   -webkit-box-shadow: 0 0 10px white;
@@ -836,7 +850,7 @@ button {
   font-size: 16px;
   color: white;
   background: #555;
-  border: 0px solid;
+  border: 0px solid white;
   border-radius: 10px;
 }
 /* universal */
@@ -1429,8 +1443,8 @@ svg.switchButtonHelp {
   stroke: #000000;
 }
 /* Egy nem inaktív ikon fölé menve váltson aktív színre. */
-#mainToolbar nav ul li:hover:not(.inactive) > span:hover > svg > * {
-  stroke: #ffffff;
+#mainToolbar nav ul li:hover:not(.inactive) > span:hover > svg > *:not(.nohover) {
+  stroke: #ffffff !important;
 }
 /* Az ikonok svg-rajzolási stílusa. */
 #mainToolbar svg *,
@@ -1551,6 +1565,8 @@ svg.switchButtonHelp {
   width: 100vw;
   height: 32px;
   backround: rgba(0, 0, 0, 0);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
   box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
   -webkit-box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
@@ -1603,6 +1619,7 @@ svg.switchButtonHelp {
   height: 100vh;
   display: none;
   background: black;
+  color: white;
   opacity: 0;
   z-index: 150;
   transition: opacity 0.2s linear;
@@ -1627,6 +1644,7 @@ svg.switchButtonHelp {
   min-height: 208px;
   border-radius: 10px;
   background: #343434;
+  border: 0px solid white;
 }
 #dialogPanel h1 {
   margin: -20px -20px 21px;
@@ -1912,4 +1930,28 @@ svg.switchButtonHelp {
 .helpContent .helpAbout > .changelog > span > span {
   font-weight: bold;
 }
-/*# sourceMappingURL=containerBlack.css.map */
+.loginStaticText {
+  text-align: center;
+}
+.loginVariableText {
+  text-align: center;
+  padding: 25px 0px;
+}
+#loginReadyPercentage {
+  font-size: 40px;
+}
+/* A háttérszín */
+/* Párbeszédablakok háttere */
+/* A panel, és az arra írás színe */
+/* Keretek */
+/* Kerekítettség */
+/* Árnyékok */
+/* A dimenziók válatakozó színei */
+/* Értékek színei */
+/* Elemek körüli határ */
+/* Input mezők színezése */
+/* Fejléc színei, árnyékolása */
+/* Scrollbar */
+/* Help színezése */
+/* Tooltip */
+/*# sourceMappingURL=black.css.map */

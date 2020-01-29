@@ -37,6 +37,8 @@ var global = function () {
 //////////////////////////////////////////////////
 
     var changeCSS = function (cssFile) {
+        console.log("SETTT", cssFile)
+        setCookie("css", cssFile, 730);
 
         var savedDuration = global.selfDuration;
         global.selfDuration = 0;

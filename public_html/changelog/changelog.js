@@ -17,6 +17,7 @@ var changelog = [
             {"entity": "Agnos", "date": "2018-05-02", "change": "Új panel: 2 dimenziós vonaldiagram."},
             {"entity": "Agnos", "date": "2018-05-24", "change": "Egy kiválasztott panel duplájára nagyítható."},
             {"entity": "Agnos", "date": "2018-11-11", "change": "A help oldalak angol fordítása."},
+            {"entity": "Agnos", "date": "2020-01-29", "change": "Szín és stílusválasztás."},
         ],
         "updated": "2018-11-11"
     },
@@ -35,6 +36,7 @@ var changelog = [
             {"entity": "Agnos", "date": "2018-05-02", "change": "New panel: 2-dimensional linechart."},
             {"entity": "Agnos", "date": "2018-05-24", "change": "A selected panel can be magnified to 2x."},
             {"entity": "Agnos", "date": "2018-11-11", "change": "English translation of the help pages."},
+            {"entity": "Agnos", "date": "2020-01-29", "change": "Color and style selector."},
 
         ],
         "updated": "2018-11-11"

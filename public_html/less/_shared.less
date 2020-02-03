@@ -21,6 +21,7 @@
 
 /* A háttérszín */
 @baseBackgroundColor: black;
+@baseBackgroundImage: none;
 @dialogMaskColor: rgba(0,0,0,0.9);
 @dialogBorder: @panelBorder;
 
@@ -1302,8 +1303,8 @@ text {
     position: absolute;
     width: 100vw;
     height: 100vh;
-    display: none;
-    background: @baseBackgroundColor;
+    display: none;    
+    background-color: @baseBackgroundColor;
     color: @panelWriteColor;    
     opacity: 0;
     z-index: 150;
@@ -1349,7 +1350,8 @@ text {
 
 #dialogMask {
     z-index: 150;
-    background: @dialogMaskColor;
+    background-image: @baseBackgroundImage;
+    background-color: @dialogMaskColor;
 }
 
 #dialogMessage {

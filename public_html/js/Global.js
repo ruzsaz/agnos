@@ -37,13 +37,11 @@ var global = function () {
 //////////////////////////////////////////////////
 
     var changeCSS = function (cssFile) {
-        console.log("SETTT", cssFile)
         setCookie("css", cssFile, 730);
-
-        var savedDuration = global.selfDuration;
-        global.selfDuration = 0;
-
         global.changeCSSInProgress = true;
+
+        d3.select('body').style("opacity", 0);
+
         var oldLink = document.getElementById("cssLink");
         oldLink.removeAttribute("id");
 
@@ -53,37 +51,50 @@ var global = function () {
         newLink.setAttribute("type", "text/css");
         newLink.setAttribute("href", cssFile);
 
-        d3.select('body').transition(100).style("opacity", 0)
-                .on("end", function () {
-                    document.getElementsByTagName("head").item(0).replaceChild(newLink, oldLink);
+        document.getElementsByTagName("head").item(0).removeChild(oldLink);
+        document.getElementsByTagName("head").item(0).appendChild(newLink);
 
-                    d3.select(this).transition(0).delay(50).style("opacity", 0)
-                            .on("end", function () {
-                                varsFromCSS = readVarsFromCSS();
-                                initValuesFromCss();
-
-                                // Féldinamikus (metával megkapott) szövegek átírása.
-                                global.mediators[0].publish("langSwitch");
-                                global.mediators[1].publish("langSwitch");
-
-                                // Dinamikus (adattal megkapott) szövegek átírása egy önmagába fúrással.
-                                if (global.facts[0] && global.facts[0].reportMeta) {
-                                    global.mediators[0].publish("drill", {dim: -1, direction: 0});
-                                }
-                                if (global.facts[1] && global.facts[1].reportMeta) {
-                                    global.mediators[1].publish("drill", {dim: -1, direction: 0});
-                                }
-
-                                d3.select(this).transition(100).delay(0).style("opacity", 1)
-                                        .on("end", function () {
-                                            global.changeCSSInProgress = false;
-                                            global.selfDuration = savedDuration;
-                                        });
-                            });
-
-                });
+        resetAfterChangeCSS(cssFile);
     };
 
+    var resetAfterChangeCSS = function (cssFile) {
+
+        // Megpróbáljuk beolvasni az új css-t
+        varsFromCSS = readVarsFromCSS();
+        initValuesFromCss();
+        const newLink = document.getElementById("cssLink");
+        const newCssFile = (newLink === null) ? undefined : newLink.getAttribute("href");
+
+        // Ha nincs css, vagy nem az új, akkor picit később újra megpróbáljuk
+        if (newCssFile !== cssFile || colors[0] === undefined) {
+            setTimeout(function () {
+                resetAfterChangeCSS(cssFile);
+            }, 10);
+            // Ha megvan az új, akkor végrehajtjuk a változtatást    
+        } else {
+
+            var savedDuration = global.selfDuration;
+            global.selfDuration = 0;
+
+            // Féldinamikus (metával megkapott) szövegek átírása.
+            global.mediators[0].publish("langSwitch");
+            global.mediators[1].publish("langSwitch");
+
+            // Dinamikus (adattal megkapott) szövegek átírása egy önmagába fúrással.
+            if (global.facts[0] && global.facts[0].reportMeta) {
+                global.mediators[0].publish("drill", {dim: -1, direction: 0});
+            }
+            if (global.facts[1] && global.facts[1].reportMeta) {
+                global.mediators[1].publish("drill", {dim: -1, direction: 0});
+            }
+
+            d3.select('body').transition(savedDuration).delay(0).style("opacity", 1)
+                    .on("end", function () {
+                        global.changeCSSInProgress = false;
+                        global.selfDuration = savedDuration;
+                    });
+        }
+    };
 
     /**
      * Átírja a fix szövegeket a beállított nyelvre. A nyelvbeállítás a
@@ -125,15 +136,12 @@ var global = function () {
      */
     var readVarsFromCSS = function () {
         var configVars = {};
-        console.log(document.styleSheets);
         for (var css = 0, cssMax = document.styleSheets.length; css < cssMax; css++) {
             var sheet = document.styleSheets[css];
-            console.log(sheet)
 
             for (var r = 0, rMax = sheet.cssRules.length; r < rMax; r++) {
                 var sRule = sheet.cssRules[r].cssText;
                 if (sRule.substr(0, 5) === "#less") {
-                    console.log(sRule)
                     var aKey = sRule.match(/\.(\w+)/);
                     var aVal = sRule.match(/: .*;/)[0].replace(": ", "").replace(";", "");
                     if (aKey && aVal) {

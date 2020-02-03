@@ -38,7 +38,9 @@ var global = function () {
 
     var changeCSS = function (cssFile) {
         setCookie("css", cssFile, 730);
+        clearTimeout(global.cssChangeTimer);
         global.changeCSSInProgress = true;
+        
 
         d3.select('body').style("opacity", 0);
 
@@ -90,7 +92,7 @@ var global = function () {
 
             d3.select('body').transition(savedDuration).delay(0).style("opacity", 1)
                     .on("end", function () {
-                        global.changeCSSInProgress = false;
+                        global.cssChangeTimer = setTimeout(function() {global.changeCSSInProgress = false;}, 2000);
                         global.selfDuration = savedDuration;
                     });
         }

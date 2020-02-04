@@ -1453,7 +1453,6 @@ panel_barline.prototype.drawAxes = function(preparedData, trans) {
     var that = this;
     
     that.xAxisColor = global.readableColor(global.colorValue(0));
-    console.log(global.colorValue(0), global.readableColor(global.colorValue(0)), that.xAxisColor)
 
     var shadowSize = global.axisTextSize(that.xScale(1));	// A vízszintes tengely betűje mögötti klikk-téglalap mérete.
     var axisTextSize = (shadowSize < 6) ? 0 : shadowSize;	// A vízszintes tengely betűmérete.

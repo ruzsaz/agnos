@@ -172,6 +172,7 @@ and open the template in the editor.
   -ms-user-select: none;
   user-select: none;
   font-family: arial, sans-serif;
+  background-size: cover;
 }
 /* Safarihoz bugfix */
 input[type=text],
@@ -202,6 +203,7 @@ svg {
 #topdiv {
   width: 100%;
   overflow: hidden;
+  background-image: none;
 }
 #progressDiv {
   position: absolute;
@@ -571,8 +573,8 @@ mask path {
 .cell {
   display: table-cell;
   font-size: 16px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding-top: 5.5px;
+  padding-bottom: 4.5px;
   line-height: 20px;
   z-index: 2;
   position: relative;
@@ -615,6 +617,7 @@ mask path {
   max-width: 90%;
   /* white-space: nowrap; A legújabb próbálkozás szerint ez nem kell */
   overflow-x: hidden;
+  overflow-y: hidden;
   text-overflow: ellipsis;
 }
 #headPanelP0 .halfHead .row .cell text:not(.spacer),
@@ -1618,7 +1621,7 @@ svg.switchButtonHelp {
   width: 100vw;
   height: 100vh;
   display: none;
-  background: yellow;
+  background-color: yellow;
   color: darkred;
   opacity: 0;
   z-index: 150;
@@ -1660,7 +1663,8 @@ svg.switchButtonHelp {
 }
 #dialogMask {
   z-index: 150;
-  background: rgba(0, 0, 0, 0.9);
+  background-image: none;
+  background-color: rgba(0, 0, 0, 0.9);
 }
 #dialogMessage {
   margin: 5px;

@@ -77,7 +77,7 @@ function HeadPanel_Report(init, reportMeta, startScale) {
 
     nameRow.append("html:text")
             .attr("class", "dummyText")
-            .text("ArányosítottMérték k k k k k k k k k k k k k k k k k k k k k");
+            .text("Arányosított érték k k k k k k k k k k k k k k k k k k k k k");
 
     var valueRow = valHeading.append("html:div")
             .attr("class", "cell");
@@ -88,7 +88,7 @@ function HeadPanel_Report(init, reportMeta, startScale) {
 
     valueRow.append("html:text")
             .attr("class", "dummyText")
-            .text("ArányosítottMérték");
+            .text("Arányosított érték");
 
     var ratioRow = valHeading.append("html:div")
             .attr("class", "cell");
@@ -98,7 +98,7 @@ function HeadPanel_Report(init, reportMeta, startScale) {
             .text("Arányosított érték");
 
     ratioRow.append("html:text")
-            .text("ArányosítottMérték")
+            .text("Arányosított érték")
             .attr("class", "dummyText");
 
 

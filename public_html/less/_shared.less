@@ -32,6 +32,7 @@
 @panelBackgroundColor: #343434;
 @panelWriteColor: white;
 @panelWriteValueColor: #c2b211;
+@panelInputColor: rgb(231, 231, 231);
 
 /* Keretek */
 @borderSize: 0px; // Az elemek körül
@@ -91,6 +92,7 @@
 
 @firstChildGradient: top, @middleGrey0 0%, @middleGrey 50%;
 @lastChildGradient: top, @middleGrey 50%, @middleGrey1 100%;
+@dropDownBackgroundColor: @middleGrey;
 
 /* Elemek körüli határ */
 @elementBorderSize: 0px;
@@ -527,7 +529,7 @@ mask path {
 }
 
 /* Panel_Table1D */
-.svgColumnHead.showValue text, .svgTableCell.showValue text,  {
+.svgColumnHead.showValue text, .svgTableCell.showValue text  {
     fill: @valWriteColor;
 }
 
@@ -641,8 +643,8 @@ mask path {
 .cell {
     display: table-cell;
     font-size: @fontSizeNormal;
-    padding-top: 5.5px;
-    padding-bottom: 4.5px;
+    padding-top: 6px;
+    padding-bottom: 4px;
     line-height: 20px;
     z-index: 2;
     position: relative;
@@ -1151,7 +1153,7 @@ text {
 }
 
 #mainToolbar nav ul ul li {
-    background: @middleGrey;
+    background: @dropDownBackgroundColor;
     float: none; 
     border-top: 1px solid @middleGrey0;
     border-bottom: 1px solid @middleGrey1;
@@ -1246,7 +1248,7 @@ text {
     top: 0px;
     width: 100vw;
     height: @mainToolbarHeight;
-    backround: rgba(0,0,0,0);
+    background: rgba(0,0,0,0);
     border-bottom-left-radius: @rounding;
     border-bottom-right-radius: @rounding;
     box-shadow: @mainToolbarShadow;
@@ -1306,8 +1308,10 @@ text {
     position: absolute;
     width: 100vw;
     height: 100vh;
-    display: none;    
+    display: none;
     background-color: @baseBackgroundColor;
+    background-size: cover;
+    background-repeat: no-repeat;
     color: @panelWriteColor;    
     opacity: 0;
     z-index: 150;
@@ -1344,7 +1348,7 @@ text {
     line-height: 40px;
     font-size: @fontSizeBig;
     color: @panelWriteColor;
-    fill: @panelWriteColor;
+    fill: @panelInputColor;
     stroke-width: 0px;
     text-align: center;
     background: @oddColor;
@@ -1422,8 +1426,8 @@ text {
     overflow: hidden;
     margin: 10px 10px 15px 10px;
     width: 272px;
-    background-color: @panelWriteColor;
-    border: 4px solid @panelWriteColor;
+    background-color: @panelInputColor;
+    border: 4px solid @panelInputColor;
     border-radius: @rounding;
     padding: 0px;
     outline: none;
@@ -1439,10 +1443,12 @@ text {
 
 #dialogPanel input#loginName {
     margin: 4px 0px 18px 0px !important;
+    background-color: @panelInputColor;
 }
 
 #dialogPanel input#loginPassword {
     margin: 4px 0px 0px 0px !important;
+    background-color: @panelInputColor;
 }
 
 #dialogButtonHolder {

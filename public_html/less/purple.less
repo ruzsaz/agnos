@@ -30,6 +30,7 @@ and open the template in the editor.
 /* A panel, és az arra írás színe */
 @panelBackgroundColor: #fdd;
 @panelWriteColor: red;
+@panelInputColor: #fdd;
 @panelWriteValueColor: red; // Ha értéket írunk, pl. a piechart értéke
 @topTenColor: #faa; // Top 10 felirat színe
 @axisTextOpacity: 0.4; // Az oszlopdiagramon a dimenziók szövege
@@ -75,6 +76,7 @@ and open the template in the editor.
 @inputBackgroundColor: @neutralGrey;
 @inputTextBorder: @borderSize solid red;
 @inputTextColor: @panelWriteColor;
+@panelInputColor: #fdd;
 @inputPlaceholderColor: #b66;
 
 /* Fejléc színei, árnyékolása */
@@ -90,6 +92,8 @@ and open the template in the editor.
 @mainToolbarHoverColor: #afa; // Ikon hover-színe
 @firstChildGradient: top, @middleGrey0 0%, @middleGrey 50%; // Fejlécről lenyíló menuelem teteje
 @lastChildGradient: top, @middleGrey 50%, @middleGrey1 100%; // Fejlécről lenyíló menuelem alja
+@dropDownBackgroundColor:  @mainToolbarBackgroundColor;
+
 
 /* Scrollbar */
 @scrollbarColor: red;

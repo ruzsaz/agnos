@@ -18,8 +18,9 @@ var changelog = [
             {"entity": "Agnos", "date": "2018-05-24", "change": "Egy kiválasztott panel duplájára nagyítható."},
             {"entity": "Agnos", "date": "2018-11-11", "change": "A help oldalak angol fordítása."},
             {"entity": "Agnos", "date": "2020-01-29", "change": "Szín és stílusválasztás."},
+            {"entity": "Agnos", "date": "2020-02-07", "change": "További színsémák hozzáadása."}
         ],
-        "updated": "2018-11-11"
+        "updated": "2020-02-07"
     },
     {
         "language": "en",
@@ -37,8 +38,8 @@ var changelog = [
             {"entity": "Agnos", "date": "2018-05-24", "change": "A selected panel can be magnified to 2x."},
             {"entity": "Agnos", "date": "2018-11-11", "change": "English translation of the help pages."},
             {"entity": "Agnos", "date": "2020-01-29", "change": "Color and style selector."},
-
+            {"entity": "Agnos", "date": "2020-02-07", "change": "Additional styles added."}
         ],
-        "updated": "2018-11-11"
+        "updated": "2020-02-07"
     }
 ];

@@ -18,20 +18,39 @@ and open the template in the editor.
 
 @import (less) "_shared.less";
 
-@neutralGrey: #bbb;
+@import url('../data/fonts/napsugar.css');
+
+* {
+    font-family: 'Baloo', arial, sans-serif;
+};
+
+@fontSizeHuge: 26px;
+@fontSizeBig: 18px;
+@fontSizeNormal: 16px;
+@fontSizeSmall: 12px;
+
+@neutralGrey: rgb(219, 218, 218);
+@lightBlue: #90e0ef; 
+@midBlue: #51bef6;
+@darkBlue: #2389c0; 
+@navyBlue: #03045e; 
+@darkYellow: #ffdb00;
+@darkOrange:#ff7c00;
 
 /* A háttérszín */
-@baseBackgroundColor: rgba(255,255,255,1);
-@baseBackgroundImage: url('../data/pictures/cloudy.jpg');
+@baseBackgroundColor: rgb(248, 243, 175);
+@baseBackgroundImage: url('../data/pictures/napsugar.jpg');
+
 
 /* Párbeszédablakok háttere */
-@dialogMaskColor: rgba(200,200,200,1);
-@dialogBorder: @borderSize solid #444;
+@dialogMaskColor: @darkBlue;
+@dialogBorder: @borderSize solid #eeeeee;
 
 /* A panel, és az arra írás színe */
-@panelBackgroundColor: rgba(255,255,255,0.7);
+@panelBackgroundColor: rgb(255, 255, 226);
+@panelInputColor: @neutralGrey;
 @panelWriteColor: #000;
-@panelWriteValueColor: darkblue; // Ha értéket írunk, pl. a piechart értéke
+@panelWriteValueColor: #a9d9f3; // Ha értéket írunk, pl. a piechart értéke
 @topTenColor: #eee; // Top 10 felirat színe
 @axisTextOpacity: 0.4; // Az oszlopdiagramon a dimenziók szövege
 @magnifyPanelButtonColor: @middleGrey; // Panel nagyító fül
@@ -45,24 +64,25 @@ and open the template in the editor.
 @panelBorder: @borderSize solid #aaa; // A panelek körül
 
 /* Kerekítettség */
-@rounding: 0px;
+@rounding: 14px;
 
 /* Árnyékok */
 @dimValShadow: 3px 3px 5px rgba(0,0,0,0.55); // A dimenziók, értékek körül a felső panelen
 @panelShadow: 0px 0px 0px @borderSize @panelBorderColor, 3px 3px 6px 2px #666; // A panelek körül
 
 /* A dimenziók válatakozó színei */
-@oddColor: #ccc;
-@evenColor: #aaa;
+@oddColor:  @darkOrange;
+@evenColor: @darkYellow;
 @avgColor: #bbb; // 2d táblánál számít, az odd row - even column metszetnél
 @writeOnDimColor: @panelWriteColor; // A dimenzióra írás színe
 
 /* Az értékek jelölésére szolgáló színpaletta */
-@valColors: #ff9090,#ffcf90,#8aafcc,#75d075,#ffa6a6,#b89ffe,#7c557c,#679667,#b87e7e,#ffd9a6,#cd86cd,#93e393,#ffb8b8,#9b6927,#691a69,#1f7e1f,#9b2727,#ffe0b8,#cd94cd,#a3e3a3,#576b7b,#658cab;
+@valColors:  @darkYellow, @darkOrange, #ff4343, @midBlue, @darkBlue, #22c900, #ffd105, #00d9d0, #dc51f6, #8ae6f7,#ee6927, #33abc0, #187a18, #1486b3, #a4fca4, #832121, #a8fa0f, #dd6ddd,#16e4eb, #b3721e, #6f84fc, rgb(250, 225, 0), #172917, #663c9c;
 @valColorNA: @neutralGrey;
-@multiValuesColor: @neutralGrey; // Panelfejléc színe, ha egyszerre több érték jelenik meg
+@multiValuesColor: @darkBlue; // Panelfejléc színe, ha egyszerre több érték jelenik meg
 @valWriteColor: @panelWriteColor; // Értékre írás színe
 @valWriteColor2: white; // Más szín, ha az előző nem lenne olvasható (pl. térkép)
+
 
 /* Elemek körüli határ */
 @elementBorderSize: 1px; // Diagramelemek közti határ
@@ -74,36 +94,37 @@ and open the template in the editor.
 
 /* Input mezők színezése */
 @inputBackgroundColor: @neutralGrey;
-@inputTextBorder: @borderSize solid #000;
+@inputTextBorder: @borderSize solid @darkOrange;
 @inputTextColor: @panelWriteColor;
-@inputPlaceholderColor: #666;
+@inputPlaceholderColor: @neutralGrey;
 
 /* Fejléc színei, árnyékolása */
-@middleGrey0: rgba(255,255,255,0.8);
-@middleGrey: rgba(240,240,240,0.8);
-@middleGrey1: rgba(225,225,225,0.8);
-@mainToolbarBackgroundColor: rgba(255,255,255,0.7);
-@switchColor: rgba(255,144,144,0.7); // Panelváltó gomb színe
-@closeColor: rgba(255,207,144,0.7); // Riportbecsokó gomb színe
+@middleGrey0: #bbb;
+@middleGrey: #aaa;
+@middleGrey1: #999;
+@mainToolbarBackgroundColor: @darkBlue;
+@switchColor: @darkOrange;  // Panelváltó gomb színe
+@closeColor:  @darkYellow;// Riportbecsokó gomb színe
 @mainToolbarShadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0,0,0,0.75);
-@mainToolbarActiveColor: #444; // Aktív ikon színe
+@mainToolbarActiveColor: @lightBlue; // Aktív ikon színe
 @mainToolbarInactiveColor: #bbb; // Inaktív ikon színe
-@mainToolbarHoverColor: #ffe; // Ikon hover-színe
-@firstChildGradient: top, @middleGrey0 0%, @middleGrey 50%; // Fejlécről lenyíló menuelem teteje
-@lastChildGradient: top, @middleGrey 50%, @middleGrey1 100%; // Fejlécről lenyíló menuelem alja
+@mainToolbarHoverColor: #fff; // Ikon hover-színe
+@firstChildGradient: top, @darkBlue 0%, @darkBlue 50%; // Fejlécről lenyíló menuelem teteje
+@lastChildGradient: top, @darkBlue 50%, @darkBlue 100%; // Fejlécről lenyíló menuelem alja
+@dropDownBackgroundColor:  @mainToolbarBackgroundColor;
 
 /* Scrollbar */
-@scrollbarColor: @closeColor;
+@scrollbarColor: @darkBlue;
 @scrollbarWidth: 12px;
-@scrollbarRounding: 0px; // A sarkak kerekítettsége
+@scrollbarRounding: 1px; // A sarkak kerekítettsége
 
 /* Help színezése */
-@helpBackgroundColor: @panelBackgroundColor;
-@helpControlBackgroundGradient: top, @middleGrey0 0%, @middleGrey 30px, @middleGrey1 100%;
+@helpBackgroundColor: #fff;
+@helpControlBackgroundGradient: top, @darkBlue 0%, @darkBlue 30px, @darkBlue 100%;
 @stripeWidth: 8px; // Épp kiválasztott help-elem mutató szélessége
 
 /* Tooltip */
 @tooltipTextColor: #444;
-@tooltipValueColor: #844;
-@tooltipBackgroundColor: #eee;
+@tooltipValueColor: @darkBlue;
+@tooltipBackgroundColor: @baseBackgroundColor;
 @tooltipBorder: @panelBorder;

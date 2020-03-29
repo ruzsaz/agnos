@@ -1,0 +1,140 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 7, 2017, 3:16:49 PM
+    Author     : ruzsaz
+*/
+
+/* 
+    Document   : frame
+    Created on : 2014.01.29., 16:03:26
+    Author     : ruzsaz
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+@import (less) "_shared.less";
+
+@import url('../data/fonts/covid.css');
+
+* {
+    font-family: Helvetica, sans-serif;
+    font-weight: bold;
+};
+
+@fontSizeHuge: 26px;
+@fontSizeBig: 18px;
+@fontSizeNormal: 16px;
+@fontSizeSmall: 12px;
+
+@neutralGrey: #eee;
+@directRed: #d34d58; 
+@directRedDark: #c92d3a;
+@directRedLight: #e76d7a;
+@directDarkGrey: #2d3132;
+@directBlue: #0576cddc;
+@directLightBlue: #017bfdd7;
+@directYellow: #ffbf00d3;
+
+@lightBlue: #90e0ef; 
+@midBlue: #51bff6e8;
+@darkBlue: #2389c0ee; 
+@navyBlue: #03055eec; 
+@darkYellow: #ffdd00de;
+@darkOrange:#ff7b00da;
+
+@middleGrey0: #bbb;
+@middleGrey: #aaa;
+@middleGrey1: #999;
+
+/* A háttérszín */
+@baseBackgroundColor: @neutralGrey;
+@baseBackgroundImage: url('../data/pictures/eee_2.png');
+
+/* Párbeszédablakok háttere */
+@dialogMaskColor: rgb(207, 207, 207);
+@dialogBorder: @borderSize solid @directDarkGrey;
+
+
+/* A panel, és az arra írás színe */
+@panelBackgroundColor: #fff; // az alap háttérszén minden oldalon
+@panelInputColor: @neutralGrey;
+@panelWriteColor: #000;
+@panelWriteValueColor: @directRedDark; // Ha értéket írunk, pl. a piechart értéke
+@topTenColor: #eee; // Top 10 felirat színe
+@axisTextOpacity: 0.4; // Az oszlopdiagramon a dimenziók szövege
+@magnifyPanelButtonColor: #fff; // Panel nagyító fül
+@magnifyPanelButtonHoverColor: @mainToolbarActiveColor; // Panel nagyító fül
+
+/* Keretek */
+@borderSize: 2px; // Az elemek körül
+@dimValBorder: @borderSize solid @directRed; // A dimenzió és érték elemek körül
+@panelBorderSize: @borderSize;  // A panelek körül (valójában az árnyékok között van megvalósítva)
+@panelBorderColor: #aaa;  // A panelek körül (valójában az árnyékok között van megvalósítva)
+@panelBorder: @borderSize solid @directRedDark; // A panelek körül
+
+/* Kerekítettség */
+@rounding: 7px;
+
+/* Árnyékok */
+@dimValShadow: 3px 3px 5px rgba(0,0,0,0.55); // A dimenziók, értékek körül a felső panelen
+@panelShadow: 0px 0px 0px @borderSize @panelBorderColor, 3px 3px 6px 2px #aaa; // A panelek körül
+
+/* A dimenziók válatakozó színei */
+@oddColor: #d36f77; 
+@evenColor: @neutralGrey;
+@avgColor: #bbb; // 2d táblánál számít, az odd row - even column metszetnél
+@writeOnDimColor: @panelWriteColor; // A dimenzióra írás színe
+
+/* Az értékek jelölésére szolgáló színpaletta */
+@valColors:  #d36f77, @neutralGrey, #d36f77, @neutralGrey,  #d36f77, @neutralGrey, #af857d, #928e81, #e5d89d, #8a746d, rgb(233, 43, 43), #544a48,  rgb(172, 57, 57), #a89591,#636057, #994a00, #c0bfbb, #a87d44,#9a988b, #802e2e, rgb(160, 62, 62), #d4cdcc, @directDarkGrey, rgb(214, 129, 129), #d9a173, rgb(194, 184, 92), #716a7a;
+@valColorNA: @neutralGrey;
+@multiValuesColor: @directRed; // Panelfejléc színe, ha egyszerre több érték jelenik meg
+@valWriteColor: @panelWriteColor; // Értékre írás színe
+@valWriteColor2: white; // Más szín, ha az előző nem lenne olvasható (pl. térkép)
+
+
+/* Elemek körüli határ */
+@elementBorderSize: 3px; // Diagramelemek közti határ
+@elementBorderColor: @directRedDark; // Diagramelemek közti határ
+@lineSymbolStroke: @elementBorderColor; // Jelölő keretszíne
+
+@highlightColor: #ffe;
+@dimHighlightColor: #ffe;
+
+/* Input mezők színezése */
+@inputBackgroundColor: @neutralGrey;
+@inputTextBorder: @borderSize solid @directRed;
+@inputTextColor: @panelWriteColor;
+@inputPlaceholderColor: @neutralGrey;
+
+/* Fejléc színei, árnyékolása */
+@mainToolbarBackgroundColor: @directRed;
+@switchColor: @directRedDark;  // Panelváltó gomb színe
+@closeColor:  @directRedLight;// Riportbecsukó gomb színe
+@mainToolbarShadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0,0,0,0.75);
+@mainToolbarActiveColor: #fff; // Aktív ikon színe
+@mainToolbarInactiveColor: #d8d9dd; // Inaktív ikon színe
+@mainToolbarHoverColor: #d8d9dd; // Ikon hover-színe
+@firstChildGradient: top, @directRed 0%, @directRed 50%; // Fejlécről lenyíló menuelem teteje
+@lastChildGradient: top, @directRed 50%, @directRed 1000%; // Fejlécről lenyíló menuelem alja
+@dropDownBackgroundColor:  @directRed; // Fejlécről lenyíló menuelem közepe
+
+/* Scrollbar */
+@scrollbarColor: @middleGrey;
+@scrollbarWidth: 12px;
+@scrollbarRounding: 1px; // A sarkak kerekítettsége
+
+/* Help színezése */
+@helpBackgroundColor: @directRedDark;
+@helpControlBackgroundGradient: top, @directRed 0%, @directRed 30px, @directRed 100%;
+@stripeWidth: 8px; // Épp kiválasztott help-elem mutató szélessége
+
+/* Tooltip */
+@tooltipTextColor: #444;
+@tooltipValueColor: #8d8775;
+@tooltipBackgroundColor: @baseBackgroundColor;
+@tooltipBorder: @panelBorder;

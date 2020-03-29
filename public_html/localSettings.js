@@ -6,7 +6,7 @@
 // Lokális gép
 //var baseUrl = "https://localhost:8443/ARS/";
 //var baseUrl = "http://localhost:8080/AgnosReportingServer/";
-//var baseUrl = "http://192.168.123.18/AgnosReportingServer";
+//var baseUrl = "http://192.168.32.184:8080/ReportingServer";
 var baseUrl = "http://agnos.hu/AgnosReportingServer";
 //var baseUrl = "http://10.64.4.21:7979/AgnosReportingServer";  // Zsolt gépe
 

@@ -1,4 +1,4 @@
-/* global Panel, d3, topojson, mapOfHungary, pois, global */
+/* global Panel, d3, topojson, mapOfHungary, pois, global, projections, maps */
 
 'use strict';
 
@@ -20,6 +20,7 @@ function panel_map(init) {
     this.isColorsLocked = (that.actualInit.range !== undefined);
 
     Panel.call(that, that.actualInit, global.mediators[that.actualInit.group], true, 0, 0); // A Panel konstruktorának meghívása.
+    //
     // Ha a kért dimenzió nem ábrázolható, keresünk egy olyat, ami igen.
     if (that.localMeta.dimensions[that.actualInit.dim].is_territorial !== 1) {
         for (var d = 0, dMax = that.localMeta.dimensions.length; d < dMax; d++) {
@@ -35,10 +36,12 @@ function panel_map(init) {
     this.valToShow = that.actualInit.val;		// Az ennyiedik mutatót mutatja.
     this.valFraction = that.actualInit.ratio;	// Hányadost mutasson, vagy abszolútértéket?
     this.isPoiRequired = that.actualInit.poi;	// Kell-e POI?
+    this.mapKey = that.meta.mapKey;
     this.currentLevel;							// Az épp kirajzolt szint.
     this.maxDepth = that.meta.dimensions[that.dimToShow].levels.length - 1;	// Maximális lefúrási szint. 1: megye, 2: kistérség, 3: település
-
-    this.imageCover = Math.min(that.width / that.w, that.height / that.h); // Ennyiszerese fedhető le a panelnek térképpel.
+    
+    this.imageWidthCover = 0.9 * that.width / that.w;
+    this.imageHeightCover = that.height / that.h; // Ennyiszerese fedhető le a panelnek térképpel.
     this.maskId = global.randomString(12);      // A maszk réteg id-je. Véletlen, nehogy kettő azonos legyen.    
 
     // A színskála.
@@ -57,12 +60,11 @@ function panel_map(init) {
             that.colorRange[1] = mid;
         }
     }
-
-    // A térképek felrajzolásához használt projekció.
-    this.projection = d3.geoMercator()
-            .scale(30000)
-            .center([19.5, 47.2])
-            .translate([that.w / 2, that.height / 2 + that.margin.top]);
+   
+    // Térképdefiníció és projekció beolvasása
+    this.projection = projections[that.mapKey]
+        .translate([that.w / 2, that.height / 2 + that.margin.top]);
+    this.topology = maps[that.mapKey];
 
     // Görbegenerátor a térképrajzoláshoz.
     this.path = d3.geoPath()
@@ -130,7 +132,7 @@ function panel_map(init) {
 
     // Kezdeti magyarország kirajzolása.
     var box = that.path.bounds((topojson.feature(that.topology, that.topoLevel(that.topology.objects.level0)).features)[0]);
-    var scalemeasure = that.imageCover / Math.max((box[1][0] - box[0][0]) / that.w, (box[1][1] - box[0][1]) / that.h);
+    var scalemeasure = Math.min(that.imageWidthCover / ((box[1][0] - box[0][0]) / that.w) , that.imageHeightCover / ((box[1][1] - box[0][1]) / that.h));
     that.svg.selectAll(".mapHolder")
             .attr("transform",
                     "translate(" + that.projection.translate() + ")" +
@@ -163,8 +165,8 @@ function panel_map(init) {
     panel_map.prototype.poiLegendWidth = 140;		// A poi-jelkulcs téglalapjának szélessége.
     panel_map.prototype.poiLegendHeight = 30;		// Egy elem magassága a poi-jelkulcson.
 
-    panel_map.prototype.topology = mapOfHungary;	// Magyarország térképi réteg.
-    panel_map.prototype.pois = pois;				// POI térképi réteg.
+    //panel_map.prototype.topology = mapOfHungary;	// Magyarország térképi réteg.
+    panel_map.prototype.pois = pois;				// POI térképi réteg.    
 }
 
 //////////////////////////////////////////////////
@@ -287,13 +289,13 @@ panel_map.prototype.getParent = function (dataRows) {
     if (dataRows.length > 0) {
         // Vesszük az adatkupac első elemét. Ha az épp N/A, akkor a másodikat. TODO: Itt most gányolás van!!! Ki kéne javítani.
         var shapeId = (dataRows[0].dims[0].knownId !== "N/A") ? dataRows[0].dims[0].knownId : (dataRows.length > 1) ? dataRows[1].dims[0].knownId : undefined;
-        for (var level = 0; level <= 3; level++) {
+        for (var level = 0; level <= 3; level++) { // TODO: 3 helyett ahány van kéne...
             var thisObj = topojson.feature(this.topology, this.topoLevel(level)).features.filter(function (d) {
-                return shapeId === d.properties.shapeid;
+                return shapeId == d.properties.shapeid;
             });
             if (thisObj.length > 0) {
                 parentObj = topojson.feature(this.topology, this.topoLevel(level - 1)).features.filter(function (d) {
-                    return thisObj[0].properties.parent === d.properties.shapeid;
+                    return thisObj[0].properties.parentid == d.properties.shapeid;
                 });
                 break;
             }
@@ -311,7 +313,7 @@ panel_map.prototype.getParent = function (dataRows) {
 panel_map.prototype.getSelf = function (shapeId) {
     for (var level = 0; level <= 3; level++) {
         var thisObj = topojson.feature(this.topology, this.topoLevel(level)).features.filter(function (d) {
-            return shapeId === d.properties.shapeid;
+            return shapeId == d.properties.shapeid;
         });
         if (thisObj.length > 0) {
             break;
@@ -460,18 +462,18 @@ panel_map.prototype.prepareData = function (newDataRows) {
             return undefined;
         } else {
             var extent = that.path.bounds(parentShape);
-            var scalemeasure = that.imageCover / Math.max((extent[1][0] - extent[0][0]) / that.w, (extent[1][1] - extent[0][1]) / that.h);
+            var scalemeasure = Math.min(that.imageWidthCover / ((extent[1][0] - extent[0][0]) / that.w), that.imageHeightCover / ((extent[1][1] - extent[0][1]) / that.h));
 
             // A kirajzolandó térképi elemek adatainak megszerzése.
             var featuresToDraw = topojson.feature(that.topology, that.topoLevel(that.currentLevel)).features.filter(function (d) {
-                return parentShape.properties.shapeid === ((that.currentLevel === that.maxDepth + 1) ? d.properties.shapeid : d.properties.parent);
+                return parentShape.properties.shapeid == ((that.currentLevel === that.maxDepth + 1) ? d.properties.shapeid : d.properties.parentid);
             });
 
             var pairedData = [];
             var bounds = that.path.bounds;
             featuresToDraw.map(function (d) {
                 for (var w = 0, wMax = newDataRows.length; w < wMax; w++) {
-                    if (newDataRows[w].dims[0].knownId === d.properties.shapeid) {
+                    if (newDataRows[w].dims[0].knownId == d.properties.shapeid) {
                         var datarow = newDataRows[w];
                         var b = bounds(d);
                         var val = that.valueToShow(datarow);
@@ -484,8 +486,8 @@ panel_map.prototype.prepareData = function (newDataRows) {
                         element.name = datarow.dims[0].name.trim();
                         element.value = val.value;
                         element.originalValue = val.originalValue;
-                        element.centerX = (b[1][0] + b[0][0]) / 2;
-                        element.centerY = (b[1][1] + b[0][1]) / 2;
+                        element.centerX = isNaN((b[1][0] + b[0][0]) / 2) ? 0 : (b[1][0] + b[0][0]) / 2;
+                        element.centerY = isNaN((b[1][1] + b[0][1]) / 2) ? 0 : (b[1][1] + b[0][1]) / 2;                        
                         element.tooltip = that.getTooltip(element);
                         pairedData.push(element);
 

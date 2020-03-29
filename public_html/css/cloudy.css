@@ -94,7 +94,7 @@ and open the template in the editor.
   opacity: 0.4;
 }
 #less .fontSizeSmall {
-  width: 14px;
+  width: 12px;
 }
 #less .mainToolbarHeight {
   width: 32px;
@@ -203,7 +203,7 @@ svg {
 #topdiv {
   width: 100%;
   overflow: hidden;
-  background-image: url('../data/pictures/IMG_0002.JPG');
+  background-image: url('../data/pictures/cloudy.jpg');
 }
 #progressDiv {
   position: absolute;
@@ -290,7 +290,7 @@ svg {
 .mainTitle {
   color: #000;
   text-align: center;
-  font-size: 24px;
+  font-size: 20px;
   padding-top: 16px;
   padding-bottom: 0px;
 }
@@ -333,7 +333,7 @@ svg {
 }
 .label {
   fill: #000;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
 }
 div.tooltip {
@@ -348,12 +348,12 @@ div.tooltip {
   border: 1px solid #aaa;
   border-radius: 0px;
   pointer-events: none;
-  font-size: 18px;
+  font-size: 16px;
   z-index: 500;
   text-align: left;
 }
 div.tooltip em {
-  font-size: 18px;
+  font-size: 16px;
 }
 div.tooltip ul {
   list-style-position: inside;
@@ -440,24 +440,24 @@ mask path {
   text-shadow: 0px 0px 3px #000;
 }
 .units {
-  font-size: 14px;
+  font-size: 12px;
   fill: #000;
 }
 .axisY text {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
   fill: #000;
 }
 /* Panel_Table2D, Panel_Table1D */
 .svgRowHeadLabel {
-  font-size: 14px;
+  font-size: 12px;
   fill: #000;
   text-anchor: beginning;
 }
 /* Panel_Table2D, Panel_Table1D */
 .svgTableCell,
 .svgColumnHeadLabel {
-  font-size: 14px;
+  font-size: 12px;
   fill: #000;
   text-anchor: middle;
 }
@@ -486,18 +486,18 @@ mask path {
 }
 /* Panel_BarLine */
 .avg_group text {
-  font-size: 14px;
+  font-size: 12px;
   font-style: italic;
 }
 .value {
-  font-size: 14px;
+  font-size: 12px;
   fill: darkblue;
 }
 .legend {
-  font-size: 14px;
+  font-size: 12px;
 }
 .titleText {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
   fill: #000;
 }
@@ -572,7 +572,7 @@ mask path {
 /* HeadPanel */
 .cell {
   display: table-cell;
-  font-size: 18px;
+  font-size: 16px;
   padding-top: 5.5px;
   padding-bottom: 4.5px;
   line-height: 20px;
@@ -596,7 +596,7 @@ mask path {
   color: #000;
 }
 .heading .cell {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 }
 .valTable .realText {
@@ -721,7 +721,7 @@ mask path {
   line-height: 30px;
   white-space: nowrap;
   overflow: hidden;
-  font-size: 18px;
+  font-size: 16px;
   pointer-events: none;
   color: red;
 }
@@ -804,14 +804,14 @@ p.submit {
 }
 :-moz-placeholder {
   color: #c9c9c9 !important;
-  font-size: 18px;
+  font-size: 16px;
 }
 ::-webkit-input-placeholder {
   color: #666;
-  font-size: 18px;
+  font-size: 16px;
 }
 input {
-  font-size: 18px;
+  font-size: 16px;
 }
 input[type=text],
 input[type=password] {
@@ -850,7 +850,7 @@ button {
   margin-right: 5px;
   padding: 0 18px;
   height: 29px;
-  font-size: 18px;
+  font-size: 16px;
   color: #000;
   background: #ccc;
   border: 1px solid #aaa;
@@ -1567,7 +1567,7 @@ svg.switchButtonHelp {
   top: 0px;
   width: 100vw;
   height: 32px;
-  backround: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0);
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
   box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2), 3px 3px 9px rgba(0, 0, 0, 0.75);
@@ -1622,6 +1622,8 @@ svg.switchButtonHelp {
   height: 100vh;
   display: none;
   background-color: #ffffff;
+  background-size: cover;
+  background-repeat: no-repeat;
   color: #000;
   opacity: 0;
   z-index: 150;
@@ -1653,9 +1655,9 @@ svg.switchButtonHelp {
   margin: -20px -20px 21px;
   height: 40px;
   line-height: 40px;
-  font-size: 18px;
+  font-size: 16px;
   color: #000;
-  fill: #000;
+  fill: #e7e7e7;
   stroke-width: 0px;
   text-align: center;
   background: #ccc;
@@ -1663,7 +1665,7 @@ svg.switchButtonHelp {
 }
 #dialogMask {
   z-index: 150;
-  background-image: url('../data/pictures/IMG_0002.JPG');
+  background-image: url('../data/pictures/cloudy.jpg');
   background-color: #c8c8c8;
 }
 #dialogMessage {
@@ -1719,8 +1721,8 @@ svg.switchButtonHelp {
   overflow: hidden;
   margin: 10px 10px 15px 10px;
   width: 272px;
-  background-color: #000;
-  border: 4px solid #000;
+  background-color: #e7e7e7;
+  border: 4px solid #e7e7e7;
   border-radius: 0px;
   padding: 0px;
   outline: none;
@@ -1733,9 +1735,11 @@ svg.switchButtonHelp {
 }
 #dialogPanel input#loginName {
   margin: 4px 0px 18px 0px !important;
+  background-color: #e7e7e7;
 }
 #dialogPanel input#loginPassword {
   margin: 4px 0px 0px 0px !important;
+  background-color: #e7e7e7;
 }
 #dialogButtonHolder {
   margin-top: 26px;

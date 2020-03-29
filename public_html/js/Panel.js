@@ -1,4 +1,4 @@
-/* global d3 */
+/* global d3, global */
 
 'use strict';
 
@@ -131,7 +131,7 @@ function Panel(panelInitString, mediator, isLegendRequired, leftOffset, rightOff
 
     
     rz.append("svg:g")
-            .html('<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#magnify_panel_button"></use>')
+            .html('<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#magnify_panel_button"></use>');
     
 
     // Fejléc.

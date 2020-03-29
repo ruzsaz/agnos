@@ -1,3 +1,5 @@
+/* global global */
+
 'use strict';
 
 /**
@@ -37,7 +39,7 @@ function Fact(reportSuperMeta, side, callbackFunction, callContext, startObject)
  * @returns {Fact.reportMetaReady}
  */
 Fact.prototype.reportMetaReady = function(reportSuperMeta, reportMetaJson, startObject) {
-
+    
     // A report metáját kiegészítjük a supermeta rá vonatkozó részével.
     this.reportMeta = reportMetaJson;
     this.reportMeta.captions = reportSuperMeta.captions;
@@ -57,6 +59,15 @@ Fact.prototype.reportMetaReady = function(reportSuperMeta, reportMetaJson, start
     // A dimenziók id-jének beállítása, tooltip beállítása;
     for (var i = 0, iMax = this.reportMeta.dimensions.length; i < iMax; i++) {
         this.reportMeta.dimensions[i].id = i;
+    }
+
+    // Ha van térkép, a térképkód kinyerése;
+    for (var i = 0, iMax = this.reportMeta.dimensions.length; i < iMax; i++) {
+        const dimType = this.reportMeta.dimensions[i].type;
+        if (typeof dimType === "string" && dimType.search("map") !== -1) {
+            this.reportMeta.mapKey = dimType.replace("map(", "").replace(")", "");
+            break;
+        }
     }
 
     // A mutatók id-jének beállítása, tooltip beállítása.

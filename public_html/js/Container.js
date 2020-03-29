@@ -1,4 +1,4 @@
-/* global d3, version, LZString, URL */
+/* global d3, version, LZString, URL, global, changelog */
 
 'use strict'; // TODO: nyelv
 

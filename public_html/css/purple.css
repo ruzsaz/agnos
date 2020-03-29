@@ -1567,7 +1567,7 @@ svg.switchButtonHelp {
   top: 0px;
   width: 100vw;
   height: 32px;
-  backround: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
   box-shadow: inset 0px -24px 24px -12px rgba(0, 0, 0, 0.2);
@@ -1622,6 +1622,8 @@ svg.switchButtonHelp {
   height: 100vh;
   display: none;
   background-color: #fdd;
+  background-size: cover;
+  background-repeat: no-repeat;
   color: red;
   opacity: 0;
   z-index: 150;
@@ -1655,7 +1657,7 @@ svg.switchButtonHelp {
   line-height: 40px;
   font-size: 16px;
   color: red;
-  fill: red;
+  fill: #fdd;
   stroke-width: 0px;
   text-align: center;
   background: #fcc;
@@ -1719,8 +1721,8 @@ svg.switchButtonHelp {
   overflow: hidden;
   margin: 10px 10px 15px 10px;
   width: 272px;
-  background-color: red;
-  border: 4px solid red;
+  background-color: #fdd;
+  border: 4px solid #fdd;
   border-radius: 12px;
   padding: 0px;
   outline: none;
@@ -1733,9 +1735,11 @@ svg.switchButtonHelp {
 }
 #dialogPanel input#loginName {
   margin: 4px 0px 18px 0px !important;
+  background-color: #fdd;
 }
 #dialogPanel input#loginPassword {
   margin: 4px 0px 0px 0px !important;
+  background-color: #fdd;
 }
 #dialogButtonHolder {
   margin-top: 26px;

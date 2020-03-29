@@ -574,8 +574,8 @@ mask path {
 .cell {
   display: table-cell;
   font-size: 16px;
-  padding-top: 6px;
-  padding-bottom: 4px;
+  padding-top: 5.5px;
+  padding-bottom: 4.5px;
   line-height: 20px;
   z-index: 2;
   position: relative;

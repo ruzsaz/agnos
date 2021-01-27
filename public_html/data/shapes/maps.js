@@ -1,13 +1,13 @@
 'use strict';
 
 var projections = {
-    "world" : d3.geoNaturalEarth1().rotate([-10.5, 0]),
-    "hun" : d3.geoMercator().scale(30000).center([19.5, 47.2]),
-    "ca" : d3.geoNaturalEarth1().rotate([-10.5, 0]),
-    "cn" : d3.geoNaturalEarth1().rotate([-10.5, 0]),
-    "au" : d3.geoNaturalEarth1().rotate([-10.5, 0]),
-    "us" : d3.geoNaturalEarth1().rotate([-10.5, 0]),
-    "eu" : d3.geoNaturalEarth1().rotate([-10.5, 0])    
+    "world" : function() {return d3.geoNaturalEarth1().rotate([-10.5, 0])},
+    "hun" : function() {return d3.geoMercator().scale(30000).center([19.5, 47.2])},
+    "ca" : function() {return d3.geoNaturalEarth1().rotate([-10.5, 0])},
+    "cn" : function() {return d3.geoNaturalEarth1().rotate([-10.5, 0])},
+    "au" : function() {return d3.geoNaturalEarth1().rotate([-10.5, 0])},
+    "us" : function() {return d3.geoNaturalEarth1().rotate([-10.5, 0])},
+    "eu" : function() {return d3.geoNaturalEarth1().rotate([-10.5, 0])}    
 }
 
 var maps = {

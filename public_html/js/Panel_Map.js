@@ -62,14 +62,14 @@ function panel_map(init) {
     }
    
     // Térképdefiníció és projekció beolvasása
-    this.projection = projections[that.mapKey]
+    this.projection = projections[that.mapKey]()
         .translate([that.w / 2, that.height / 2 + that.margin.top]);
     this.topology = maps[that.mapKey];
 
     // Görbegenerátor a térképrajzoláshoz.
     this.path = d3.geoPath()
             .projection(that.projection);
-
+ 
     // Alapréteg.
     that.svg.insert("svg:g", ".title_group")
             .attr("class", "background listener droptarget droptarget0")
